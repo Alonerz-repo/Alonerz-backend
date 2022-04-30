@@ -1,4 +1,5 @@
 import { path } from 'app-root-path';
+import kakaoConfig from './kakao.config';
 
 const envFiles = () =>
   process.env.NODE_ENV === 'production'
@@ -8,5 +9,5 @@ const envFiles = () =>
 export const EnvConfig = {
   envFilePath: envFiles(),
   isGlobal: true,
-  load: [],
+  load: [kakaoConfig],
 };
