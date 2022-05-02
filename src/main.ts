@@ -1,7 +1,7 @@
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { serverConstants } from './common/constants';
+import { configs } from './common/configs';
 
 async function bootstrap() {
   const logger = new Logger();
@@ -14,7 +14,7 @@ async function bootstrap() {
     allowedHeaders: '*',
   });
 
-  // 유효성 검사 파이프 전역에서 사용
+  // 유효성 검사 파이프 설정
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -23,8 +23,9 @@ async function bootstrap() {
     }),
   );
 
-  await app.listen(serverConstants.port);
-  logger.log(`App Listening at ${serverConstants.port}`);
+  const port = configs.server.port;
+  await app.listen(port);
+  logger.log(`App Listening at ${port}`);
 }
 bootstrap();
 

@@ -1,11 +1,13 @@
-import { ForbiddenException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import * as bcrypt from 'bcrypt';
-import { bcryptConstants } from 'src/common/constants';
 import { CreateUserDto } from './dto/create.user.dto';
 import { UpdateUserDto } from './dto/update.user.dto';
 import { UserException } from './user.exception';
 import { UserRepository } from './user.repository';
+import { configs } from 'src/common/configs';
+import { hash } from 'bcrypt';
+
+const { rounds } = configs.bcrypt;
 
 @Injectable()
 export class UserService {
@@ -15,15 +17,14 @@ export class UserService {
     private exception: UserException,
   ) {}
 
+  // TODO : 카카오 계정만 사용하는 경우 제거
+  // 그렇지 않은 경우 authService로 옮길 것
   async serviceSignup(createUserDto: CreateUserDto): Promise<any> {
     const { email } = createUserDto;
     const isExist = await this.repository.findOneByEmail(email);
     if (isExist) this.exception.alreadyExist();
 
-    createUserDto.password = await bcrypt.hash(
-      createUserDto.password,
-      bcryptConstants.rounds,
-    );
+    createUserDto.password = await hash(createUserDto.password, rounds);
 
     const user = await this.repository.createServiceUser(createUserDto);
     delete user.password;
@@ -35,16 +36,9 @@ export class UserService {
     if (!isExist) this.exception.notFound();
 
     if (updateUserDto.password !== undefined) {
-      updateUserDto.password = await bcrypt.hash(
-        updateUserDto.password,
-        bcryptConstants.rounds,
-      );
+      updateUserDto.password = await hash(updateUserDto.password, rounds);
     }
 
     await this.repository.update(userId, updateUserDto);
-  }
-
-  async remove(userId: number): Promise<void> {
-    await this.repository.delete(userId);
   }
 }

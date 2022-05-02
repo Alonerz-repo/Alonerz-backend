@@ -8,19 +8,35 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+// TODO : Career 테이블 JOIN 설정
 @Entity('users')
 export class User extends BaseEntity {
+  // TODO : 카카오 계정만 사용하는 경우 제거
   @PrimaryGeneratedColumn()
   userId: number;
 
-  @Column({ unique: true })
+  // TODO : 카카오 계정만 사용하는 경우 제거
+  @Column({ default: null })
   email: string;
 
-  @Column()
+  // TODO : 카카오 계정만 사용하는 경우 제거
+  @Column({ default: null })
   nickname: string;
 
-  @Column()
+  // TODO : 카카오 계정만 사용하는 경우 제거
+  @Column({ default: null })
   password: string;
+
+  // TODO : 카카오 계정만 사용하는 경우 string으로 변환 후 Primary Key로 지정
+  @Column({ type: 'bigint', default: null })
+  kakaoId: number;
+
+  // TODO : 카카오 계정만 사용하는 경우 제거
+  @Column({ default: null })
+  gender: string;
+
+  @Column({ default: 0 })
+  point: number;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -30,24 +46,4 @@ export class User extends BaseEntity {
 
   @DeleteDateColumn({ default: null })
   deletedAt: Date;
-
-  // 카카오 계정 정보
-  // TODO : 별도의 테이블로 관리할 것
-  @Column({ default: null })
-  kakaoId: number;
-
-  @Column({ default: null })
-  kakaoNickname: string;
-
-  @Column({ default: null })
-  kakaoEmail: string;
-
-  @Column({ default: null })
-  kakaoGender: string;
-
-  @Column({ default: null })
-  kakaoProfileImageUrl: string;
-
-  @Column({ default: null })
-  kakaoConnectedAt: Date;
 }
