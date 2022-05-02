@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy, StrategyOptions } from 'passport-jwt';
 import { JwtPayload } from 'src/common/interfaces';
-import { configs } from 'src/common/constants';
+import { configs } from 'src/common/configs';
 
 const { secret } = configs.jwt;
 const strategyOptions: StrategyOptions = {

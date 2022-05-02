@@ -4,7 +4,7 @@ import { CreateUserDto } from './dto/create.user.dto';
 import { UpdateUserDto } from './dto/update.user.dto';
 import { UserException } from './user.exception';
 import { UserRepository } from './user.repository';
-import { configs } from 'src/common/constants';
+import { configs } from 'src/common/configs';
 import { hash } from 'bcrypt';
 
 const { rounds } = configs.bcrypt;

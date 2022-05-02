@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, StrategyOption } from 'passport-kakao';
-import { configs } from 'src/common/constants';
 import { KakaoAccount } from 'src/common/interfaces';
+import { configs } from 'src/common/configs';
 
 const { restAPIKey, redirectURL } = configs.kakao;
 const strategyOption: StrategyOption = {

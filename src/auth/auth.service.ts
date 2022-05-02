@@ -6,7 +6,7 @@ import { UserLoginDto } from './dto/user.login.dto';
 import { AuthException } from './auth.exception';
 import { User } from 'src/user/user.entity';
 import { JwtPayload, JwtTokens, KakaoPayload } from 'src/common/interfaces';
-import { configs } from 'src/common/constants';
+import { configs } from 'src/common/configs';
 import { compare } from 'bcrypt';
 import axios from 'axios';
 

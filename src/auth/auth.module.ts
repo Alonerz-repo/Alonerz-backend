@@ -10,7 +10,7 @@ import { AuthException } from './auth.exception';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { KakaoStrategy } from './strategies/kakao.strategy';
-import { configs } from 'src/common/constants';
+import { configs } from 'src/common/configs';
 
 const { secret, expiresIn } = configs.jwt;
 
