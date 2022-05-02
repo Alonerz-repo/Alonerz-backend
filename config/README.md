@@ -9,8 +9,9 @@ jwt:
 bcrypt:
   rounds:
 kakao:
-  clientID:
-  callbackURL:
+  adminKey:
+  restAPIKey:
+  redirectURL:
 typeorm:
   type:
   host:
