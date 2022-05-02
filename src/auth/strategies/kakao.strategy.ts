@@ -1,16 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { Strategy } from 'passport-kakao';
-import { kakaoConstants } from 'src/common/constants';
+import { Strategy, StrategyOption } from 'passport-kakao';
+import { configs } from 'src/common/constants';
 import { KakaoAccount } from 'src/common/interfaces';
+
+const { restAPIKey, redirectURL } = configs.kakao;
+const strategyOption: StrategyOption = {
+  clientID: restAPIKey,
+  clientSecret: '',
+  callbackURL: redirectURL,
+};
 
 @Injectable()
 export class KakaoStrategy extends PassportStrategy(Strategy) {
   constructor() {
-    super({
-      clientID: kakaoConstants.clientID,
-      callbackURL: kakaoConstants.callbackURL,
-    });
+    super(strategyOption);
   }
 
   // _  : Kakao accessToken

@@ -1,30 +1,32 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import * as config from 'config';
 
-interface ServerContants {
-  port: number;
+interface Configs {
+  server: {
+    port: number;
+  };
+  jwt: {
+    secret: string;
+    expiresIn: number;
+  };
+  bcrypt: {
+    rounds: number;
+  };
+  kakao: {
+    adminKey: string;
+    restAPIKey: string;
+    redirectURL: string;
+  };
+  typeorm: TypeOrmModuleOptions;
 }
 
-interface JwtConstants {
-  secret: string;
-  expiresIn: number;
-}
-
-interface BcryptConstants {
-  rounds: number;
-}
-
-interface KakaoConstants {
-  adminID: string;
-  clientID: string;
-  callbackURL: string;
-}
-
-export const serverConstants: ServerContants = config.get('server');
-export const jwtConstants: JwtConstants = config.get('jwt');
-export const bcryptConstants: BcryptConstants = config.get('bcrypt');
-export const kakaoConstants: KakaoConstants = config.get('kakao');
-export const typeOrmConstants: TypeOrmModuleOptions = {
-  entities: [__dirname + '/../**/*.entity.{ts,js}'],
-  ...config.get('typeorm'),
+export const configs: Configs = {
+  server: config.get('server'),
+  jwt: config.get('jwt'),
+  bcrypt: config.get('bcrypt'),
+  kakao: config.get('kakao'),
+  typeorm: {
+    entities: [__dirname + '/../**/*.entity.{ts,js}'],
+    ...config.get('typeorm'),
+  },
 };
