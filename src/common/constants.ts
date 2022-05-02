@@ -15,6 +15,7 @@ interface BcryptConstants {
 }
 
 interface KakaoConstants {
+  adminID: string;
   clientID: string;
   callbackURL: string;
 }
