@@ -4,8 +4,6 @@ import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { Request } from 'express';
 import { CreateUserDto } from './dto/create.user.dto';
 import { UpdateUserDto } from './dto/update.user.dto';
-// import { Role } from '../auth/roles.decorator';
-// import { RolesGuard } from '../auth/guards/roles.guard';
 
 @Controller('users')
 export class UserController {

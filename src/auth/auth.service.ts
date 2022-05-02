@@ -5,8 +5,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserLoginDto } from './dto/user.login.dto';
 import { AuthException } from './auth.exception';
 import * as bcrypt from 'bcrypt';
-import { KakaoPayload, Payload } from 'src/common/interface';
 import axios from 'axios';
+import { kakaoConstants } from 'src/common/constants';
+import { User } from 'src/user/user.entity';
+import { JwtPayload, JwtTokens, KakaoPayload } from 'src/common/interfaces';
 
 @Injectable()
 export class AuthService {
@@ -29,11 +31,10 @@ export class AuthService {
     return user;
   }
 
-  async serviceLogin(user: any) {
-    const payload: Payload = {
+  // 자체 서비스 로그인
+  async serviceLogin(user: any): Promise<JwtTokens> {
+    const payload = {
       userId: user.userId,
-      email: user.email,
-      nickname: user.nickname,
       kakaoId: user.kakaoId,
     };
 
@@ -42,37 +43,64 @@ export class AuthService {
     };
   }
 
-  async kakaoLogin(kakaoPayload: KakaoPayload) {
-    const { accessToken } = kakaoPayload;
-    // const user = await axios.get('https://kapi.kakao.com/v2/user/me', {
-    //   headers: {
-    //     Authorization: `Bearer ${accessToken}`,
-    //     'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-    //   },
-    // });
-    // console.log(2);
+  // 카카오 로그인 및 회원가입
+  async kakaoSignupOrLogin(kakaoPayload: KakaoPayload): Promise<JwtTokens> {
+    const { kakaoId, gender } = kakaoPayload;
 
-    // TODO : kakaoId로 유저 찾고, 있으면 새로운 토큰 발급, 없으면 새로운 계정 생성
+    let user: User = await this.userRepository.findOneByKakaoId(kakaoId);
 
-    // const user = await this.userRepository.createUser()
+    // 카카오 계정 회원가입 처리
+    if (!user) {
+      user = await this.userRepository.createKakaoUser({
+        kakaoId,
+        gender: gender ? gender : null,
+      });
+    }
 
-    // const user = await this.userRepository.findOneByEmailOrKakaoId(email, kakaoId);
-    // if (!user) {
-    //   this.userRepository.createUser()
-    // }
+    const payload = {
+      userId: user.userId,
+      kakaoId: user.kakaoId,
+    };
+
+    return {
+      accessToken: this.jwtService.sign(payload),
+    };
   }
 
-  // 카카오 계정 해제
-  // TODO : DB에서 카카오 관련 정보 초기화
-  async kakaoUnlink(accessToken: string) {
-    await axios.post(
-      'https://kapi.kakao.com/v1/user/unlink',
-      {},
-      {
-        headers: {
-          Authorization: accessToken,
+  // 현재 로그인 한 사용자 조회
+  async getCurrentUser(jwtPayload: JwtPayload) {
+    const { userId, kakaoId } = jwtPayload;
+    const user = await this.userRepository.findOneByUserId(userId);
+
+    if (kakaoId) {
+      const host = 'https://kapi.kakao.com/v2/user/me';
+      const response: any = await axios.get(
+        `${host}?target_id_type=user_id&target_id=${kakaoId}`,
+        {
+          headers: {
+            Authorization: `KakaoAK ${kakaoConstants.adminID}`,
+            'Content-type': 'application/x-www-form-urlencoded;charset=utf-8',
+          },
         },
-      },
-    );
+      );
+      const { data } = response;
+      return {
+        ...jwtPayload,
+        nickname: data.properties.nickname,
+        profileImageUrl: data.kakao_account.profile.profile_image_url,
+        thumbnailImageUrl: data.kakao_account.profile.thumbnail_image_url,
+        gender: data.kakao_account.gender,
+        point: user.point,
+      };
+    } else {
+      return {
+        ...jwtPayload,
+        nickname: user.nickname,
+        profileImageUrl: null,
+        thumbnailImageUrl: null,
+        gender: user.gender,
+        point: user.point,
+      };
+    }
   }
 }

@@ -13,14 +13,23 @@ export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   userId: number;
 
-  @Column({ unique: true })
+  @Column({ default: null })
   email: string;
 
-  @Column()
+  @Column({ default: null })
   nickname: string;
 
-  @Column()
+  @Column({ default: null })
   password: string;
+
+  @Column({ type: 'bigint', default: null })
+  kakaoId: number;
+
+  @Column({ default: null })
+  gender: string;
+
+  @Column({ default: 0 })
+  point: number;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -30,24 +39,4 @@ export class User extends BaseEntity {
 
   @DeleteDateColumn({ default: null })
   deletedAt: Date;
-
-  // 카카오 계정 정보
-  // TODO : 별도의 테이블로 관리할 것
-  @Column({ default: null })
-  kakaoId: number;
-
-  @Column({ default: null })
-  kakaoNickname: string;
-
-  @Column({ default: null })
-  kakaoEmail: string;
-
-  @Column({ default: null })
-  kakaoGender: string;
-
-  @Column({ default: null })
-  kakaoProfileImageUrl: string;
-
-  @Column({ default: null })
-  kakaoConnectedAt: Date;
 }
