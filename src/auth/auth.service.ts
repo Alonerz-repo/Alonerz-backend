@@ -4,11 +4,13 @@ import { UserRepository } from '../user/user.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserLoginDto } from './dto/user.login.dto';
 import { AuthException } from './auth.exception';
-import * as bcrypt from 'bcrypt';
-import axios from 'axios';
-import { kakaoConstants } from 'src/common/constants';
 import { User } from 'src/user/user.entity';
 import { JwtPayload, JwtTokens, KakaoPayload } from 'src/common/interfaces';
+import { configs } from 'src/common/constants';
+import { compare } from 'bcrypt';
+import axios from 'axios';
+
+const { adminKey } = configs.kakao;
 
 @Injectable()
 export class AuthService {
@@ -19,18 +21,20 @@ export class AuthService {
     private exception: AuthException,
   ) {}
 
+  // TODO : 카카오 로그인만 적용 시 제거
   async validateService(userLoginDto: UserLoginDto): Promise<any> {
     const { email, password } = userLoginDto;
     const user = await this.userRepository.findOneByEmail(email);
     if (!user) this.exception.notFound();
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await compare(password, user.password);
     if (!isMatch) this.exception.notMatch();
 
     delete user.password;
     return user;
   }
 
+  // TODO : 카카오 로그인만 적용 시 제거
   // 자체 서비스 로그인
   async serviceLogin(user: any): Promise<JwtTokens> {
     const payload = {
@@ -43,6 +47,7 @@ export class AuthService {
     };
   }
 
+  // TODO : 카카오 로그인만 적용 시 kakaoId를 String 변환 후 PK로 사용할 것
   // 카카오 로그인 및 회원가입
   async kakaoSignupOrLogin(kakaoPayload: KakaoPayload): Promise<JwtTokens> {
     const { kakaoId, gender } = kakaoPayload;
@@ -67,6 +72,7 @@ export class AuthService {
     };
   }
 
+  // TODO : 카카오 계정만 사용하는 경우 로직 단순화할 것
   // 현재 로그인 한 사용자 조회
   async getCurrentUser(jwtPayload: JwtPayload) {
     const { userId, kakaoId } = jwtPayload;
@@ -78,7 +84,7 @@ export class AuthService {
         `${host}?target_id_type=user_id&target_id=${kakaoId}`,
         {
           headers: {
-            Authorization: `KakaoAK ${kakaoConstants.adminID}`,
+            Authorization: `KakaoAK ${adminKey}`,
             'Content-type': 'application/x-www-form-urlencoded;charset=utf-8',
           },
         },

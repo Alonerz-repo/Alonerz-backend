@@ -9,11 +9,14 @@ import { UpdateUserDto } from './dto/update.user.dto';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  // TODO : Kakao 계정으로만 사용하는 경우 제거
+  // 그렇지 않으면 AuthController로 옮길 것
   @Post()
   signup(@Body() createUserDto: CreateUserDto): Promise<any> {
     return this.userService.serviceSignup(createUserDto);
   }
 
+  // TODO : Type 지정 및 수정하려는 데이터 수정
   @UseGuards(JwtAuthGuard)
   @Patch()
   update(
