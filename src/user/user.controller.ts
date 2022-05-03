@@ -1,21 +1,65 @@
-import { Body, Controller, Patch, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { Request } from 'express';
-import { UpdateUserDto } from './dto/update.user.dto';
+import { JwtPayload } from 'src/common/interfaces';
+import { User } from './user.entity';
+import { CreateCareerDto } from './dto/create.career.dto';
+import { UpdateCareerDto } from './dto/update.career.dto';
 
-@Controller('users')
+@Controller('api/users')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly service: UserService) {}
 
-  // TODO : Type 지정 및 수정하려는 데이터 수정
+  // 내 정보 조회 API
   @UseGuards(JwtAuthGuard)
-  @Patch()
-  update(
+  @Get('me')
+  async me(@Req() req: Request): Promise<User> {
+    const { kakaoId }: JwtPayload = req.user;
+    return await this.service.me(kakaoId);
+  }
+
+  // 커리어 등록 API
+  @UseGuards(JwtAuthGuard)
+  @Post('career')
+  async createCareer(
     @Req() req: Request,
-    @Body() updateUserDto: UpdateUserDto,
+    @Body() createCareerDto: CreateCareerDto,
   ): Promise<any> {
-    const user: any = req.user;
-    return this.userService.update(user.userId, updateUserDto);
+    const { kakaoId }: JwtPayload = req.user;
+    return await this.service.createCareer(kakaoId, createCareerDto);
+  }
+
+  // 커리어 수정 API
+  @UseGuards(JwtAuthGuard)
+  @Patch('career/:id')
+  async updateCareer(
+    @Req() req: Request,
+    @Param('id') careerId: number,
+    @Body() updateCareerDto: UpdateCareerDto,
+  ): Promise<any> {
+    const { kakaoId }: JwtPayload = req.user;
+    return await this.service.updateCareer(kakaoId, careerId, updateCareerDto);
+  }
+
+  // 커리어 삭제 API
+  @UseGuards(JwtAuthGuard)
+  @Delete('career/:id')
+  async deleteCareer(
+    @Req() req: Request,
+    @Param('id') careerId: number,
+  ): Promise<any> {
+    const { kakaoId }: JwtPayload = req.user;
+    return await this.service.deleteCareer(kakaoId, careerId);
   }
 }

@@ -4,11 +4,12 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  OneToMany,
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Career } from './career.entity';
 
-// TODO : Career 테이블 JOIN 설정
 @Entity('users')
 export class User extends BaseEntity {
   @PrimaryColumn({ type: 'varchar' })
@@ -25,4 +26,11 @@ export class User extends BaseEntity {
 
   @DeleteDateColumn({ default: null })
   deletedAt: Date;
+
+  // 1:N 관계, eager 로딩 방식 적용
+  @OneToMany(() => Career, (career) => career.kakaoId, {
+    onDelete: 'CASCADE',
+    eager: true,
+  })
+  careers: Career[];
 }
