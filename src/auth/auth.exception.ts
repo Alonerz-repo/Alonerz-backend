@@ -1,11 +1,11 @@
-import { HttpStatus, NotFoundException } from '@nestjs/common';
+import { HttpStatus, UnauthorizedException } from '@nestjs/common';
 
 export class AuthException {
-  notFound() {
-    throw new NotFoundException({
-      statusCode: HttpStatus.NOT_FOUND,
+  unauthorized() {
+    throw new UnauthorizedException({
+      statusCode: HttpStatus.UNAUTHORIZED,
       message: ['사용자 정보를 찾을 수 없습니다.'],
-      error: 'Not found',
+      error: 'Unauthorized',
     });
   }
 }
