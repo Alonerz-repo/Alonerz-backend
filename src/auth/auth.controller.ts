@@ -1,8 +1,7 @@
-import { Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { JwtAuthGuard } from './guards/jwt.auth.guard';
 import { KakaoAuthGuard } from './guards/kakao.auth.guard';
-import { LocalAuthGuard } from './guards/local.auth.guard';
 import { AuthService } from './auth.service';
 import { JwtPayload, KakaoPayload } from 'src/common/interfaces';
 
