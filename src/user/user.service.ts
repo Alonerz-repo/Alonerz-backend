@@ -17,28 +17,12 @@ export class UserService {
     private exception: UserException,
   ) {}
 
-  // TODO : 카카오 계정만 사용하는 경우 제거
-  // 그렇지 않은 경우 authService로 옮길 것
-  async serviceSignup(createUserDto: CreateUserDto): Promise<any> {
-    const { email } = createUserDto;
-    const isExist = await this.repository.findOneByEmail(email);
-    if (isExist) this.exception.alreadyExist();
-
-    createUserDto.password = await hash(createUserDto.password, rounds);
-
-    const user = await this.repository.createServiceUser(createUserDto);
-    delete user.password;
-    return user;
-  }
-
   async update(userId: number, updateUserDto: UpdateUserDto): Promise<void> {
-    const isExist = await this.repository.findOne({ userId });
-    if (!isExist) this.exception.notFound();
-
-    if (updateUserDto.password !== undefined) {
-      updateUserDto.password = await hash(updateUserDto.password, rounds);
-    }
-
-    await this.repository.update(userId, updateUserDto);
+    // const isExist = await this.repository.findOne({ userId });
+    // if (!isExist) this.exception.notFound();
+    // if (updateUserDto.password !== undefined) {
+    //   updateUserDto.password = await hash(updateUserDto.password, rounds);
+    // }
+    // await this.repository.update(userId, updateUserDto);
   }
 }

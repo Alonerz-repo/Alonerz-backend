@@ -19,13 +19,6 @@ export class AuthController {
     return user;
   }
 
-  // 서비스 자체 로그인
-  @UseGuards(LocalAuthGuard)
-  @Post('login')
-  async serviceLogin(@Req() req: Request) {
-    return this.authService.serviceLogin(req.user);
-  }
-
   // React -> Kakao API -> 서버(RedirectURL)
   @UseGuards(KakaoAuthGuard)
   @Get('kakao/redirect')

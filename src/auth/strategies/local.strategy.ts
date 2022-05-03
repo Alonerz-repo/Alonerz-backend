@@ -18,6 +18,6 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
       password: password,
     };
 
-    return await this.authService.validateService(userLoginDto);
+    return;
   }
 }

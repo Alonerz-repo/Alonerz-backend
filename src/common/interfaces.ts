@@ -1,12 +1,11 @@
 export interface JwtPayload {
-  userId?: number;
-  kakaoId?: number;
+  kakaoId?: string;
   iat?: number;
   exp?: number;
 }
 
 export interface KakaoPayload {
-  kakaoId?: number;
+  kakaoId?: string;
   gender?: 'male' | 'female';
 }
 
