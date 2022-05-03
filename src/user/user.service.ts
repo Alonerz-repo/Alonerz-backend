@@ -2,15 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserException } from './user.exception';
 import { UserRepository } from './user.repository';
-import { Career } from './career.entity';
 import { CareerRepository } from './career.repository';
 import { CreateCareerDto } from './dto/create.career.dto';
 import { UpdateCareerDto } from './dto/update.career.dto';
 import { CareerException } from './career.exception';
 import { KakaoAccount, KakaoAccountAPI } from 'src/common/interfaces';
 import { configs } from 'src/common/configs';
-import axios from 'axios';
 import { KakaoUser } from './dto/kakao.user.dto';
+import axios from 'axios';
 
 const { adminKey } = configs.kakao;
 
