@@ -50,7 +50,11 @@ export class UserService {
   public async userInfo(kakaoId: string): Promise<KakaoUser> {
     const user = await this.userRepository.findUserByKakaoId(kakaoId);
     if (!user) this.userException.notFound();
+    if (user.deletedAt) this.userException.forbidden();
     const kakaoAccount = await this.kakaoGetUserAPI(kakaoId);
+    delete user.createdAt;
+    delete user.updatedAt;
+    delete user.deletedAt;
     return {
       ...user,
       ...kakaoAccount,

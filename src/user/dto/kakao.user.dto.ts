@@ -8,8 +8,5 @@ export class KakaoUser {
   gender: 'male' | 'female' | null;
   connectedAt: Date;
   point: number;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt: Date | null;
   careers: Career[];
 }
