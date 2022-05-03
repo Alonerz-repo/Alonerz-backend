@@ -1,30 +1,12 @@
-import { Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { JwtAuthGuard } from './guards/jwt.auth.guard';
 import { KakaoAuthGuard } from './guards/kakao.auth.guard';
-import { LocalAuthGuard } from './guards/local.auth.guard';
 import { AuthService } from './auth.service';
-import { JwtPayload, KakaoPayload } from 'src/common/interfaces';
+import { KakaoPayload } from 'src/common/interfaces';
 
-@Controller('auth')
+@Controller('api/auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
-
-  // 토큰 유효성 검사 및 현재 사용자 정보 가져오기
-  @UseGuards(JwtAuthGuard)
-  @Get()
-  async me(@Req() req: Request) {
-    const jwtPayload: JwtPayload = req.user;
-    const user = await this.authService.getCurrentUser(jwtPayload);
-    return user;
-  }
-
-  // 서비스 자체 로그인
-  @UseGuards(LocalAuthGuard)
-  @Post('login')
-  async serviceLogin(@Req() req: Request) {
-    return this.authService.serviceLogin(req.user);
-  }
 
   // React -> Kakao API -> 서버(RedirectURL)
   @UseGuards(KakaoAuthGuard)
@@ -38,7 +20,6 @@ export class AuthController {
       kakaoPayload,
     );
     res.cookie('token', accessToken);
-    // TODO : redirect 경로 설정 필요
     return res.redirect(301, '//localhost:3000');
   }
 }

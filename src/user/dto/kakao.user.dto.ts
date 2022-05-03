@@ -1,14 +1,15 @@
-import { IsString } from 'class-validator';
+import { Career } from '../career.entity';
 
-export class KakaoUserDto {
-  kakaoId: number;
-
-  @IsString()
-  kakaoEmail: string;
-
-  @IsString()
+export class KakaoUser {
+  kakaoId: string;
+  nickname: string;
   profileImageUrl: string;
-
-  @IsString()
-  password: string;
+  thumbnailImageUrl: string;
+  gender: 'male' | 'female' | null;
+  connectedAt: Date;
+  point: number;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date | null;
+  careers: Career[];
 }

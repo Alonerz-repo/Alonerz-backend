@@ -7,7 +7,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserRepository } from 'src/user/user.repository';
 import { UserModule } from '../user/user.module';
 import { AuthException } from './auth.exception';
-import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { KakaoStrategy } from './strategies/kakao.strategy';
 import { configs } from 'src/common/configs';
@@ -24,13 +23,7 @@ const { secret, expiresIn } = configs.jwt;
     TypeOrmModule.forFeature([UserRepository]),
     UserModule,
   ],
-  providers: [
-    AuthService,
-    AuthException,
-    LocalStrategy,
-    JwtStrategy,
-    KakaoStrategy,
-  ],
+  providers: [AuthService, AuthException, JwtStrategy, KakaoStrategy],
   controllers: [AuthController],
 })
 export class AuthModule {}

@@ -4,36 +4,16 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  PrimaryGeneratedColumn,
+  OneToMany,
+  PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Career } from './career.entity';
 
-// TODO : Career 테이블 JOIN 설정
 @Entity('users')
 export class User extends BaseEntity {
-  // TODO : 카카오 계정만 사용하는 경우 제거
-  @PrimaryGeneratedColumn()
-  userId: number;
-
-  // TODO : 카카오 계정만 사용하는 경우 제거
-  @Column({ default: null })
-  email: string;
-
-  // TODO : 카카오 계정만 사용하는 경우 제거
-  @Column({ default: null })
-  nickname: string;
-
-  // TODO : 카카오 계정만 사용하는 경우 제거
-  @Column({ default: null })
-  password: string;
-
-  // TODO : 카카오 계정만 사용하는 경우 string으로 변환 후 Primary Key로 지정
-  @Column({ type: 'bigint', default: null })
-  kakaoId: number;
-
-  // TODO : 카카오 계정만 사용하는 경우 제거
-  @Column({ default: null })
-  gender: string;
+  @PrimaryColumn({ type: 'varchar' })
+  kakaoId: string;
 
   @Column({ default: 0 })
   point: number;
@@ -46,4 +26,11 @@ export class User extends BaseEntity {
 
   @DeleteDateColumn({ default: null })
   deletedAt: Date;
+
+  // 1:N 관계, eager 로딩 방식 적용
+  @OneToMany(() => Career, (career) => career.kakaoId, {
+    onDelete: 'CASCADE',
+    eager: true,
+  })
+  careers: Career[];
 }
