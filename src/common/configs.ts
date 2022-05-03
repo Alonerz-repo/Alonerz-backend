@@ -1,5 +1,5 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { get } from 'config';
+import * as config from 'config';
 
 interface Configs {
   server: {
@@ -19,14 +19,13 @@ interface Configs {
   };
   typeorm: TypeOrmModuleOptions;
 }
-
 export const configs: Configs = {
-  server: get('server'),
-  jwt: get('jwt'),
-  bcrypt: get('bcrypt'),
-  kakao: get('kakao'),
+  server: config.get('server'),
+  jwt: config.get('jwt'),
+  bcrypt: config.get('bcrypt'),
+  kakao: config.get('kakao'),
   typeorm: {
     entities: [__dirname + '/../**/*.entity.{ts,js}'],
-    ...get('typeorm'),
+    ...config.get('typeorm'),
   },
 };
