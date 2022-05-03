@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './user.entity';
 import { UserException } from './user.exception';
 import { UserRepository } from './user.repository';
 import { Career } from './career.entity';
@@ -8,6 +7,12 @@ import { CareerRepository } from './career.repository';
 import { CreateCareerDto } from './dto/create.career.dto';
 import { UpdateCareerDto } from './dto/update.career.dto';
 import { CareerException } from './career.exception';
+import { KakaoAccount, KakaoAccountAPI } from 'src/common/interfaces';
+import { configs } from 'src/common/configs';
+import axios from 'axios';
+import { KakaoUser } from './dto/kakao.user.dto';
+
+const { adminKey } = configs.kakao;
 
 @Injectable()
 export class UserService {
@@ -19,11 +24,37 @@ export class UserService {
     private careerException: CareerException,
   ) {}
 
-  // 내 정보 조회
-  public async me(kakaoId: string): Promise<User> {
+  // Kakao 사용자 정보 조회 API
+  private async kakaoGetUserAPI(kakaoId: string): Promise<KakaoAccountAPI> {
+    const host = 'https://kapi.kakao.com/v2/user/me';
+    const url = `${host}?target_id_type=user_id&target_id=${kakaoId}`;
+    const headers = {
+      Authorization: `KakaoAK ${adminKey}`,
+      'Content-type': 'application/x-www-form-urlencoded;charset=utf-8',
+    };
+    const response = await axios.get(url, { headers });
+    const data: KakaoAccount = response.data;
+    const { kakao_account, connected_at } = data;
+    const { profile, gender } = kakao_account;
+    return {
+      kakaoId,
+      nickname: profile.nickname,
+      gender: gender ? gender : null,
+      profileImageUrl: profile.profile_image_url,
+      thumbnailImageUrl: profile.thumbnail_image_url,
+      connectedAt: connected_at,
+    };
+  }
+
+  // 사용자 정보 조회
+  public async userInfo(kakaoId: string): Promise<KakaoUser> {
     const user = await this.userRepository.findUserByKakaoId(kakaoId);
     if (!user) this.userException.notFound();
-    return user;
+    const kakaoAccount = await this.kakaoGetUserAPI(kakaoId);
+    return {
+      ...user,
+      ...kakaoAccount,
+    };
   }
 
   // 사용자 커리어 개수 파악

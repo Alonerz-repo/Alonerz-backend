@@ -4,7 +4,4 @@ export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
   readonly kakaoId: string;
-
-  @IsString()
-  readonly gender: string | null;
 }

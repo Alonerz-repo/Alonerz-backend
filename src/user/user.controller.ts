@@ -13,9 +13,9 @@ import { UserService } from './user.service';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { Request } from 'express';
 import { JwtPayload } from 'src/common/interfaces';
-import { User } from './user.entity';
 import { CreateCareerDto } from './dto/create.career.dto';
 import { UpdateCareerDto } from './dto/update.career.dto';
+import { KakaoUser } from './dto/kakao.user.dto';
 
 @Controller('api/users')
 export class UserController {
@@ -24,9 +24,16 @@ export class UserController {
   // 내 정보 조회 API
   @UseGuards(JwtAuthGuard)
   @Get('me')
-  async me(@Req() req: Request): Promise<User> {
+  async me(@Req() req: Request): Promise<KakaoUser> {
     const { kakaoId }: JwtPayload = req.user;
-    return await this.service.me(kakaoId);
+    return await this.service.userInfo(kakaoId);
+  }
+
+  // 다른 사용자 정보 조회 API
+  @UseGuards(JwtAuthGuard)
+  @Get(':id')
+  async other(@Param('id') kakaoId: string): Promise<KakaoUser> {
+    return await this.service.userInfo(kakaoId);
   }
 
   // 커리어 등록 API
