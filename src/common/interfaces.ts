@@ -6,7 +6,6 @@ export interface JwtPayload {
 
 export interface KakaoPayload {
   kakaoId?: string;
-  gender?: 'male' | 'female';
 }
 
 // TODO : refreshToken 추가
@@ -23,6 +22,15 @@ export interface KakaoAccount {
       profile_image_url: string;
       thumbnail_image_url: string;
     };
-    gender?: string;
+    gender?: 'male' | 'female' | null;
   };
+}
+
+export interface KakaoAccountAPI {
+  kakaoId: string;
+  nickname: string;
+  gender: 'male' | 'female' | null;
+  profileImageUrl: string;
+  thumbnailImageUrl: string;
+  connectedAt: Date;
 }
