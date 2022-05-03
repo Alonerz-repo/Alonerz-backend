@@ -42,9 +42,10 @@ export class UserController {
   async createCareer(
     @Req() req: Request,
     @Body() createCareerDto: CreateCareerDto,
-  ): Promise<any> {
+  ): Promise<{ careerId: number }> {
     const { kakaoId }: JwtPayload = req.user;
-    return await this.service.createCareer(kakaoId, createCareerDto);
+    const careerId = await this.service.createCareer(kakaoId, createCareerDto);
+    return { careerId };
   }
 
   // 커리어 수정 API
@@ -54,7 +55,7 @@ export class UserController {
     @Req() req: Request,
     @Param('id') careerId: number,
     @Body() updateCareerDto: UpdateCareerDto,
-  ): Promise<any> {
+  ): Promise<void> {
     const { kakaoId }: JwtPayload = req.user;
     return await this.service.updateCareer(kakaoId, careerId, updateCareerDto);
   }
@@ -65,7 +66,7 @@ export class UserController {
   async deleteCareer(
     @Req() req: Request,
     @Param('id') careerId: number,
-  ): Promise<any> {
+  ): Promise<void> {
     const { kakaoId }: JwtPayload = req.user;
     return await this.service.deleteCareer(kakaoId, careerId);
   }
