@@ -82,7 +82,7 @@ export class UserService {
   public async createCareer(
     kakaoId: string,
     createCareerDto: CreateCareerDto,
-  ): Promise<Career> {
+  ): Promise<number> {
     await this.countCareer(kakaoId);
     return await this.careerRepository.createCareer(kakaoId, createCareerDto);
   }

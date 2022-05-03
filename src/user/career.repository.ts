@@ -13,8 +13,9 @@ export class CareerRepository extends Repository<Career> {
   async createCareer(
     kakaoId: string,
     createCareerDto: CreateCareerDto,
-  ): Promise<Career> {
-    return await this.save({ ...createCareerDto, kakaoId });
+  ): Promise<number> {
+    const { careerId } = await this.save({ ...createCareerDto, kakaoId });
+    return careerId;
   }
 
   // 사용자 특정 커리어 정보 조회
