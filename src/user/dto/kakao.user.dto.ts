@@ -1,4 +1,4 @@
-import { Career } from '../career.entity';
+import { Career } from '../entities/career.entity';
 
 export class KakaoUser {
   kakaoId: string;

@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserException } from './user.exception';
-import { UserRepository } from './user.repository';
-import { CareerRepository } from './career.repository';
+import { UserException } from './exceptions/user.exception';
+import { UserRepository } from './repositories/user.repository';
+import { CareerRepository } from './repositories/career.repository';
 import { CreateCareerDto } from './dto/create.career.dto';
 import { UpdateCareerDto } from './dto/update.career.dto';
-import { CareerException } from './career.exception';
+import { CareerException } from './exceptions/career.exception';
 import { KakaoAccount, KakaoAccountAPI } from 'src/common/interfaces';
 import { configs } from 'src/common/configs';
 import { KakaoUser } from './dto/kakao.user.dto';

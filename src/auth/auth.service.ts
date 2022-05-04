@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UserRepository } from '../user/user.repository';
+import { UserRepository } from '../user/repositories/user.repository';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/user/user.entity';
+import { User } from '../user/entities/user.entity';
 import { JwtTokens, KakaoPayload } from 'src/common/interfaces';
 
 @Injectable()

@@ -1,7 +1,7 @@
 import { EntityRepository, Repository } from 'typeorm';
-import { Career } from './career.entity';
-import { CreateCareerDto } from './dto/create.career.dto';
-import { UpdateCareerDto } from './dto/update.career.dto';
+import { Career } from '../entities/career.entity';
+import { CreateCareerDto } from '../dto/create.career.dto';
+import { UpdateCareerDto } from '../dto/update.career.dto';
 
 @EntityRepository(Career)
 export class CareerRepository extends Repository<Career> {
