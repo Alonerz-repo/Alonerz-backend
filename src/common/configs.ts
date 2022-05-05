@@ -16,6 +16,7 @@ interface Configs {
     adminKey: string;
     restAPIKey: string;
     redirectURL: string;
+    clientURL: string;
   };
   typeorm: TypeOrmModuleOptions;
 }
