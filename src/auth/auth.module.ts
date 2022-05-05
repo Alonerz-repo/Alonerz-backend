@@ -4,7 +4,7 @@ import { AuthController } from './auth.controller';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserRepository } from '../user/repositories/user.repository';
+import { AuthRepository } from './auth.repository';
 import { UserModule } from '../user/user.module';
 import { AuthException } from './auth.exception';
 import { JwtStrategy } from './strategies/jwt.strategy';
@@ -20,7 +20,7 @@ const { secret, expiresIn } = configs.jwt;
       secret: secret,
       signOptions: { expiresIn: expiresIn },
     }),
-    TypeOrmModule.forFeature([UserRepository]),
+    TypeOrmModule.forFeature([AuthRepository]),
     UserModule,
   ],
   providers: [AuthService, AuthException, JwtStrategy, KakaoStrategy],

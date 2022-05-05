@@ -1,4 +1,5 @@
 export interface JwtPayload {
+  userId?: number;
   kakaoId?: string;
   iat?: number;
   exp?: number;
@@ -11,6 +12,7 @@ export interface KakaoPayload {
 // TODO : refreshToken 추가
 export interface JwtTokens {
   accessToken: string;
+  refreshToken: string;
 }
 
 export interface KakaoAccount {

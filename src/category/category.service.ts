@@ -7,11 +7,11 @@ import { CategoryRepository } from './category.repository';
 export class CategoryService {
   constructor(
     @InjectRepository(CategoryRepository)
-    private repository: CategoryRepository,
+    private categoryRepository: CategoryRepository,
   ) {}
 
   // 모든 카테고리 조회
   async getAllCategories(): Promise<Category[]> {
-    return await this.repository.findAllCategories();
+    return await this.categoryRepository.findAllCategories();
   }
 }

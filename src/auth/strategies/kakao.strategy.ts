@@ -23,10 +23,6 @@ export class KakaoStrategy extends PassportStrategy(Strategy) {
   async validate(_: string, __: string, profile: any, done: any) {
     const user: KakaoAccount = profile._json;
     if (!user) this.exception.unauthorized();
-    const payload = {
-      kakaoId: user.id,
-      gender: user.kakao_account.gender,
-    };
-    done(null, payload);
+    done(null, { kakaoId: user.id });
   }
 }

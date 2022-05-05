@@ -1,11 +1,9 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   Param,
   Patch,
-  Post,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -13,61 +11,27 @@ import { UserService } from './user.service';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { Request } from 'express';
 import { JwtPayload } from 'src/common/interfaces';
-import { CreateCareerDto } from './dto/create.career.dto';
-import { UpdateCareerDto } from './dto/update.career.dto';
-import { KakaoUser } from './dto/kakao.user.dto';
+import { UpdateUserDto } from './dto/update.user.dto';
 
 @Controller('api/users')
 export class UserController {
   constructor(private readonly service: UserService) {}
 
-  // 내 정보 조회 API
-  @UseGuards(JwtAuthGuard)
-  @Get('me')
-  async me(@Req() req: Request): Promise<KakaoUser> {
-    const { kakaoId }: JwtPayload = req.user;
-    return await this.service.userInfo(kakaoId);
-  }
-
   // 다른 사용자 정보 조회 API
   @UseGuards(JwtAuthGuard)
   @Get(':id')
-  async other(@Param('id') kakaoId: string): Promise<KakaoUser> {
-    return await this.service.userInfo(kakaoId);
+  async otherUserInfo(@Param('id') userId: number) {
+    return await this.service.otherUserInfo(userId);
   }
 
-  // 커리어 등록 API
+  // 내 정보 수정(닉네임, 프로필 이미지 URL)
   @UseGuards(JwtAuthGuard)
-  @Post('career')
-  async createCareer(
+  @Patch()
+  async updateProfile(
     @Req() req: Request,
-    @Body() createCareerDto: CreateCareerDto,
-  ): Promise<{ careerId: number }> {
-    const { kakaoId }: JwtPayload = req.user;
-    const careerId = await this.service.createCareer(kakaoId, createCareerDto);
-    return { careerId };
-  }
-
-  // 커리어 수정 API
-  @UseGuards(JwtAuthGuard)
-  @Patch('career/:id')
-  async updateCareer(
-    @Req() req: Request,
-    @Param('id') careerId: number,
-    @Body() updateCareerDto: UpdateCareerDto,
-  ): Promise<void> {
-    const { kakaoId }: JwtPayload = req.user;
-    return await this.service.updateCareer(kakaoId, careerId, updateCareerDto);
-  }
-
-  // 커리어 삭제 API
-  @UseGuards(JwtAuthGuard)
-  @Delete('career/:id')
-  async deleteCareer(
-    @Req() req: Request,
-    @Param('id') careerId: number,
-  ): Promise<void> {
-    const { kakaoId }: JwtPayload = req.user;
-    return await this.service.deleteCareer(kakaoId, careerId);
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    const { userId, kakaoId }: JwtPayload = req.user;
+    this.service.updateProfile(userId, kakaoId, updateUserDto);
   }
 }
