@@ -3,8 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { configs } from './common/configs';
-import { GroupModule } from './group/group.module';
 import { CategoryModule } from './category/category.module';
+import { CareerModule } from './career/career.module';
 
 const { typeorm } = configs;
 
@@ -13,7 +13,7 @@ const { typeorm } = configs;
     TypeOrmModule.forRoot(typeorm),
     UserModule,
     AuthModule,
-    GroupModule,
+    CareerModule,
     CategoryModule,
   ],
   controllers: [],
