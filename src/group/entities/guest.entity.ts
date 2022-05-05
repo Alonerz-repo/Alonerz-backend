@@ -4,6 +4,7 @@ import {
   DeleteDateColumn,
   Entity,
   JoinColumn,
+  ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -27,7 +28,7 @@ export class Guest extends BaseEntity {
   readonly groupId: string;
 
   // Guest : User = N:1 관계
-  @ManyToOne(() => User, (user) => user.guestGroups)
+  @ManyToMany(() => User, (user) => user.guestGroups)
   @JoinColumn({ name: 'kakaoId' })
   readonly kakaoId: string;
 }

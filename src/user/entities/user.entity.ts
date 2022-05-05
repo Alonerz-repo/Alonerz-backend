@@ -38,18 +38,14 @@ export class User extends BaseEntity {
   readonly careers: Career[];
 
   // User:Group = 1:N 관계
-  // eager 로딩 방식 적용
-  @OneToMany(() => Group, (group) => group.kakaoId, {
+  @OneToMany(() => Group, (group) => group.host, {
     onDelete: 'CASCADE',
-    eager: true,
   })
   hostGroups: Group[];
 
-  // User : Guest = 1:N 관계
-  // eager 로딩 방식 적용
+  // User:Guest = 1:N 관계
   @OneToMany(() => Guest, (guest) => guest.kakaoId, {
     onDelete: 'CASCADE',
-    eager: true,
   })
   guestGroups: Guest[];
 }

@@ -24,10 +24,10 @@ export class Group extends BaseEntity {
   @Column()
   readonly menu: string;
 
-  @Column()
+  @Column('datetime')
   readonly startAt: Date;
 
-  @Column()
+  @Column('datetime')
   readonly endAt: Date;
 
   @Column()
@@ -36,8 +36,8 @@ export class Group extends BaseEntity {
   @Column()
   readonly description: string;
 
-  @Column()
-  readonly imageUrl: string;
+  @Column({ nullable: true, default: null })
+  readonly imageUrl?: string;
 
   @CreateDateColumn()
   readonly createdAt: Date;
@@ -48,12 +48,16 @@ export class Group extends BaseEntity {
   @DeleteDateColumn({ default: null })
   readonly deletedAt: Date;
 
-  // Group : User = N:1 관계
-  @ManyToOne(() => User, (user) => user.hostGroups)
+  // Group:User = N:1 관계
+  // eager: true
+  @ManyToOne(() => User, (user) => user.hostGroups, {
+    onDelete: 'CASCADE',
+    eager: true,
+  })
   @JoinColumn({ name: 'kakaoId' })
-  readonly kakaoId: string;
+  readonly host: string;
 
-  // Group : Guest = 1:N 관계
+  // Group:Guest = 1:N 관계
   // eager 로딩 방식 적용
   @OneToMany(() => Guest, (guest) => guest.groupId, {
     onDelete: 'CASCADE',
