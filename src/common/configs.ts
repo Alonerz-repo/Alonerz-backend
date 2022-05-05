@@ -21,8 +21,6 @@ interface Configs {
   typeorm: TypeOrmModuleOptions;
 }
 
-console.log(config.get('kakao'));
-
 export const configs: Configs = {
   server: config.get('server'),
   jwt: config.get('jwt'),
