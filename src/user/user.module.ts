@@ -2,14 +2,12 @@ import { Module } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserRepository } from './repositories/user.repository';
-import { UserException } from './exceptions/user.exception';
-import { CareerRepository } from './repositories/career.repository';
-import { CareerException } from './exceptions/career.exception';
+import { UserException } from './user.exception';
+import { UserRepository } from './user.repository';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UserRepository, CareerRepository])],
-  providers: [UserService, UserException, CareerException],
+  imports: [TypeOrmModule.forFeature([UserRepository])],
+  providers: [UserService, UserException],
   controllers: [UserController],
   exports: [UserService],
 })
