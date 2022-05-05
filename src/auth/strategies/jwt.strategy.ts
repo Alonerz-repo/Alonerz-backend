@@ -22,6 +22,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     // payload의 만료일자를 통해 만료 여부 확인 후 커스텀 예외 처리
     // 또는, refreshToken으로 accessToken 재발급
     return {
+      userId: payload.userId,
       kakaoId: payload.kakaoId,
     };
   }
