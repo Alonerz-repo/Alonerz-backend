@@ -20,6 +20,7 @@ export class AuthController {
     const { kakaoId }: KakaoPayload = req.user;
     const { accessToken, refreshToken } =
       await this.authService.kakaoLoginOrSignup(kakaoId);
+    console.log(kakaoId);
     res.cookie('accessToken', accessToken);
     res.cookie('refreshToken', refreshToken);
     return res.redirect(301, '//localhost:3000');

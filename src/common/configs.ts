@@ -19,6 +19,7 @@ interface Configs {
   };
   typeorm: TypeOrmModuleOptions;
 }
+
 export const configs: Configs = {
   server: config.get('server'),
   jwt: config.get('jwt'),
