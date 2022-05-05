@@ -10,4 +10,4 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
 sudo npm install && npm run build
-sudo npm run start > app.out.log 2> app.err.log < /dev/null &
+npm run start
