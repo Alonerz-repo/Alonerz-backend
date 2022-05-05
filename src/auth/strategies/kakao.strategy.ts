@@ -5,11 +5,10 @@ import { KakaoAccount } from 'src/common/interfaces';
 import { configs } from 'src/common/configs';
 import { AuthException } from '../auth.exception';
 
-const { restAPIKey, redirectURL } = configs.kakao;
 const strategyOption: StrategyOption = {
-  clientID: restAPIKey,
+  clientID: configs.kakao.restAPIKey,
+  callbackURL: configs.kakao.redirectURL,
   clientSecret: '',
-  callbackURL: redirectURL,
 };
 
 @Injectable()
