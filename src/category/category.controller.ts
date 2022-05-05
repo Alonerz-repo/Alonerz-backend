@@ -8,8 +8,8 @@ export class CategoryController {
 
   // 모든 카테고리 불러오기
   @Get()
-  async getAllCategories(): Promise<{ categories: Category[] }> {
+  async getAllCategories(): Promise<{ categories: Category[]; hello: string }> {
     const categories = await this.categoryService.getAllCategories();
-    return { categories };
+    return { categories, hello: '아직 개발 중입니다.' };
   }
 }
