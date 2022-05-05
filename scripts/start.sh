@@ -2,7 +2,7 @@
 
 sudo chmod -R 777 /home/ubuntu/nest
 
-# cp -r /home/ubuntu/env /home/ubuntu/nest/config
+sudo cp /home/ubuntu/environments/nest/* /home/ubuntu/nest/config
 cd /home/ubuntu/nest
 
 export NVM_DIR="$HOME/.nvm"
