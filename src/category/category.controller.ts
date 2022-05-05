@@ -10,6 +10,6 @@ export class CategoryController {
   @Get()
   async getAllCategories(): Promise<{ categories: Category[]; hello: string }> {
     const categories = await this.categoryService.getAllCategories();
-    return { categories, hello: '아직 개발 중입니다.' };
+    return { categories, hello: '아직 개발 중입니다!' };
   }
 }
