@@ -1,8 +1,6 @@
 name: Deploy to EB
 
 on:
-  push:
-    branches: [master]
   pull_request:
     branches: [master]
 
@@ -93,6 +91,6 @@ jobs:
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           application_name: ${{ secrets.AWS_APPLICATION_NAME }}
           environment_name: ${{ secrets.AWS_ENVIRONMENT_NAME }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          region: ${{ secrets.AWS_REGION }}
           version_labal: ${{ github.SHA }}
           deployment_package: deploy.zip
