@@ -84,11 +84,11 @@ jobs:
         run: zip -r deploy.zip . -x '*.git*' './src/*' './aws/*' awscliv2.zip
 
       # Deploy to Elastic Beanstalk
-      - name: Deploy to Elastic Beanstalk
-        uses: einaregilsson/beanstalk-deploy@v14
+      - name: Deploy to EB
+        uses: einaregilsson/beanstalk-deploy@v20
         with:
-          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           application_name: ${{ secrets.AWS_APPLICATION_NAME }}
           environment_name: ${{ secrets.AWS_ENVIRONMENT_NAME }}
           region: ${{ secrets.AWS_REGION }}
