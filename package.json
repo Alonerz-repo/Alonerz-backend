@@ -8,7 +8,8 @@
   },
   "scripts": {
     "start:dev": "nodemon --watch \"*.ts\" --exec \"ts-node\" src/bin/www.ts",
-    "start": "npm install && tsc && node dist/bin/www.js"
+    "build": "tsc",
+    "start": "node dist/bin/www.js"
   },
   "repository": {
     "type": "git",
