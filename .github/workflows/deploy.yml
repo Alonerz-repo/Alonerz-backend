@@ -98,6 +98,14 @@ jobs:
       - name: Generate deployment Beanstalk
         run: zip -r deploy.zip . -x '*.git*' './src/*' './aws/*' awscliv2.zip
 
+      # Get Current Time
+      - name: Get Current time
+        uses: josStorer/get-current-time@v2
+        id: current-time
+        with:
+          format: YYYYMMDD-HH-mm-ss
+          utcOffset: '+09:00'
+
       # Deploy to Elastic Beanstalk
       - name: Deploy to EB
         uses: einaregilsson/beanstalk-deploy@v20
