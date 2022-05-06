@@ -1,4 +1,7 @@
-node_modules
-dist
-config
+.idea/
+.vscode/
+node_modules/
+build/
+tmp/
+temp/
 .env
