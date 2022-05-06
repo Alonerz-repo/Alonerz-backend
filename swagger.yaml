@@ -11,15 +11,15 @@ servers:
     url: 'http://localhost:5000'
 
 tags:
-  - name: 'api/auth'
+  - name: 'auth'
     description: '인증 API (카카오 로그인 / 인가 확인)'
-  - name: 'api/users'
+  - name: 'users'
     description: '사용자 API (사용자 조회 / 내 정보 수정 / 팔로우 / 팔로워 / 차단)'
-  - name: 'api/categories'
+  - name: 'categories'
     description: '카테고리 API (모든 카테고리 조회)'
-  - name: 'api/groups'
+  - name: 'groups'
     description: '그룹 API (그룹 조회 / 그룹 생성 / 그룹 정보 수정 / 그룹 삭제 / 그룹 참여)'
-  - name: 'api/chats'
+  - name: 'chats'
     description: '채팅 API (채팅방 목록 조회 / 채팅 내용 조회 / 채팅방 나가기)'
 
 schemes:
