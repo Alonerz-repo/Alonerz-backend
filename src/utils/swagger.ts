@@ -1,11 +1,12 @@
-import swaggerUi from 'swagger-ui-express';
-import YAML from 'yamljs';
-import path from 'path';
-import { Application } from 'express';
+import * as swaggerUi from 'swagger-ui-express';
+import * as YAML from 'yamljs';
+import * as path from 'path';
 
 const swaggerYamlPath = path.join(__dirname, '../../swagger.yaml');
 const swaggerYaml = YAML.load(swaggerYamlPath);
 
-export const AppSwagger = (app: Application) => {
-  app.use('/apis', swaggerUi.serve, swaggerUi.setup(swaggerYaml));
+export const swagger = {
+  route: '/apis',
+  serve: swaggerUi.serve,
+  setup: swaggerUi.setup(swaggerYaml),
 };

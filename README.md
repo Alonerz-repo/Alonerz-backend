@@ -1,8 +1,4 @@
-# 항해 99 - 실전 프로젝트
-
-- Backend API Server
-
-# 개요
+# Alonerz Backend - API Server
 
 ## Architectures
 

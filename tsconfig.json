@@ -1,16 +1,16 @@
 {
   "compilerOptions": {
-    "target": "es2016",
+    "lib": ["es5", "es6"],
+    "target": "es5",
     "module": "commonjs",
+    "moduleResolution": "node",
     "outDir": "./dist",
-    "strict": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
+    "sourceMap": true,
     "rootDir": "src"
   },
-  "include": ["src/**/*", "bin"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules"]
 }
