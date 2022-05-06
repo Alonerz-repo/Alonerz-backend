@@ -1,5 +1,5 @@
-import app from '../src/app';
-import { AppConfig } from '../src/common/interface';
+import app from '../app';
+import { AppConfig } from '../common/interface';
 
 const config: AppConfig = app.get('config');
 const port = config.server.port;
