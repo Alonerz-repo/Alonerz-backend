@@ -1,0 +1,98 @@
+name: Deploy to EB
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build:
+    name: CI Pipeline
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        node-version: ['16.x']
+
+    steps:
+      - uses: actions/checkout@v3
+
+      # Install Node.js
+      - name: Install Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      # Install Node.js dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Build Typescript
+      - name: Run build
+        run: npm run build
+
+  deploy:
+    name: CD Pipeline
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        node-version: ['16.x']
+    needs: build
+    steps:
+      - uses: actions/checkout@v3
+
+      # Create .env file
+      - name: Create env file
+        run: |
+          touch .env
+          echo PORT=8081 >> .env
+          echo NODE_ENV=${{ secrets.NODE_ENV }} >> .env
+          cat .env
+
+      # Install Node.js
+      - name: Install Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      # Install Node.js dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Build Typescript
+      - name: Run build
+        run: npm run build
+
+      # Install AWS CLI 2
+      - name: Install AWS CLI 2
+        run: |
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          which aws
+          sudo ./aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --update
+
+      # Configure AWS credentials
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      # Make to ZIP file with source code
+      # -x에 해당하는 파일은 zip 파일 생성 시 제외
+      - name: Generate deployment Beanstalk
+        run: zip -r deploy.zip . -x '*.git*' './src/*' './aws/*' awscliv2.zip
+
+      # Deploy to Elastic Beanstalk
+      - name: Deploy to Elastic Beanstalk
+        uses: einaregilsson/beanstalk-deploy@v14
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: ${{ secrets.AWS_APPLICATION_NAME }}
+          environment_name: ${{ secrets.AWS_ENVIRONMENT_NAME }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          version_labal: ${{ github.SHA }}
+          deployment_package: deploy.zip
