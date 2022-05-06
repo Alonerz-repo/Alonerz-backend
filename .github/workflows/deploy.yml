@@ -44,8 +44,23 @@ jobs:
       - name: Create env file
         run: |
           touch .env
+          echo TZ=Asia/Seoul >> .env
           echo PORT=8081 >> .env
           echo NODE_ENV=${{ secrets.NODE_ENV }} >> .env
+          echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
+          echo JWT_EXPIRESIN=${{ secrets.JWT_EXPIRESIN }} >> .env
+          echo BCRYPT_ROUNDS=${{ secrets.BCRYPT_ROUNDS }} >> .env
+          echo KAKAO_REST_API_KEY=${{ secrets.KAKAO_REST_API_KEY }} >> .env
+          echo KAKAO_ADMIN_KEY=${{ secrets.KAKAO_ADMIN_KEY }} >> .env
+          echo KAKAO_SERVER_REDIRECT_URL=${{ secrets.KAKAO_SERVER_REDIRECT_URL }} >> .env
+          echo KAKAO_CLIENT_REDIRECT_URL=${{ secrets.KAKAO_CLIENT_REDIRECT_URL }} >> .env
+          echo DB_TYPE=${{ secrets.DB_TYPE }} >> .env
+          echo DB_HOST=${{ secrets.DB_HOST }} >> .env
+          echo DB_PORT=${{ secrets.DB_PORT }} >> .env
+          echo DB_USERNAME=${{ secrets.DB_USERNAME }} >> .env
+          echo DB_PASSWORD=${{ secrets.DB_PASSWORD }} >> .env
+          echo DB_DATABASE=${{ secrets.DB_DATABASE }} >> .env
+          echo DB_SYNCHRONIZE=${{ secrets.DB_SYNCHRONIZE }} >> .env
           cat .env
 
       # Install Node.js

@@ -1,9 +1,18 @@
 import express, { Request, Response } from 'express';
+import 'dotenv/config';
 
 const app = express();
 
+const configs = [
+  process.env.TZ,
+  process.env.PORT,
+  process.env.DB_DATABASE,
+  process.env.KAKAO_SERVER_REDIRECT_URL,
+  process.env.KAKAO_CLIENT_REDIRECT_URL,
+];
+
 app.get('/', (_: Request, res: Response) =>
-  res.send('This is Express Server Application'),
+  res.send(`This is Express Server Application ${configs.join('\n')}`),
 );
 
 app.get('/api/test', (_: Request, res: Response) => {
