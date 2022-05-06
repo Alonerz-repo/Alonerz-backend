@@ -92,5 +92,5 @@ jobs:
           application_name: ${{ secrets.AWS_APPLICATION_NAME }}
           environment_name: ${{ secrets.AWS_ENVIRONMENT_NAME }}
           region: ${{ secrets.AWS_REGION }}
-          version_labal: v1.1.0
+          version_label: ${{ github.SHA }}
           deployment_package: deploy.zip
