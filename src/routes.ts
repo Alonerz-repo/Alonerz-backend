@@ -10,16 +10,10 @@ const Routes = [
     action: 'swagger',
   },
   {
-    method: 'get',
-    route: '/api/auth/kakao',
-    controller: AuthController,
-    action: 'kakaoLoginOrSignup',
-  },
-  {
     method: 'post',
     route: '/api/auth/kakao',
     controller: AuthController,
-    action: 'kakaoLoginOrSignup',
+    action: 'loginOrSignupWithKakao',
   },
 ];
 
