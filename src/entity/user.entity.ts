@@ -15,10 +15,10 @@ export class User {
   @Column('varchar')
   kakaoId: string;
 
-  @Column('varchar')
+  @Column({ type: 'varchar', default: String(Date.now()) })
   nickname: string;
 
-  @Column('varchar')
+  @Column({ type: 'varchar', default: null })
   profileImageUrl: string;
 
   @CreateDateColumn()
@@ -27,6 +27,6 @@ export class User {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @DeleteDateColumn()
+  @DeleteDateColumn({ default: null })
   deletedAt: Date;
 }
