@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
+import { UserToken } from './entity/user-token.entity';
 import { UserBlock } from './entity/user-block.entity';
 import { UserCareer } from './entity/user-career.entity';
 import { UserFollow } from './entity/user-follow.entity';
@@ -15,7 +16,7 @@ export const AppDataSource = new DataSource({
   database: String(process.env.DB_DATABASE),
   synchronize: Boolean(process.env.DB_SYNCHRONIZE),
   logging: false,
-  entities: [User, UserPoint, UserCareer, UserFollow, UserBlock],
+  entities: [User, UserToken, UserPoint, UserCareer, UserFollow, UserBlock],
   migrations: [],
   subscribers: [],
 });
