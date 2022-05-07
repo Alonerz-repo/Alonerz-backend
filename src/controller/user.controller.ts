@@ -10,7 +10,7 @@ export class UserController {
   }
 
   async one(request: Request, response: Response, next: NextFunction) {
-    return this.userRepository.findOneBy({ id: 1 });
+    // return this.userRepository.findOneBy({ id: 1 });
   }
 
   async save(request: Request, response: Response, next: NextFunction) {
@@ -18,7 +18,7 @@ export class UserController {
   }
 
   async remove(request: Request, response: Response, next: NextFunction) {
-    let userToRemove = await this.userRepository.findOneBy({ id: 1 });
-    await this.userRepository.remove(userToRemove);
+    // let userToRemove = await this.userRepository.findOneBy({ id: 1 });
+    // await this.userRepository.remove(userToRemove);
   }
 }
