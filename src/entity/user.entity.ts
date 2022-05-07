@@ -1,16 +1,32 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
+} from 'typeorm';
 
-@Entity()
+@Entity('users')
 export class User {
   @PrimaryGeneratedColumn()
-  id: number;
+  userId: number;
 
-  @Column()
-  firstName: string;
+  @Column('varchar')
+  kakaoId: string;
 
-  @Column()
-  lastName: string;
+  @Column('varchar')
+  nickname: string;
 
-  @Column()
-  age: number;
+  @Column('varchar')
+  profileImageUrl: string;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+
+  @DeleteDateColumn()
+  deletedAt: Date;
 }
