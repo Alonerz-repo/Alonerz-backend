@@ -9,6 +9,7 @@ export class UserCareer {
   @Column('int')
   userId: number;
 
+  // 직종과 직업으로 분류
   @Column('varchar')
   part: string;
 

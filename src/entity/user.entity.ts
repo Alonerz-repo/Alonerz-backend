@@ -15,6 +15,7 @@ export class User {
   @Column('varchar')
   kakaoId: string;
 
+  // 유효성 검사
   @Column({ type: 'varchar', default: String(Date.now()) })
   nickname: string;
 
