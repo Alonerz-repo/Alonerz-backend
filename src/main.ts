@@ -1,23 +1,17 @@
 import 'dotenv/config';
-import * as express from 'express';
 import { AppDataSource } from './data-source';
-import { routes } from './routes';
-import { swagger } from './utils/swagger';
-import * as cors from 'cors';
+import { AppModule } from './app.module';
 
+// TypeORM 연결 후 서버 실행
+// DB 없이 테스트하기 위해 분리시켰음
 AppDataSource.initialize()
-  .then(async () => {
-    const app = express();
-
-    app.use(express.json());
-    app.use(express.urlencoded({ extended: true }));
-    app.use(cors({ origin: '*', credentials: true }));
-    app.use(swagger.route, swagger.serve, swagger.setup);
-    app.use(routes);
-
+  .then(() => {
+    const app = AppModule();
     const port = process.env.PORT;
-    app.listen(port, () => {
-      console.log(`server running on pot ${port}`);
-    });
+    const listenText = `server running on port ${port}`;
+    const listenLog = () => console.log(listenText);
+    app.listen(port, listenLog);
   })
-  .catch((error) => console.log(error));
+  .catch((error) => {
+    console.log(error);
+  });

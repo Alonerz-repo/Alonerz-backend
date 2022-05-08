@@ -3,9 +3,10 @@ import {
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
-@Entity('user_token')
+@Entity('user_tokens')
 export class UserToken {
   @PrimaryGeneratedColumn()
   id: number;
@@ -17,8 +18,14 @@ export class UserToken {
   kakaoId: string;
 
   @Column('varchar')
+  accessToken: string;
+
+  @Column('varchar')
   refreshToken: string;
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }
