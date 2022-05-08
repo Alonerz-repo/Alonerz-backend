@@ -1,14 +1,15 @@
-import { NextFunction, Request, Response } from 'express';
-import { Middleware } from '../common/middleware';
+import { Request, Response } from 'express';
+import { Controller, Get } from '../common/decorator/application';
 
-const test = (req: Request, res: Response, next: NextFunction) => {
-  console.log('test');
-  next();
-};
-
+@Controller()
 export class AppController {
-  @Middleware(test)
+  @Get()
   swagger(_: Request, res: Response) {
     return res.redirect('/apis');
+  }
+
+  @Get('test')
+  test(_: Request, res: Response) {
+    return res.send([]);
   }
 }

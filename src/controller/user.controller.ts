@@ -1,24 +1,14 @@
-import { NextFunction, Request, Response } from 'express';
-import { User } from '../entity/user.entity';
-import { AppDataSource } from '../data-source';
+import { Request, Response } from 'express';
+import { Controller, Patch } from '../common/decorator/application';
+import { UserRepository } from '../repository/user.repository';
 
+@Controller('api/users')
 export class UserController {
-  private userRepository = AppDataSource.getRepository(User);
+  private readonly userRepository = UserRepository;
 
-  async me(request: Request, response: Response, next: NextFunction) {
-    return this.userRepository.find();
-  }
-
-  async one(request: Request, response: Response, next: NextFunction) {
-    // return this.userRepository.findOneBy({ id: 1 });
-  }
-
-  async save(request: Request, response: Response, next: NextFunction) {
-    return this.userRepository.save(request.body);
-  }
-
-  async remove(request: Request, response: Response, next: NextFunction) {
-    // let userToRemove = await this.userRepository.findOneBy({ id: 1 });
-    // await this.userRepository.remove(userToRemove);
+  @Patch(':id')
+  public async editMyProfile(req: Request, res: Response) {
+    console.log(req.params);
+    return res.send(req.params);
   }
 }
