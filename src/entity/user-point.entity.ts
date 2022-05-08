@@ -5,10 +5,11 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { User } from './user.entity';
 
-@Entity('user_point')
+@Entity('user_points')
 export class UserPoint {
   @PrimaryGeneratedColumn()
   id: number;
@@ -22,9 +23,9 @@ export class UserPoint {
   @DeleteDateColumn({ default: null })
   deletedAt: Date;
 
-  @ManyToOne((type) => User, (user) => user.userId, {
-    nullable: true,
+  @ManyToOne(() => User, (user) => user.userId, {
     onDelete: 'CASCADE',
   })
+  @JoinColumn({ name: 'userId' })
   userId: number;
 }

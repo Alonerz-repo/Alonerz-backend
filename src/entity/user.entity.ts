@@ -5,7 +5,14 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  OneToMany,
+  OneToOne,
+  JoinColumn,
 } from 'typeorm';
+import { Career } from './career.entity';
+import { UserCareer } from './user-career.entity';
+import { UserFollow } from './user-follow.entity';
+import { UserPoint } from './user-point.entity';
 
 @Entity('users')
 export class User {
@@ -15,9 +22,12 @@ export class User {
   @Column('varchar')
   kakaoId: string;
 
-  // 유효성 검사
   @Column({ type: 'varchar', default: String(Date.now()) })
   nickname: string;
+
+  @OneToOne(() => Career)
+  @JoinColumn({ name: 'career' })
+  career: Career;
 
   @Column({ type: 'varchar', default: null })
   profileImageUrl: string;
@@ -30,4 +40,8 @@ export class User {
 
   @DeleteDateColumn({ default: null })
   deletedAt: Date;
+
+  @OneToMany(() => UserPoint, (userPoint) => userPoint.userId)
+  @JoinColumn({ name: 'point' })
+  point: UserPoint[];
 }

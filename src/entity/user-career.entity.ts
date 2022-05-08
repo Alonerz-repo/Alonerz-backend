@@ -1,17 +1,23 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Career } from './career.entity';
+import { User } from './user.entity';
 
-@Entity('user_career')
+@Entity('user_careers')
 export class UserCareer {
   @PrimaryGeneratedColumn()
-  careerId: number;
+  id: number;
 
-  // 1 : N userId
+  @ManyToOne(() => User, (user) => user.userId, {
+    onDelete: 'CASCADE',
+  })
   @Column('int')
   userId: number;
 
-  // 직종과 직업으로 분류
-  @Column('varchar')
-  part: string;
+  @ManyToOne(() => Career, (career) => career.careerId, {
+    onDelete: 'CASCADE',
+  })
+  @Column('int')
+  careerId: number;
 
   @Column('varchar')
   year: string;

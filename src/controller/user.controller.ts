@@ -1,14 +1,38 @@
 import { Request, Response } from 'express';
-import { Controller, Patch } from '../common/decorator/application';
-import { UserRepository } from '../repository/user.repository';
+import {
+  Controller,
+  Get,
+  Middleware,
+  Patch,
+} from '../common/decorator/application';
+import { UpdateUserDto } from '../common/dto/user.dto';
+import { AuthMiddleware } from '../middleware/auth.middleware';
+import { findUser, updateUser } from '../service/user.service';
 
-@Controller('api/users')
+@Controller('/api/users')
 export class UserController {
-  private readonly userRepository = UserRepository;
+  @Get('/:id')
+  // @Middleware(AuthMiddleware.validateServiceToken)
+  public async getUserProfile(req: Request, res: Response) {
+    try {
+      const userId = Number(req.params.id);
+      const user = await findUser(userId);
+      return res.status(200).send(user);
+    } catch (error) {
+      return res.status(error.statusCode).send(error);
+    }
+  }
 
-  @Patch(':id')
-  public async editMyProfile(req: Request, res: Response) {
-    console.log(req.params);
-    return res.send(req.params);
+  @Patch('/:id')
+  @Middleware(AuthMiddleware.validateServiceTokens)
+  public async updateUserProfile(req: Request, res: Response) {
+    try {
+      const userId = Number(req.params.id);
+      const updateUserDto: UpdateUserDto = req.body;
+      await updateUser(userId, updateUserDto);
+      return res.status(200).send();
+    } catch (error) {
+      return res.status(error.statusCode).send(error);
+    }
   }
 }
