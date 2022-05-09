@@ -6,7 +6,7 @@ export const envConfig = {
   isGlobal: true,
   load: [
     () => ({
-      secret: process.env.SECRET,
+      secret: process.env.JWT_SECRET,
       auth: {
         clientUrl: process.env.KAKAO_REDIRECT_CLIENT_URL,
       },
@@ -36,6 +36,6 @@ export const typeormConfig: TypeOrmModuleOptions = {
 };
 
 export const jwtConfig: JwtModuleOptions = {
-  secret: String(process.env.SECRET),
+  secret: String(process.env.JWT_SECRET),
   signOptions: { expiresIn: '15m' },
 };

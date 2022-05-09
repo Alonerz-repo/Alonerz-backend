@@ -11,6 +11,7 @@ export class JwtGuard extends AuthGuard('jwt') {}
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly configService: ConfigService) {
     const secret = configService.get('secret');
+    console.log(secret);
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
