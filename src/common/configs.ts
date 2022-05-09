@@ -8,11 +8,11 @@ export const envConfig = {
     () => ({
       secret: process.env.JWT_SECRET,
       auth: {
-        clientUrl: process.env.KAKAO_REDIRECT_CLIENT_URL,
+        clientUrl: process.env.KAKAO_CLIENT_REDIRECT_URL,
       },
       kakao: {
         clientID: process.env.KAKAO_REST_API_KEY,
-        callbackURL: process.env.KAKAO_REDIRECT_CLIENT_URL,
+        callbackURL: process.env.KAKAO_CLIENT_REDIRECT_URL,
         clientSecret: '',
       },
     }),
