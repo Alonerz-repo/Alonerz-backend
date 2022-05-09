@@ -18,6 +18,7 @@ export class JwtGuard extends AuthGuard('jwt') {
   handleRequest(_: any, user: any, info: any) {
     if (info) {
       switch (info.message) {
+        case 'No auth token':
         case 'jwt malformed':
           throw new BadRequestException({
             statusCode: HttpStatus.BAD_REQUEST,
@@ -31,7 +32,7 @@ export class JwtGuard extends AuthGuard('jwt') {
             error: 'Unauthorized',
           });
         default:
-          console.log(info.message);
+          return console.log(info.message);
       }
     }
     return user;

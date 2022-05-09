@@ -5,13 +5,15 @@ import { envConfig, typeormConfig } from '../common/configs';
 import { HttpExceptionModule } from '../filter/http.exception.module';
 import { AppController } from '../controller/app.controller';
 import { AuthModule } from './auth.module';
+import { UserModule } from './user.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(envConfig),
     TypeOrmModule.forRoot(typeormConfig),
-    // HttpExceptionModule,
+    HttpExceptionModule,
     AuthModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [],
