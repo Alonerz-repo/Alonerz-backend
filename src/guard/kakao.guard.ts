@@ -20,7 +20,6 @@ export class KakaoStrategy extends PassportStrategy(Strategy) {
     private readonly configService: ConfigService,
   ) {
     const kakaoStrategyConfig = configService.get<KakaoStrategyConfig>('kakao');
-    console.log(kakaoStrategyConfig);
     super(kakaoStrategyConfig);
   }
 
