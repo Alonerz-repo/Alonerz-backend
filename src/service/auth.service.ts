@@ -10,7 +10,6 @@ export class AuthService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-
     @InjectRepository(UserToken)
     private readonly userTokenRepository: Repository<UserToken>,
     private jwtService: JwtService,
@@ -28,11 +27,23 @@ export class AuthService {
     const { userId, nickname } = user;
     const payload = { userId, kakaoId, nickname };
     const tokens = {
-      accessToken: this.jwtService.sign(payload, { expiresIn: '15m' }),
+      accessToken: this.jwtService.sign(payload, { expiresIn: '10s' }),
       refreshToken: this.jwtService.sign({}, { expiresIn: '20d' }),
     };
 
     await this.userTokenRepository.save({ userId, kakaoId, ...tokens });
     return { isSignup, ...tokens };
+  }
+
+  async reissueTokens(authorization: string, refreshToken: string) {
+    const accessToken = (authorization || ' ').split(' ')[1];
+    const { userId, kakaoId, nickname } = Object(
+      this.jwtService.decode(accessToken),
+    );
+    const payload = { userId, kakaoId, nickname };
+    const tokens = {
+      accessToken: this.jwtService.sign(payload, { expiresIn: '10s' }),
+    };
+    console.log(payload);
   }
 }
