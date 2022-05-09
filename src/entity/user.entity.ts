@@ -25,10 +25,6 @@ export class User {
   @Column({ type: 'varchar', default: String(Date.now()) })
   nickname: string;
 
-  @OneToOne(() => Career)
-  @JoinColumn({ name: 'career' })
-  career: Career;
-
   @Column({ type: 'varchar', default: null })
   profileImageUrl: string;
 
@@ -40,6 +36,10 @@ export class User {
 
   @DeleteDateColumn({ default: null })
   deletedAt: Date;
+
+  @OneToOne(() => Career)
+  @JoinColumn({ name: 'career' })
+  career: Career;
 
   @OneToMany(() => UserPoint, (userPoint) => userPoint.userId)
   @JoinColumn({ name: 'point' })

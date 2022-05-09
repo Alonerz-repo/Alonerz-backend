@@ -10,7 +10,7 @@ import { AuthModule } from './auth.module';
   imports: [
     ConfigModule.forRoot(envConfig),
     TypeOrmModule.forRoot(typeormConfig),
-    HttpExceptionModule,
+    // HttpExceptionModule,
     AuthModule,
   ],
   controllers: [AppController],
