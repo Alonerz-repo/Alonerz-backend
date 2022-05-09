@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AuthGuard, PassportStrategy } from '@nestjs/passport';
-import { Strategy } from 'passport-jwt';
+import { Strategy } from 'passport-kakao';
 import { AuthException } from 'src/exception/auth.exception';
 
 interface KakaoStrategyConfig {

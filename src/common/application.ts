@@ -6,6 +6,7 @@ export const useApplication = async (
   AppModule: any,
 ): Promise<INestApplication> => {
   const app = await NestFactory.create(AppModule);
+  useSwagger(app);
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -13,6 +14,10 @@ export const useApplication = async (
       transform: true,
     }),
   );
-  useSwagger(app);
+  app.setGlobalPrefix('api');
+  app.enableCors({
+    origin: '*',
+    credentials: true,
+  });
   return app;
 };

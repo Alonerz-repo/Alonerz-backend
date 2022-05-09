@@ -12,7 +12,7 @@ export const envConfig = {
       },
       kakao: {
         clientID: process.env.KAKAO_REST_API_KEY,
-        callbackURL: process.env.KAKAO_CLIENT_REDIRECT_URL,
+        callbackURL: `http://localhost:${process.env.PORT}/api/auth/kakao`,
         clientSecret: '',
       },
     }),
