@@ -36,8 +36,8 @@ export class AuthController {
     const kakaoId = req.user;
     // const { clientUrl } = this.configService.get('auth');
     // 개발 단계에서는 아래와 같이 설정
-    const redirectUrl = `http://localhost:3000/redirect?kakaoId=${kakaoId}`;
     // 배포 환경에서는 S3 URL로 연결
+    const redirectUrl = `http://${req.connection.remoteAddress}/redirect?kakaoId=${kakaoId}`;
     return res.redirect(redirectUrl);
   }
 
