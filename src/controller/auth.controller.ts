@@ -34,10 +34,9 @@ export class AuthController {
   @Get('kakao')
   async kakao(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const kakaoId = req.user;
-    // const { clientUrl } = this.configService.get('auth');
     // 개발 단계에서는 아래와 같이 설정
     // 배포 환경에서는 S3 URL로 연결
-    const redirectUrl = `http://${req.connection.remoteAddress}/redirect?kakaoId=${kakaoId}`;
+    const redirectUrl = `http://${req.connection.remoteAddress}:3000/redirect?kakaoId=${kakaoId}`;
     return res.redirect(redirectUrl);
   }
 
