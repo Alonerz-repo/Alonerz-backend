@@ -5,7 +5,6 @@ import { JwtStrategy } from 'src/guard/jwt.guard';
 import { jwtConfig } from 'src/common/configs';
 import { AuthController } from 'src/controller/auth.controller';
 import { AuthService } from 'src/service/auth.service';
-import { AuthException } from 'src/exception/auth.exception';
 import { UserModule } from './user.module';
 import { KakaoStrategy } from 'src/guard/kakao.guard';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -20,6 +19,6 @@ import { UserToken } from 'src/entity/user-token.entity';
     UserModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, KakaoStrategy, AuthException],
+  providers: [AuthService, JwtStrategy, KakaoStrategy],
 })
 export class AuthModule {}

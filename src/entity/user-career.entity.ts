@@ -7,6 +7,12 @@ export class UserCareer {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column('varchar')
+  year: string;
+
+  @Column('text')
+  description: string;
+
   @ManyToOne(() => User, (user) => user.userId, {
     onDelete: 'CASCADE',
   })
@@ -18,10 +24,4 @@ export class UserCareer {
   })
   @Column('int')
   careerId: number;
-
-  @Column('varchar')
-  year: string;
-
-  @Column('text')
-  description: string;
 }
