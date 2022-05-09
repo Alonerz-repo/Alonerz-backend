@@ -1,4 +1,5 @@
 import { JwtModuleOptions } from '@nestjs/jwt';
+import { SecuritySchemeObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import 'dotenv/config';
 
@@ -38,4 +39,11 @@ export const typeormConfig: TypeOrmModuleOptions = {
 export const jwtConfig: JwtModuleOptions = {
   secret: String(process.env.JWT_SECRET),
   signOptions: { expiresIn: '10s' },
+};
+
+export const bearerConfig: SecuritySchemeObject = {
+  type: 'http',
+  scheme: 'bearer',
+  name: 'JWT',
+  in: 'header',
 };
