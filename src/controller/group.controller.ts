@@ -10,9 +10,10 @@ import {
 import { GroupService } from 'src/service/group.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtGuard } from 'src/guard/jwt.guard';
-import { CreateGroupDto } from 'src/dto/group.dto';
+import { CreateGroupDto } from 'src/dto/create-group.dto';
 import { Payload } from 'src/common/interface';
 import { Request } from 'express';
+import { UpdateGroupDto } from 'src/dto/update-group.dto';
 
 @Controller('groups')
 @ApiTags('그룹 API')
@@ -39,7 +40,20 @@ export class GroupController {
   })
   @UseGuards(JwtGuard)
   @Patch(':groupId')
-  async patchGroup(@Param('groupId') groupId: number, @Body() groupData: any) {
-    return await this.groupService.updateGroup(groupId, groupData);
+  async editGroup(
+    @Param('groupId') groupId: number,
+    @Body() updateGroupDto: UpdateGroupDto,
+  ) {
+    return await this.groupService.updateGroup(groupId, updateGroupDto);
+  }
+
+  @ApiOperation({
+    summary: '그룹 정보 삭제 API',
+    description: '그룹 정보를 삭제한다.',
+  })
+  @UseGuards(JwtGuard)
+  @Patch(':groupId')
+  async deleteGroup(@Param('groupId') groupId: number) {
+    return await this.groupService.deleteGroup(groupId);
   }
 }
