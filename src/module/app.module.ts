@@ -12,7 +12,7 @@ import { GroupModule } from './group.module';
   imports: [
     ConfigModule.forRoot(envConfig),
     TypeOrmModule.forRoot(typeormConfig),
-    HttpExceptionModule,
+    // HttpExceptionModule,
     AuthModule,
     UserModule,
     GroupModule,
