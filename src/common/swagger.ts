@@ -13,6 +13,10 @@ export const useSwagger = (app: INestApplication) => {
     .setTitle(init.title)
     .setDescription(init.description)
     .setVersion(init.version)
+    .addServer(
+      'http://expressapi-env.eba-fqnmpfnx.ap-northeast-2.elasticbeanstalk.com/api',
+    )
+    .addServer('http://localhost:5000/api')
     .addBearerAuth(bearerConfig, 'AccessToken')
     .build();
   const docs = SwaggerModule.createDocument(app, swagger);
