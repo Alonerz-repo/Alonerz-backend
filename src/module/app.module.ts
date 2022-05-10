@@ -5,6 +5,7 @@ import { envConfig, typeormConfig } from '../common/configs';
 import { HttpExceptionModule } from '../filter/http.exception.module';
 import { AppController } from '../controller/app.controller';
 import { AuthModule } from './auth.module';
+import { GroupModule } from './group.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { AuthModule } from './auth.module';
     TypeOrmModule.forRoot(typeormConfig),
     // HttpExceptionModule,
     AuthModule,
+    GroupModule,
   ],
   controllers: [AppController],
   providers: [],
