@@ -49,27 +49,30 @@ export class User {
   career: Career;
 
   // 사용자 : 점수 = 1 : N
-  @OneToMany(() => UserPoint, (userPoint) => userPoint.userId)
+  @OneToMany(() => UserPoint, (userPoint) => userPoint.userId, {
+    cascade: true,
+  })
   @JoinColumn({ name: 'point' })
   point: UserPoint[];
 
   // 사용자 : 팔로잉 = 1 : N
-  @OneToMany(() => UserFollow, (UserFollow) => UserFollow.userId)
+  @OneToMany(() => UserFollow, (UserFollow) => UserFollow.userId, {
+    cascade: true,
+  })
   @JoinColumn({ name: 'following' })
   following: UserFollow[];
 
   // 사용자 : 팔로워 = 1 : N
-  @OneToMany(() => UserFollow, (userFollow) => userFollow.followUserId)
+  @OneToMany(() => UserFollow, (userFollow) => userFollow.followUserId, {
+    cascade: true,
+  })
   @JoinColumn({ name: 'follower' })
   follower: UserFollow[];
 
   // 사용자 : 차단 = 1 : N
-  // @OneToMany(() => UserBlock, (userBlock) => userBlock.userId)
-  // @JoinColumn({ name: 'blocking' })
-  // blocking: UserBlock[];
-
-  // 사용자 : 차단 = 1 : N
-  @OneToMany(() => UserBlock, (userBlock) => userBlock.blockUserId)
+  @OneToMany(() => UserBlock, (userBlock) => userBlock.blockUserId, {
+    cascade: true,
+  })
   @JoinColumn({ name: 'blocker' })
   blocker: UserBlock[];
 }
