@@ -6,11 +6,15 @@ export class UserFollow {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (user) => user.userId, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'fromUser' })
-  userId: User;
+  @ManyToOne(() => User, (user) => user.userId, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'userId' })
+  userId: number;
 
-  @ManyToOne(() => User, (user) => user.userId, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'toUser' })
-  otherUserId: User;
+  @ManyToOne(() => User, (user) => user.userId, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'followUserId' })
+  followUserId: number;
 }

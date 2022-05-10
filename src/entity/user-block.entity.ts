@@ -1,27 +1,20 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
-import { Career } from './career.entity';
+import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { User } from './user.entity';
 
-@Entity('user_careers')
-export class UserCareer {
+@Entity('user_blocks')
+export class UserBlock {
   @PrimaryGeneratedColumn()
   id: number;
 
   @ManyToOne(() => User, (user) => user.userId, {
     onDelete: 'CASCADE',
   })
-  @Column('int')
+  @JoinColumn({ name: 'userId' })
   userId: number;
 
-  @ManyToOne(() => Career, (career) => career.careerId, {
+  @ManyToOne(() => User, (user) => user.userId, {
     onDelete: 'CASCADE',
   })
-  @Column('int')
-  careerId: number;
-
-  @Column('varchar')
-  year: string;
-
-  @Column('text')
-  description: string;
+  @JoinColumn({ name: 'blockUserId' })
+  blockUserId: number;
 }

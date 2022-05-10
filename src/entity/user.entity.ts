@@ -7,9 +7,10 @@ import {
   DeleteDateColumn,
   OneToMany,
   JoinColumn,
-  OneToOne,
+  ManyToOne,
 } from 'typeorm';
 import { Career } from './career.entity';
+import { UserBlock } from './user-block.entity';
 import { UserFollow } from './user-follow.entity';
 import { UserPoint } from './user-point.entity';
 
@@ -42,19 +43,33 @@ export class User {
   @DeleteDateColumn({ default: null })
   deletedAt: Date;
 
-  @OneToOne(() => Career, (career) => career.careerId)
+  // 사용자 : 커리어 = N : 1
+  @ManyToOne(() => Career, (career) => career.careerId)
   @JoinColumn({ name: 'career' })
   career: Career;
 
+  // 사용자 : 점수 = 1 : N
   @OneToMany(() => UserPoint, (userPoint) => userPoint.userId)
   @JoinColumn({ name: 'point' })
   point: UserPoint[];
 
+  // 사용자 : 팔로잉 = 1 : N
   @OneToMany(() => UserFollow, (UserFollow) => UserFollow.userId)
   @JoinColumn({ name: 'following' })
   following: UserFollow[];
 
-  @OneToMany(() => UserFollow, (userFollow) => userFollow.otherUserId)
+  // 사용자 : 팔로워 = 1 : N
+  @OneToMany(() => UserFollow, (userFollow) => userFollow.followUserId)
   @JoinColumn({ name: 'follower' })
   follower: UserFollow[];
+
+  // 사용자 : 차단 = 1 : N
+  // @OneToMany(() => UserBlock, (userBlock) => userBlock.userId)
+  // @JoinColumn({ name: 'blocking' })
+  // blocking: UserBlock[];
+
+  // 사용자 : 차단 = 1 : N
+  @OneToMany(() => UserBlock, (userBlock) => userBlock.blockUserId)
+  @JoinColumn({ name: 'blocker' })
+  blocker: UserBlock[];
 }
