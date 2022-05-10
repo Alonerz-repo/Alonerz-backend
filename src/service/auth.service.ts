@@ -12,7 +12,7 @@ export class AuthService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     @InjectRepository(UserToken)
-    private readonly userTokenRepository: Repository<UserToken>,
+    private readonly tokenRepository: Repository<UserToken>,
     private jwtService: JwtService,
   ) {}
 
@@ -24,14 +24,13 @@ export class AuthService {
     return this.jwtService.sign({});
   }
 
+  // 로그인(최초 로그인 시 회원가입 처리)
   async loginOrSignup(kakaoId: string) {
     let user: User;
-    let isSignup = false;
 
     user = await this.userRepository.findOne({ kakaoId });
     if (!user) {
       user = await this.userRepository.save({ kakaoId });
-      isSignup = true;
     }
     const { userId, nickname } = user;
     const payload = { userId, kakaoId, nickname };
@@ -40,8 +39,12 @@ export class AuthService {
       refreshToken: this.generateRefreshToken(),
     };
 
-    await this.userTokenRepository.save({ userId, kakaoId, ...tokens });
-    return { isSignup, ...tokens };
+    const { career, year, description } = user;
+
+    const needProfile = !career || !year || !description;
+
+    await this.tokenRepository.save({ userId, kakaoId, ...tokens });
+    return { needProfile, ...tokens };
   }
 
   async reissueTokens(authorization: string, refreshToken: string) {
@@ -51,7 +54,7 @@ export class AuthService {
     );
 
     const payload = { userId, kakaoId, nickname };
-    const userToken = await this.userTokenRepository.findOne({
+    const userToken = await this.tokenRepository.findOne({
       userId,
       kakaoId,
       refreshToken,
@@ -63,14 +66,20 @@ export class AuthService {
     };
 
     if (!userToken) {
-      await this.userTokenRepository.save({ userId, kakaoId, ...tokens });
+      await this.tokenRepository.save({ userId, kakaoId, ...tokens });
     }
 
-    await this.userTokenRepository.update(
+    await this.tokenRepository.update(
       { userId, kakaoId, refreshToken },
       { userId, kakaoId, ...tokens },
     );
 
     return { ...tokens, auth: payload };
+  }
+
+  // 로그아웃(accessToken 삭제)
+  async logout(userId: number, authorization: string) {
+    const accessToken = (authorization || ' ').split(' ')[1];
+    return await this.tokenRepository.delete({ userId, accessToken });
   }
 }

@@ -1,9 +1,11 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Patch,
   Post,
+  Put,
   Req,
   Res,
   UseGuards,
@@ -14,6 +16,7 @@ import { KakaoGuard } from 'src/guard/kakao.guard';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthLoginDto } from 'src/dto/auth.dto';
 import { JwtGuard } from 'src/guard/jwt.guard';
+import { Payload } from 'src/common/interface';
 
 @ApiTags('사용자 인증 API')
 @Controller('auth')
@@ -69,5 +72,19 @@ export class AuthController {
     const { authorization } = req.headers;
     const { refreshToken } = token;
     return await this.authService.reissueTokens(authorization, refreshToken);
+  }
+
+  @ApiOperation({
+    summary: '로그아웃 API',
+    description:
+      '데이터베이스에서 사용자의 AccessToken과 RefreshToken을 삭제합니다.',
+  })
+  @ApiBearerAuth('AccessToken')
+  @UseGuards(JwtGuard)
+  @Put('logout')
+  async logout(@Req() req: Request) {
+    const { authorization } = req.headers;
+    const { userId } = req.user as Payload;
+    return await this.authService.logout(userId, authorization);
   }
 }
