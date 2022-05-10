@@ -1,6 +1,7 @@
 import {
   ConflictException,
   HttpStatus,
+  ImATeapotException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -269,12 +270,26 @@ export class UserService {
     }
   }
 
-  // 다른 사용자 팔로잉
+  // 다른 사용자 팔로잉/취소
   async followingOtherOrCancel(
     userId: number,
     followUserId: number,
   ): Promise<void> {
-    await this.findUserByUserId(followUserId);
+    const user = await (await this.findUserByUserId(userId)).user;
+    const followUser = await (await this.findUserByUserId(followUserId)).user;
+
+    if (user.userId === followUser.userId) {
+      throw new ImATeapotException({
+        statusCode: HttpStatus.I_AM_A_TEAPOT,
+        message: [
+          '자기 자신을 팔로우하다뇨?',
+          '너무 지치신 모양인 듯 하네요.',
+          '커피 한 잔 하고 오세요.',
+        ],
+        error: 'I am a Teapot',
+      });
+    }
+
     const follow = await this.followRepository.findOne({
       userId,
       followUserId,
@@ -283,13 +298,30 @@ export class UserService {
     if (follow) {
       await this.followRepository.delete({ id: follow.id });
     } else {
-      await this.followRepository.save({ userId, followUserId });
+      await this.followRepository.save({
+        userId: user,
+        followUserId: followUser,
+      });
     }
   }
 
-  // 다른 사용자 차단
+  // 다른 사용자 차단/취소
   async blockOtherOrCancel(userId: number, blockUserId: number): Promise<void> {
-    await this.findUserByUserId(blockUserId);
+    const user = (await this.findUserByUserId(userId)).user;
+    const blockUser = (await this.findUserByUserId(blockUserId)).user;
+
+    if (user.userId === blockUser.userId) {
+      throw new ImATeapotException({
+        statusCode: HttpStatus.I_AM_A_TEAPOT,
+        message: [
+          '자기 자신을 차단하다뇨?',
+          '너무 지치신 모양인 듯 하네요.',
+          '커피 한 잔 하고 오세요.',
+        ],
+        error: 'I am a Teapot',
+      });
+    }
+
     const block = await this.blockRepository.findOne({
       userId: userId,
       blockUserId: blockUserId,
@@ -305,7 +337,10 @@ export class UserService {
       if (block) {
         await queryRunner.manager.delete(UserBlock, { id: block.id });
       } else {
-        await queryRunner.manager.save(UserBlock, { userId, blockUserId });
+        await queryRunner.manager.save(UserBlock, {
+          userId: user,
+          blockUserId: blockUser,
+        });
         await queryRunner.manager.delete(UserFollow, {
           userId: userId,
           followUserId: blockUserId,
