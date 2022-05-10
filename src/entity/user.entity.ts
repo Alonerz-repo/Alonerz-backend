@@ -6,11 +6,10 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
   OneToMany,
-  OneToOne,
   JoinColumn,
+  OneToOne,
 } from 'typeorm';
 import { Career } from './career.entity';
-import { UserCareer } from './user-career.entity';
 import { UserFollow } from './user-follow.entity';
 import { UserPoint } from './user-point.entity';
 
@@ -28,6 +27,12 @@ export class User {
   @Column({ type: 'varchar', default: null })
   profileImageUrl: string;
 
+  @Column({ type: 'varchar', default: null })
+  year: string;
+
+  @Column({ type: 'text', default: null })
+  description: string;
+
   @CreateDateColumn()
   createdAt: Date;
 
@@ -37,11 +42,19 @@ export class User {
   @DeleteDateColumn({ default: null })
   deletedAt: Date;
 
-  @OneToOne(() => Career)
+  @OneToOne(() => Career, (career) => career.careerId)
   @JoinColumn({ name: 'career' })
   career: Career;
 
   @OneToMany(() => UserPoint, (userPoint) => userPoint.userId)
   @JoinColumn({ name: 'point' })
   point: UserPoint[];
+
+  @OneToMany(() => UserFollow, (UserFollow) => UserFollow.userId)
+  @JoinColumn({ name: 'following' })
+  following: UserFollow[];
+
+  @OneToMany(() => UserFollow, (userFollow) => userFollow.otherUserId)
+  @JoinColumn({ name: 'follower' })
+  follower: UserFollow[];
 }
