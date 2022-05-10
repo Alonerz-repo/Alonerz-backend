@@ -5,7 +5,6 @@ import {
   Get,
   Patch,
   Post,
-  Put,
   Req,
   Res,
   UseGuards,
@@ -81,7 +80,7 @@ export class AuthController {
   })
   @ApiBearerAuth('AccessToken')
   @UseGuards(JwtGuard)
-  @Put('logout')
+  @Delete('logout')
   async logout(@Req() req: Request) {
     const { authorization } = req.headers;
     const { userId } = req.user as Payload;
