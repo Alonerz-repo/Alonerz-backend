@@ -13,7 +13,7 @@ import { Request, Response } from 'express';
 import { AuthService } from 'src/service/auth.service';
 import { KakaoGuard } from 'src/guard/kakao.guard';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { AuthLoginDto } from 'src/dto/auth.dto';
+import { AuthLoginDto, RefreshTokenDto } from 'src/dto/auth.dto';
 import { JwtGuard } from 'src/guard/jwt.guard';
 import { Payload } from 'src/common/interface';
 
@@ -35,9 +35,9 @@ export class AuthController {
   }
 
   @ApiOperation({
-    summary: '카카오 API Redirect',
+    summary: '카카오 로그인 API Redirect',
     description:
-      '클라이언트에서 카카오 API로 로그인을 하면, 서버로 해당 사용자의 정보와 토큰이 넘어온다.',
+      '클라이언트에서만 동작하며, 카카오 API로 로그인을 하면, 서버로 해당 사용자의 정보와 토큰이 넘어옵니다.',
   })
   @UseGuards(KakaoGuard)
   @Get('kakao')
@@ -52,7 +52,7 @@ export class AuthController {
   @ApiOperation({
     summary: '사용자 로그인 API',
     description:
-      '사용자 정보가 있으면 로그인, 없으면 회원가입으로 처리한 후 AccessToken과 RefreshToken을 보내준다.',
+      '사용자 정보가 있으면 로그인, 없으면 회원가입으로 처리한 후 AccessToken과 RefreshToken을 보내줍니다.',
   })
   @Post('login')
   async login(@Body() body: AuthLoginDto) {
@@ -67,9 +67,9 @@ export class AuthController {
   })
   @ApiBearerAuth('AccessToken')
   @Patch('token')
-  async reissue(@Req() req: Request, @Body() token: { refreshToken: string }) {
+  async reissue(@Req() req: Request, @Body() refreshTokenDto: RefreshTokenDto) {
     const { authorization } = req.headers;
-    const { refreshToken } = token;
+    const { refreshToken } = refreshTokenDto;
     return await this.authService.reissueTokens(authorization, refreshToken);
   }
 
