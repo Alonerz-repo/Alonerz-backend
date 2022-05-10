@@ -1,7 +1,16 @@
-import { Controller, Get, Param, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { Request } from 'express';
 import { Payload } from 'src/common/interface';
+import { UpdateUserDto } from 'src/dto/user.dto';
 import { JwtGuard } from 'src/guard/jwt.guard';
 import { UserService } from 'src/service/user.service';
 
@@ -17,9 +26,9 @@ export class UserController {
   @ApiBearerAuth('AccessToken')
   @UseGuards(JwtGuard)
   @Get('me')
-  async me(@Req() req: Request) {
-    const user = req.user;
-    return this.userService.getMyProfile(user as Payload);
+  async getMyProfile(@Req() req: Request) {
+    const { userId } = req.user as Payload;
+    return this.userService.findUserProfile(userId);
   }
 
   @ApiOperation({
@@ -29,7 +38,21 @@ export class UserController {
   @ApiBearerAuth('AccessToken')
   @UseGuards(JwtGuard)
   @Get(':id')
-  async other(@Param('id') userId: number) {
-    return this.userService.getOtherProfile(userId);
+  async getOtherProfile(@Param('id') userId: number) {
+    return this.userService.findUserProfile(userId);
+  }
+
+  @ApiOperation({
+    summary: '내 정보 수정 API',
+    description: '내 정보를 수정합니다.',
+  })
+  @UseGuards(JwtGuard)
+  @Patch('me')
+  async editMyProfile(
+    @Req() req: Request,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    const { userId } = req.user as Payload;
+    return this.userService.updateMyProfile(userId, updateUserDto);
   }
 }
