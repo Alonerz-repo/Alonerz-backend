@@ -47,6 +47,7 @@ export class AuthService {
     return { needProfile, ...tokens };
   }
 
+  // 토큰 재발급
   async reissueTokens(authorization: string, refreshToken: string) {
     const accessToken = (authorization || ' ').split(' ')[1];
     const { userId, kakaoId, nickname } = Object(
