@@ -10,6 +10,7 @@ import {
   OneToOne,
 } from 'typeorm';
 import { Career } from './career.entity';
+import { UserFollow } from './user-follow.entity';
 import { UserPoint } from './user-point.entity';
 
 @Entity('users')
@@ -48,4 +49,12 @@ export class User {
   @OneToMany(() => UserPoint, (userPoint) => userPoint.userId)
   @JoinColumn({ name: 'point' })
   point: UserPoint[];
+
+  @OneToMany(() => UserFollow, (UserFollow) => UserFollow.userId)
+  @JoinColumn({ name: 'following' })
+  following: UserFollow[];
+
+  @OneToMany(() => UserFollow, (userFollow) => userFollow.otherUserId)
+  @JoinColumn({ name: 'follower' })
+  follower: UserFollow[];
 }

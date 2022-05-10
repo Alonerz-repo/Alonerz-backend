@@ -7,6 +7,8 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateUserDto } from 'src/dto/user.dto';
 import { Career } from 'src/entity/career.entity';
+import { UserFollow } from 'src/entity/user-follow.entity';
+import { UserPoint } from 'src/entity/user-point.entity';
 import { User } from 'src/entity/user.entity';
 import { Repository } from 'typeorm';
 
@@ -17,16 +19,30 @@ export class UserService {
     private userRepository: Repository<User>,
     @InjectRepository(Career)
     private careerRepository: Repository<Career>,
+    @InjectRepository(UserPoint)
+    private pointRepository: Repository<UserPoint>,
+    @InjectRepository(UserFollow)
+    private followRepository: Repository<UserFollow>,
   ) {}
 
   private async findUserByUserId(userId: number) {
     const user = await this.userRepository
       .createQueryBuilder('users')
-      .where('users.userId = :userId', { userId })
-      .andWhere('users.deletedAt IS NULL')
+      .select([
+        'users.userId',
+        'users.nickname',
+        'users.profileImageUrl',
+        'users.year',
+        'users.description',
+      ])
       .leftJoinAndSelect('users.career', 'career')
-      .leftJoinAndSelect('users.point', 'point')
+      .leftJoinAndSelect('users.point', 'points')
+      .leftJoinAndSelect('users.following', 'following')
+      .leftJoinAndSelect('users.follower', 'follower')
+      .where('users.userId = :userId', { userId })
       .getOne();
+
+    console.log(user);
     if (!user) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
@@ -34,7 +50,17 @@ export class UserService {
         error: 'Not Found',
       });
     }
-    return { user };
+
+    return {
+      user: {
+        ...user,
+        point: user.point.reduce((pre, current) => {
+          return pre + current.point;
+        }, 0),
+        following: user.following.length,
+        follower: user.follower.length,
+      },
+    };
   }
 
   private async findUserByNickname(nickname: string) {
@@ -60,10 +86,12 @@ export class UserService {
     return career;
   }
 
+  // 사용자 프로필 조회
   async findUserProfile(userId: number) {
     return await this.findUserByUserId(userId);
   }
 
+  // 사용자 프로필 수정
   async updateMyProfile(userId: number, updateUserDto: UpdateUserDto) {
     const { user } = await this.findUserByUserId(userId);
     const { nickname, profileImageUrl, careerId, year, description } =
@@ -86,4 +114,7 @@ export class UserService {
       );
     }
   }
+
+  // 다른 사용자 팔로잉
+  // async followingOtherUser(userId: number, )
 }
