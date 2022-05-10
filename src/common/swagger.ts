@@ -1,5 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { bearerConfig } from './configs';
 
 const init = {
   title: 'Alonerz API',
@@ -12,6 +13,7 @@ export const useSwagger = (app: INestApplication) => {
     .setTitle(init.title)
     .setDescription(init.description)
     .setVersion(init.version)
+    .addBearerAuth(bearerConfig, 'AccessToken')
     .build();
   const docs = SwaggerModule.createDocument(app, swagger);
   return SwaggerModule.setup('/', app, docs);

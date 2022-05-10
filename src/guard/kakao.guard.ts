@@ -19,8 +19,6 @@ export class KakaoStrategy extends PassportStrategy(Strategy) {
     super(kakaoStrategyConfig);
   }
 
-  // _  : Kakao accessToken
-  // __ : Kakao refreshToken
   async validate(_: string, __: string, profile: any, done: any) {
     const user = profile._json;
     if (!user) {
