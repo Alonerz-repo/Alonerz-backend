@@ -6,6 +6,7 @@ import { HttpExceptionModule } from '../filter/http.exception.module';
 import { AppController } from '../controller/app.controller';
 import { AuthModule } from './auth.module';
 import { UserModule } from './user.module';
+import { GroupModule } from './group.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { UserModule } from './user.module';
     HttpExceptionModule,
     AuthModule,
     UserModule,
+    GroupModule,
   ],
   controllers: [AppController],
   providers: [],
