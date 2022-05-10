@@ -1,28 +1,23 @@
 import {
   Body,
   Controller,
-  Get,
   Param,
   Patch,
   Post,
   Req,
-  Res,
   UseGuards,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { Request, Response } from 'express';
 import { GroupService } from 'src/service/group.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtGuard } from 'src/guard/jwt.guard';
-import { GroupDto } from 'src/dto/group.dto';
+import { CreateGroupDto } from 'src/dto/group.dto';
+import { Payload } from 'src/common/interface';
+import { Request } from 'express';
 
 @Controller('groups')
 @ApiTags('그룹 API')
 export class GroupController {
-  constructor(
-    private groupService: GroupService,
-    private configService: ConfigService,
-  ) {}
+  constructor(private groupService: GroupService) {}
 
   @ApiOperation({
     summary: '그룹 생성 API',
@@ -30,8 +25,12 @@ export class GroupController {
   })
   @UseGuards(JwtGuard)
   @Post()
-  async createGroup(@Body() groupData: GroupDto) {
-    return await this.groupService.createGroup(groupData);
+  async createGroup(
+    @Req() req: Request,
+    @Body() createGroupDto: CreateGroupDto,
+  ) {
+    const { userId } = req.user as Payload;
+    return await this.groupService.createGroup(userId, createGroupDto);
   }
 
   @ApiOperation({
@@ -40,10 +39,7 @@ export class GroupController {
   })
   @UseGuards(JwtGuard)
   @Patch(':groupId')
-  async patchGroup(
-    @Param('groupId') groupId: number,
-    @Body() groupData: GroupDto,
-  ) {
+  async patchGroup(@Param('groupId') groupId: number, @Body() groupData: any) {
     return await this.groupService.updateGroup(groupId, groupData);
   }
 }

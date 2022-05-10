@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsString, IsDate, IsNumber } from 'class-validator';
 import { Double } from 'typeorm';
 
-export class GroupDto {
+export class CreateGroupDto {
   @IsNotEmpty()
   @IsString()
   title: string;
