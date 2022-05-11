@@ -10,6 +10,8 @@ import {
   ManyToOne,
 } from 'typeorm';
 import { Career } from './career.entity';
+import { GroupUser } from './group-user.entity';
+import { Group } from './group.entity';
 import { UserBlock } from './user-block.entity';
 import { UserFollow } from './user-follow.entity';
 import { UserPoint } from './user-point.entity';
@@ -75,4 +77,17 @@ export class User {
   })
   @JoinColumn({ name: 'blocker' })
   blocker: UserBlock[];
+
+  // 사용자 : 그룹(호스트) = 1 : N
+  @OneToMany(() => Group, (group) => group.host, {
+    cascade: true,
+  })
+  @JoinColumn({ name: 'hostGroups' })
+  hostGroups: Group[];
+
+  @OneToMany(() => GroupUser, (groupUser) => groupUser.guest, {
+    cascade: true,
+  })
+  @JoinColumn({ name: 'guestGroups' })
+  guestGroups: Group[];
 }
