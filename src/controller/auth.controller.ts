@@ -16,11 +16,15 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthLoginDto, RefreshTokenDto } from 'src/dto/auth.dto';
 import { JwtGuard } from 'src/guard/jwt.guard';
 import { Payload } from 'src/common/interface';
+import { ConfigService } from '@nestjs/config';
 
 @ApiTags('사용자 인증 API')
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private configService: ConfigService,
+  ) {}
 
   @ApiOperation({
     summary: '사용자 토큰 인증 API',
@@ -43,9 +47,8 @@ export class AuthController {
   @Get('kakao')
   async kakao(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const kakaoId = req.user;
-    // 개발 단계에서는 아래와 같이 설정(배포 환경에서는 S3 URL로 설정)
-    const clientUrl = `http://${req.connection.remoteAddress}:3000`;
-    const redirectUrl = `${clientUrl}/redirect?kakaoId=${kakaoId}`;
+    const { clientUrl } = this.configService.get('auth');
+    const redirectUrl = `${clientUrl}?kakaoId=${kakaoId}`;
     return res.redirect(redirectUrl);
   }
 
