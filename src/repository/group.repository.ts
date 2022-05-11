@@ -140,14 +140,6 @@ export class GroupRepository extends Repository<Group> {
       ])
       .leftJoin('groups.guests', 'guests')
       .addSelect(['guests.id'])
-      .where('groups.locationX BETWEEN :x1 AND :x2', {
-        x1: x - 200,
-        x2: x + 200,
-      })
-      .andWhere('groups.locationY BETWEEN :y1 AND :y2', {
-        y1: y - 200,
-        y2: y + 200,
-      })
       // 시간 조건 추가할 것
       .where('groups.startAt > :today', { today: new Date() })
       .andWhere('groups.groupId > :offset', { offset })

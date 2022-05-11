@@ -50,14 +50,14 @@ export class GroupController {
   @ApiQuery({
     name: 'y',
     type: 'double',
-    required: true,
-    example: 127.34540366949406,
+    required: false,
+    example: '127.34540366949406',
   })
   @ApiQuery({
     name: 'x',
     type: 'double',
-    required: true,
-    example: 36.358361084097034,
+    required: false,
+    example: '36.358361084097034',
   })
   @ApiQuery({
     name: 'offset',
@@ -67,12 +67,13 @@ export class GroupController {
   })
   @ApiQuery({
     name: 'when',
-    type: 'lunch | dinner',
-    required: false,
+    type: 'string',
     example: undefined,
+    required: false,
+    description: 'lunch | dinner',
   })
-  @Get()
-  async getLunchGroups(
+  @Get('?')
+  async getGroupsByQuery(
     @Query('x') x: number,
     @Query('y') y: number,
     @Query('offset') offset?: number,
@@ -89,13 +90,11 @@ export class GroupController {
   @ApiParam({
     name: 'userId',
     type: 'int',
-    required: true,
     example: 1,
   })
   @ApiQuery({
     name: 'offset',
     type: 'int',
-    required: false,
     example: undefined,
   })
   @Get('joined/:userId')
@@ -113,7 +112,6 @@ export class GroupController {
   @ApiParam({
     name: 'groupId',
     type: 'int',
-    required: true,
     example: 1,
   })
   @Get(':groupId')
@@ -143,7 +141,6 @@ export class GroupController {
   @ApiParam({
     name: 'groupId',
     type: 'int',
-    required: true,
     example: 1,
   })
   @ApiBearerAuth('AccessToken')
@@ -180,7 +177,7 @@ export class GroupController {
   @ApiParam({
     name: 'groupId',
     type: 'int',
-    required: true,
+    required: false,
     example: 1,
   })
   @ApiQuery({
