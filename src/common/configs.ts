@@ -29,6 +29,7 @@ export const typeormConfig: TypeOrmModuleOptions = {
   database: String(process.env.DB_DATABASE),
   synchronize: Boolean(process.env.DB_SYNCHRONIZE),
   entities: ['dist/**/*.entity{.ts,.js}'],
+  logging: true,
   migrationsTableName: 'migrations',
   migrations: ['src/migrations/*.ts'],
   cli: {
