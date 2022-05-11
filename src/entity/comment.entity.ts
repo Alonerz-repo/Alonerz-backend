@@ -10,8 +10,8 @@ import {
 import { Group } from './group.entity';
 import { User } from './user.entity';
 
-@Entity('group_comment')
-export class GroupComment {
+@Entity('comments')
+export class Comment {
   @PrimaryGeneratedColumn()
   commentId: number;
 

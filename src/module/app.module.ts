@@ -8,6 +8,7 @@ import { AuthModule } from './auth.module';
 import { UserModule } from './user.module';
 import { GroupModule } from './group.module';
 import { CareerModule } from './career.module';
+import { CommentModule } from './comment.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { CareerModule } from './career.module';
     UserModule,
     CareerModule,
     GroupModule,
+    CommentModule,
   ],
   controllers: [AppController],
   providers: [],

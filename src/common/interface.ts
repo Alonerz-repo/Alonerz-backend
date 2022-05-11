@@ -3,3 +3,6 @@ export interface Payload {
   kakaoId: string;
   nickname: string;
 }
+
+export type When = 'lunch' | 'dinner';
+export type Action = 'join' | 'exit';
