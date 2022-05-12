@@ -39,9 +39,9 @@ export class AuthService {
       refreshToken: this.generateRefreshToken(),
     };
 
-    const { career, year, description } = user;
+    const { careerId, year, description } = user;
 
-    const needProfile = !career || !year || !description;
+    const needProfile = !careerId || !year || !description;
 
     await this.tokenRepository.save({ userId, kakaoId, ...tokens });
     return { needProfile, ...tokens };

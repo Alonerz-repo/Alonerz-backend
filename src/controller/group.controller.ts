@@ -20,7 +20,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { JwtGuard } from 'src/guard/jwt.guard';
-import { Action, Payload, When } from 'src/common/interface';
+import { GroupTime, GroupAction, Payload } from 'src/common/interface';
 import { Request } from 'express';
 import { CreateGroupDto, UpdateGroupDto } from 'src/dto/group.dto';
 import { GroupSwagger } from 'src/swagger/group.swagger';
@@ -51,7 +51,7 @@ export class GroupController {
     @Query('x') x: number,
     @Query('y') y: number,
     @Query('offset') offset?: number,
-    @Query('when') when?: When,
+    @Query('when') when?: GroupTime,
   ) {
     return await this.groupService.getGroupsByQuery(x, y, offset, when);
   }
@@ -96,11 +96,12 @@ export class GroupController {
   @ApiBearerAuth('AccessToken')
   @ApiParam(GroupSwagger.param.groupId)
   async updateGroup(
+    @Req() req: Request,
     @Param('groupId') groupId: number,
     @Body() updateGroupDto: UpdateGroupDto,
   ) {
-    console.log(updateGroupDto);
-    return await this.groupService.updateGroup(groupId, updateGroupDto);
+    const { userId } = req.user as Payload;
+    return await this.groupService.updateGroup(userId, groupId, updateGroupDto);
   }
 
   // 그룹 삭제
@@ -109,8 +110,9 @@ export class GroupController {
   @ApiOperation(GroupSwagger.operations.deleteGroup)
   @ApiBearerAuth('AccessToken')
   @ApiParam(GroupSwagger.param.groupId)
-  async deleteGroup(@Param('groupId') groupId: number) {
-    return await this.groupService.deleteGroup(groupId);
+  async deleteGroup(@Req() req: Request, @Param('groupId') groupId: number) {
+    const { userId } = req.user as Payload;
+    return await this.groupService.deleteGroup(userId, groupId);
   }
 
   // 그룹 참여 및 탈퇴
@@ -122,7 +124,7 @@ export class GroupController {
   async joinOrExitGroup(
     @Req() req: Request,
     @Param('groupId') groupId: number,
-    @Query('action') action: Action,
+    @Query('action') action: GroupAction,
   ) {
     const { userId } = req.user as Payload;
     return this.groupService.joinOrExitGroup(userId, groupId, action);
