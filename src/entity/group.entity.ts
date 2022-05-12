@@ -10,6 +10,7 @@ import {
   JoinColumn,
   OneToMany,
 } from 'typeorm';
+import { Comment } from './comment.entity';
 import { GroupUser } from './group-user.entity';
 import { User } from './user.entity';
 
@@ -69,4 +70,8 @@ export class Group {
   })
   @JoinColumn({ name: 'guests' })
   guests: number[];
+
+  @OneToMany(() => Comment, (comment) => comment.groupId, { cascade: true })
+  @JoinColumn({ name: 'comments' })
+  comments: number[];
 }

@@ -13,6 +13,7 @@ import { Group } from './group.entity';
 import { Block } from './block.entity';
 import { Follow } from './follow.entity';
 import { Point } from './point.entity';
+import { Comment } from './comment.entity';
 
 @Entity('users')
 export class User {
@@ -75,4 +76,9 @@ export class User {
   @OneToMany(() => GroupUser, (groupUser) => groupUser.guest, { cascade: true })
   @JoinColumn({ name: 'guestGroups' })
   guestGroups: Group[];
+
+  // 사용자 : 댓글 = 1 : N
+  @OneToMany(() => Comment, (comment) => comment.userId, { cascade: true })
+  @JoinColumn({ name: 'guestGroups' })
+  comments: Comment[];
 }
