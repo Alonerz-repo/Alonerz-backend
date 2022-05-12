@@ -39,7 +39,7 @@ export const typeormConfig: TypeOrmModuleOptions = {
 
 export const jwtConfig: JwtModuleOptions = {
   secret: String(process.env.JWT_SECRET),
-  signOptions: { expiresIn: '10s' },
+  signOptions: { expiresIn: '1d' },
 };
 
 export const bearerConfig: SecuritySchemeObject = {

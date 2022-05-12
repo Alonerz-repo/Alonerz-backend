@@ -10,9 +10,9 @@ import {
 } from 'typeorm';
 import { GroupUser } from './group-user.entity';
 import { Group } from './group.entity';
-import { UserBlock } from './user-block.entity';
-import { UserFollow } from './user-follow.entity';
-import { UserPoint } from './user-point.entity';
+import { Block } from './block.entity';
+import { Follow } from './follow.entity';
+import { Point } from './point.entity';
 
 @Entity('users')
 export class User {
@@ -47,44 +47,32 @@ export class User {
   deletedAt: Date;
 
   // 사용자 : 점수 = 1 : N
-  @OneToMany(() => UserPoint, (userPoint) => userPoint.userId, {
-    cascade: true,
-  })
+  @OneToMany(() => Point, (point) => point.userId, { cascade: true })
   @JoinColumn({ name: 'point' })
-  point: UserPoint[];
+  point: Point[];
 
   // 사용자 : 팔로잉 = 1 : N
-  @OneToMany(() => UserFollow, (UserFollow) => UserFollow.userId, {
-    cascade: true,
-  })
+  @OneToMany(() => Follow, (follow) => follow.userId, { cascade: true })
   @JoinColumn({ name: 'following' })
-  following: UserFollow[];
+  following: Follow[];
 
   // 사용자 : 팔로워 = 1 : N
-  @OneToMany(() => UserFollow, (userFollow) => userFollow.followUserId, {
-    cascade: true,
-  })
+  @OneToMany(() => Follow, (follow) => follow.userId, { cascade: true })
   @JoinColumn({ name: 'follower' })
-  follower: UserFollow[];
+  follower: Follow[];
 
   // 사용자 : 차단 = 1 : N
-  @OneToMany(() => UserBlock, (userBlock) => userBlock.blockUserId, {
-    cascade: true,
-  })
+  @OneToMany(() => Block, (block) => block.userId, { cascade: true })
   @JoinColumn({ name: 'blocker' })
-  blocker: UserBlock[];
+  blocker: Block[];
 
   // 사용자 : 그룹(호스트) = 1 : N
-  @OneToMany(() => Group, (group) => group.host, {
-    cascade: true,
-  })
+  @OneToMany(() => Group, (group) => group.host, { cascade: true })
   @JoinColumn({ name: 'hostGroups' })
   hostGroups: Group[];
 
   // 사용자 : 그룹(참여자) = 1 : N
-  @OneToMany(() => GroupUser, (groupUser) => groupUser.guest, {
-    cascade: true,
-  })
+  @OneToMany(() => GroupUser, (groupUser) => groupUser.guest, { cascade: true })
   @JoinColumn({ name: 'guestGroups' })
   guestGroups: Group[];
 }

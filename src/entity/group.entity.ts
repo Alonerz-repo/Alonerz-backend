@@ -33,12 +33,10 @@ export class Group {
   @Column({ type: 'varchar', default: null })
   imageUrl: string;
 
-  // 개발모드에서는 default : null
-  @Column({ type: 'datetime', default: null })
+  @Column({ type: 'datetime' })
   startAt: Date;
 
-  // 개발모드에서는 default : null
-  @Column({ type: 'datetime', default: null })
+  @Column({ type: 'datetime' })
   endAt: Date;
 
   @Column('int')
@@ -66,7 +64,7 @@ export class Group {
   @JoinColumn({ name: 'host' })
   host: number;
 
-  @OneToMany(() => GroupUser, (gropuUser) => gropuUser.groupId, {
+  @OneToMany(() => GroupUser, (groupUser) => groupUser.groupId, {
     cascade: true,
   })
   @JoinColumn({ name: 'guests' })

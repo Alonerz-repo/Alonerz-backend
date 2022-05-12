@@ -6,8 +6,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity('user_tokens')
-export class UserToken {
+@Entity('tokens')
+export class Token {
   @PrimaryGeneratedColumn()
   id: number;
 

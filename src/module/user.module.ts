@@ -2,10 +2,9 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserController } from 'src/controller/user.controller';
-import { UserPoint } from 'src/entity/user-point.entity';
-import { BlockRepository } from 'src/repository/block.repository';
-import { FollowRepository } from 'src/repository/follow.repository';
 import { UserRepository } from 'src/repository/user.repository';
+import { FollowRepository } from 'src/repository/follow.repository';
+import { BlockRepository } from 'src/repository/block.repository';
 import { UserService } from 'src/service/user.service';
 
 @Module({
@@ -15,7 +14,6 @@ import { UserService } from 'src/service/user.service';
       UserRepository,
       FollowRepository,
       BlockRepository,
-      UserPoint,
     ]),
   ],
   controllers: [UserController],

@@ -9,8 +9,8 @@ import {
 } from 'typeorm';
 import { User } from './user.entity';
 
-@Entity('user_points')
-export class UserPoint {
+@Entity('points')
+export class Point {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -23,9 +23,7 @@ export class UserPoint {
   @DeleteDateColumn({ default: null })
   deletedAt: Date;
 
-  @ManyToOne(() => User, (user) => user.userId, {
-    onDelete: 'CASCADE',
-  })
+  @ManyToOne(() => User, (user) => user.userId, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })
   userId: number;
 }

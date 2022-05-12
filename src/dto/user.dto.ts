@@ -1,7 +1,7 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsOptional, IsString, Length } from 'class-validator';
-import { UserFollow } from 'src/entity/user-follow.entity';
-import { UserPoint } from 'src/entity/user-point.entity';
+import { Follow } from 'src/entity/follow.entity';
+import { Point } from 'src/entity/point.entity';
 import { UserDtoSwagger } from 'src/swagger/user.swagger';
 
 export class UpdateUserDto {
@@ -39,19 +39,19 @@ export interface UserInfoData {
   year: string;
   description: string;
   careerId: number;
-  following: UserFollow[] | number;
-  follower: UserFollow[] | number;
-  point: UserPoint[] | number;
+  following: Follow[] | number;
+  follower: Follow[] | number;
+  point: Point[] | number;
 }
 
 export interface UserFollowRow {
   id: number;
   userId?: number | UserInfoData;
-  followUserId?: number | UserInfoData;
+  otherId?: number | UserInfoData;
 }
 
 export interface UserBlockRow {
   id: number;
   userId?: number | UserInfoData;
-  blockUserId?: number | UserInfoData;
+  otherId?: number | UserInfoData;
 }
