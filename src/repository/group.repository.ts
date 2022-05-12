@@ -64,8 +64,6 @@ export class GroupRepository extends Repository<Group> {
       ])
       .where('group.groupId = :groupId', { groupId })
       .getOne();
-
-    group.guests = group.guests.map((guest: any) => guest.guest);
     return group;
   }
 
@@ -150,7 +148,6 @@ export class GroupRepository extends Repository<Group> {
         'host.year',
         'host.description',
         'host.profileImageUrl',
-        'host.career',
       ])
       .leftJoin('groups.guests', 'guests')
       .addSelect(['guests.id'])

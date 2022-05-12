@@ -13,7 +13,7 @@ import { CommentModule } from './comment.module';
   imports: [
     ConfigModule.forRoot(envConfig),
     TypeOrmModule.forRoot(typeormConfig),
-    HttpExceptionModule,
+    // HttpExceptionModule,
     AuthModule,
     UserModule,
     GroupModule,
