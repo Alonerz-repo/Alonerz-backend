@@ -1,13 +1,13 @@
 import { FollowFilter } from 'src/common/interface';
-import { UserFollow } from 'src/entity/user-follow.entity';
+import { Follow } from 'src/entity/follow.entity';
 import { EntityRepository, QueryRunner, Repository } from 'typeorm';
 
-@EntityRepository(UserFollow)
-export class FollowRepository extends Repository<UserFollow> {
+@EntityRepository(Follow)
+export class FollowRepository extends Repository<Follow> {
   // 사용자 팔로잉 목록 조회
   async findFollowUsers(userId: number, filter: FollowFilter) {
-    const joinner = filter === 'following' ? 'followUserId' : 'userId';
-    const where = filter === 'following' ? 'userId' : 'followUserId';
+    const joinner = filter === 'following' ? 'otherId' : 'userId';
+    const where = filter === 'following' ? 'userId' : 'otherId';
     return await this.createQueryBuilder('follows')
       .leftJoin(`follows.${joinner}`, 'users')
       .addSelect([
@@ -25,13 +25,13 @@ export class FollowRepository extends Repository<UserFollow> {
   }
 
   // 팔로우 상태 조회
-  async findFollow(userId: number, followUserId: number) {
-    return await this.findOne({ userId, followUserId });
+  async findFollow(userId: number, otherId: number) {
+    return await this.findOne({ userId, otherId });
   }
 
   // 다른 사용자 팔로잉
-  async followDone(userId: number, followUserId: number): Promise<void> {
-    await this.save({ userId, followUserId });
+  async followDone(userId: number, otherId: number): Promise<void> {
+    await this.save({ userId, otherId });
   }
 
   // 다른 사용자 팔로잉 끊기
@@ -45,13 +45,13 @@ export class FollowRepository extends Repository<UserFollow> {
     userId: number,
     blockUserId: number,
   ) {
-    await queryRunner.manager.delete(UserFollow, {
+    await queryRunner.manager.delete(Follow, {
       userId,
-      followUserId: blockUserId,
+      otherId: blockUserId,
     });
-    await queryRunner.manager.delete(UserFollow, {
+    await queryRunner.manager.delete(Follow, {
       userId: blockUserId,
-      followUserId: userId,
+      otherId: userId,
     });
   }
 }

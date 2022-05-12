@@ -44,14 +44,13 @@ export class GroupRepository extends Repository<Group> {
         'group.updatedAt',
       ])
       .leftJoin('group.host', 'host')
-      .leftJoinAndSelect('host.career', 'hostCareer')
       .addSelect([
         'host.userId',
         'host.nickname',
+        'host.careerId',
         'host.year',
         'host.description',
         'host.profileImageUrl',
-        'host.career',
       ])
       .leftJoinAndSelect('group.guests', 'guests')
       .leftJoin('guests.guest', 'guest')
@@ -59,11 +58,10 @@ export class GroupRepository extends Repository<Group> {
         'guest.userId',
         'guest.nickname',
         'guest.year',
+        'guest.careerId',
         'guest.description',
         'guest.profileImageUrl',
-        'guest.career',
       ])
-      .leftJoinAndSelect('guest.career', 'guestCareer')
       .where('group.groupId = :groupId', { groupId })
       .getOne();
 
@@ -85,14 +83,13 @@ export class GroupRepository extends Repository<Group> {
         'groups.endAt',
       ])
       .leftJoin('groups.host', 'host')
-      .leftJoinAndSelect('host.career', 'hostCareer')
       .addSelect([
         'host.userId',
         'host.nickname',
+        'host.careerId',
         'host.year',
         'host.description',
         'host.profileImageUrl',
-        'host.career',
       ])
       .leftJoin('groups.guests', 'guests')
       .addSelect(['guests.id'])
@@ -146,10 +143,10 @@ export class GroupRepository extends Repository<Group> {
         'groups.endAt',
       ])
       .leftJoin('groups.host', 'host')
-      .leftJoinAndSelect('host.career', 'hostCareer')
       .addSelect([
         'host.userId',
         'host.nickname',
+        'host.careerId',
         'host.year',
         'host.description',
         'host.profileImageUrl',
@@ -190,14 +187,13 @@ export class GroupRepository extends Repository<Group> {
         'groups.endAt',
       ])
       .leftJoin('groups.host', 'host')
-      .leftJoinAndSelect('host.career', 'hostCareer')
       .addSelect([
         'host.userId',
         'host.nickname',
+        'host.careerId',
         'host.year',
         'host.description',
         'host.profileImageUrl',
-        'host.career',
       ])
       .leftJoin('groups.guests', 'guests')
       .addSelect(['guests.id'])

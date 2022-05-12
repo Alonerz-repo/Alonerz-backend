@@ -1,8 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { User } from './user.entity';
 
-@Entity('user_follows')
-export class UserFollow {
+@Entity('blocks')
+export class Block {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -15,6 +15,6 @@ export class UserFollow {
   @ManyToOne(() => User, (user) => user.userId, {
     onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: 'followUserId' })
-  followUserId: number;
+  @JoinColumn({ name: 'otherId' })
+  otherId: number;
 }
