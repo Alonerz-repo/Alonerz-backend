@@ -4,6 +4,11 @@ import { EntityRepository, Repository } from 'typeorm';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
+  // 계정 생성
+  async createUser(kakaoId: string) {
+    return await this.save({ kakaoId });
+  }
+
   // 사용자 프로필 조회
   async findUserInfo(userId: number) {
     return await this.createQueryBuilder('users')

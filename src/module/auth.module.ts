@@ -8,13 +8,13 @@ import { AuthService } from 'src/service/auth.service';
 import { UserModule } from './user.module';
 import { KakaoStrategy } from 'src/guard/kakao.guard';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from 'src/entity/user.entity';
-import { Token } from 'src/entity/token.entity';
+import { UserRepository } from 'src/repository/user.repository';
+import { TokenRepository } from 'src/repository/token.repository';
 
 @Module({
   imports: [
     ConfigModule,
-    TypeOrmModule.forFeature([User, Token]),
+    TypeOrmModule.forFeature([UserRepository, TokenRepository]),
     JwtModule.register(jwtConfig),
     UserModule,
   ],
