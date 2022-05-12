@@ -21,16 +21,18 @@ import { FollowFilter, Payload } from 'src/common/interface';
 import { UpdateUserDto } from 'src/dto/user.dto';
 import { JwtGuard } from 'src/guard/jwt.guard';
 import { UserService } from 'src/service/user.service';
-import { UserSwagger } from 'src/swagger/user.swagger';
+import { UserOperation, UserTag } from 'src/swagger/operation/user.operation';
+import { UserParam } from 'src/swagger/param/user.param';
+import { UserQuery } from 'src/swagger/query/user.query';
 
-@ApiTags(UserSwagger.tag)
+@ApiTags(UserTag)
 @Controller('users')
 export class UserController {
   constructor(private userService: UserService) {}
 
   @Get('me')
   @UseGuards(JwtGuard)
-  @ApiOperation(UserSwagger.operations.getMyProfile)
+  @ApiOperation(UserOperation.getMyProfile)
   @ApiBearerAuth('AccessToken')
   async getMyProfile(@Req() req: Request) {
     const { userId } = req.user as Payload;
@@ -39,16 +41,16 @@ export class UserController {
 
   @Get(':userId')
   @UseGuards(JwtGuard)
-  @ApiOperation(UserSwagger.operations.getOtherProfile)
+  @ApiOperation(UserOperation.getOtherProfile)
   @ApiBearerAuth('AccessToken')
-  @ApiParam(UserSwagger.param.userId)
+  @ApiParam(UserParam.userId)
   async getOtherProfile(@Param('userId') userId: number) {
     return this.userService.getUserProfile(userId);
   }
 
   @Patch('me')
   @UseGuards(JwtGuard)
-  @ApiOperation(UserSwagger.operations.editMyProfile)
+  @ApiOperation(UserOperation.editMyProfile)
   @ApiBearerAuth('AccessToken')
   async editMyProfile(
     @Req() req: Request,
@@ -60,10 +62,10 @@ export class UserController {
 
   @Get('followings/:userId')
   @UseGuards(JwtGuard)
-  @ApiOperation(UserSwagger.operations.getUserFollowings)
+  @ApiOperation(UserOperation.getUserFollowings)
   @ApiBearerAuth('AccessToken')
-  @ApiParam(UserSwagger.param.userId)
-  @ApiQuery(UserSwagger.query.filter)
+  @ApiParam(UserParam.userId)
+  @ApiQuery(UserQuery.filter)
   async getUserFollowings(
     @Param('userId') userId: number,
     @Query('filter') filter: FollowFilter,
@@ -73,9 +75,9 @@ export class UserController {
 
   @Put('follow/:otherId')
   @UseGuards(JwtGuard)
-  @ApiOperation(UserSwagger.operations.followingOtherOrCancel)
+  @ApiOperation(UserOperation.followingOtherOrCancel)
   @ApiBearerAuth('AccessToken')
-  @ApiParam(UserSwagger.param.otherId)
+  @ApiParam(UserParam.otherId)
   async followingOtherOrCancel(
     @Req() req: Request,
     @Param('otherId') otherId: number,
@@ -86,7 +88,7 @@ export class UserController {
 
   @Get('blocks/me')
   @UseGuards(JwtGuard)
-  @ApiOperation(UserSwagger.operations.getUserBlocks)
+  @ApiOperation(UserOperation.getUserBlocks)
   @ApiBearerAuth('AccessToken')
   async getUserBlocks(@Req() req: Request) {
     const { userId } = req.user as Payload;
@@ -95,9 +97,9 @@ export class UserController {
 
   @Put('block/:otherId')
   @UseGuards(JwtGuard)
-  @ApiOperation(UserSwagger.operations.blockOtherOrCancel)
+  @ApiOperation(UserOperation.blockOtherOrCancel)
   @ApiBearerAuth('AccessToken')
-  @ApiParam(UserSwagger.param.otherId)
+  @ApiParam(UserParam.otherId)
   async blockOtherOrCancel(
     @Req() req: Request,
     @Param('otherId') otherId: number,

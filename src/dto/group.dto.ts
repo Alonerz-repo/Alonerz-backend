@@ -1,50 +1,50 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { IsDateString, IsNumber, IsOptional, IsString } from 'class-validator';
-import { GroupDtoSwagger } from 'src/swagger/group.swagger';
+import { GroupProperty } from 'src/swagger/property/group.property';
 
 export class CreateGroupDto {
-  @ApiProperty(GroupDtoSwagger.title)
+  @ApiProperty(GroupProperty.title)
   @IsString()
   title: string;
 
-  @ApiProperty(GroupDtoSwagger.menu)
+  @ApiProperty(GroupProperty.menu)
   @IsString()
   menu: string;
 
-  @ApiProperty(GroupDtoSwagger.description)
+  @ApiProperty(GroupProperty.description)
   @IsString()
   description: string;
 
-  @ApiProperty(GroupDtoSwagger.placeName)
+  @ApiProperty(GroupProperty.placeName)
   @IsString()
   placeName: string;
 
-  @ApiProperty(GroupDtoSwagger.startAt)
+  @ApiProperty(GroupProperty.startAt)
   @IsDateString()
   startAt: Date;
 
-  @ApiProperty(GroupDtoSwagger.endAt)
+  @ApiProperty(GroupProperty.endAt)
   @IsDateString()
   endAt: Date;
 
-  @ApiProperty(GroupDtoSwagger.limit)
+  @ApiProperty(GroupProperty.limit)
   @IsNumber()
   limit: number;
 
-  @ApiProperty(GroupDtoSwagger.imageUrl)
+  @ApiProperty(GroupProperty.imageUrl)
   @IsOptional()
   @IsString()
   imageUrl?: string;
 
-  @ApiProperty(GroupDtoSwagger.locationX)
+  @ApiProperty(GroupProperty.locationX)
   @IsNumber()
   locationX: number;
 
-  @ApiProperty(GroupDtoSwagger.locationY)
+  @ApiProperty(GroupProperty.locationY)
   @IsNumber()
   locationY: number;
 
-  @ApiProperty(GroupDtoSwagger.address)
+  @ApiProperty(GroupProperty.address)
   @IsString()
   address: string;
 }
