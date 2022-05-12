@@ -20,7 +20,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { JwtGuard } from 'src/guard/jwt.guard';
-import { Action, Payload, When } from 'src/common/interface';
+import { GroupTime, GroupAction, Payload } from 'src/common/interface';
 import { Request } from 'express';
 import { CreateGroupDto, UpdateGroupDto } from 'src/dto/group.dto';
 import { GroupSwagger } from 'src/swagger/group.swagger';
@@ -51,7 +51,7 @@ export class GroupController {
     @Query('x') x: number,
     @Query('y') y: number,
     @Query('offset') offset?: number,
-    @Query('when') when?: When,
+    @Query('when') when?: GroupTime,
   ) {
     return await this.groupService.getGroupsByQuery(x, y, offset, when);
   }
@@ -124,7 +124,7 @@ export class GroupController {
   async joinOrExitGroup(
     @Req() req: Request,
     @Param('groupId') groupId: number,
-    @Query('action') action: Action,
+    @Query('action') action: GroupAction,
   ) {
     const { userId } = req.user as Payload;
     return this.groupService.joinOrExitGroup(userId, groupId, action);

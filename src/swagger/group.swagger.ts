@@ -115,12 +115,7 @@ export const GroupDtoSwagger: SwaggerProperty = {
   locationY: {
     example: 127.34540366949406,
   },
-  address1: {
+  address: {
     example: '대전광역시 유성구 봉명동 629-2',
-  },
-  address2: {
-    required: false,
-    default: undefined,
-    example: null,
   },
 };

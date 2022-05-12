@@ -51,10 +51,7 @@ export class Group {
   locationY: Double;
 
   @Column('varchar')
-  address1: string;
-
-  @Column({ type: 'varchar', default: null })
-  address2: string;
+  address: string;
 
   @CreateDateColumn()
   createdAt: Date;

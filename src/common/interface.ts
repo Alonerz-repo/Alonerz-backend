@@ -4,8 +4,9 @@ export interface Payload {
   nickname: string;
 }
 
-export type When = 'lunch' | 'dinner';
-export type Action = 'join' | 'exit';
+export type GroupTime = 'lunch' | 'dinner';
+export type GroupAction = 'join' | 'exit';
+export type FollowFilter = 'following' | 'follower';
 
 interface SwaggerParam {
   in: 'query' | 'cookie' | 'path' | 'header';

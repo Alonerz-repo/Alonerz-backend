@@ -7,9 +7,7 @@ import {
   DeleteDateColumn,
   OneToMany,
   JoinColumn,
-  ManyToOne,
 } from 'typeorm';
-import { Career } from './career.entity';
 import { GroupUser } from './group-user.entity';
 import { Group } from './group.entity';
 import { UserBlock } from './user-block.entity';
@@ -30,6 +28,9 @@ export class User {
   @Column({ type: 'varchar', default: null })
   profileImageUrl: string;
 
+  @Column({ type: 'int', default: null })
+  careerId: number;
+
   @Column({ type: 'varchar', default: null })
   year: string;
 
@@ -44,11 +45,6 @@ export class User {
 
   @DeleteDateColumn({ default: null })
   deletedAt: Date;
-
-  // 사용자 : 커리어 = N : 1
-  @ManyToOne(() => Career, (career) => career.careerId)
-  @JoinColumn({ name: 'career' })
-  career: Career;
 
   // 사용자 : 점수 = 1 : N
   @OneToMany(() => UserPoint, (userPoint) => userPoint.userId, {
