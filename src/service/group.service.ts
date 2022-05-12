@@ -59,7 +59,9 @@ export class GroupService {
   // 특정 그룹 정보 조회
   async getGroupInfo(groupId: number) {
     const group = await this.groupRepository.findGroupInfo(groupId);
-    return group ? { group } : NotFoundGroup();
+    !group && NotFoundGroup();
+    group.guests = group.guests.map((guest: any) => guest.guest);
+    return { group };
   }
 
   // 조건에 따른 그룹 목록 조회
@@ -69,12 +71,22 @@ export class GroupService {
     offset?: number,
     when?: GroupTime,
   ) {
-    return await this.groupRepository.findGroupsByQuery(x, y, offset, when);
+    const groups = await this.groupRepository.findGroupsByQuery(
+      x,
+      y,
+      offset,
+      when,
+    );
+    return { groups };
   }
 
   // 사용자의 모든 그룹 조회
   async getUserGroups(userId: number, offset?: number) {
-    return await this.groupRepository.findGroupsByUserId(userId, offset);
+    const groups = await this.groupRepository.findGroupsByUserId(
+      userId,
+      offset,
+    );
+    return { groups };
   }
 
   // 그룹 참여 및 탈퇴
