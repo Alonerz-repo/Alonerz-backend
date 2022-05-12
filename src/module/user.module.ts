@@ -2,17 +2,21 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserController } from 'src/controller/user.controller';
-import { Career } from 'src/entity/career.entity';
-import { UserBlock } from 'src/entity/user-block.entity';
-import { UserFollow } from 'src/entity/user-follow.entity';
 import { UserPoint } from 'src/entity/user-point.entity';
-import { User } from 'src/entity/user.entity';
+import { BlockRepository } from 'src/repository/block.repository';
+import { FollowRepository } from 'src/repository/follow.repository';
+import { UserRepository } from 'src/repository/user.repository';
 import { UserService } from 'src/service/user.service';
 
 @Module({
   imports: [
     ConfigModule,
-    TypeOrmModule.forFeature([User, Career, UserPoint, UserFollow, UserBlock]),
+    TypeOrmModule.forFeature([
+      UserRepository,
+      FollowRepository,
+      BlockRepository,
+      UserPoint,
+    ]),
   ],
   controllers: [UserController],
   providers: [UserService],

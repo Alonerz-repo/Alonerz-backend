@@ -17,10 +17,10 @@ export class UserToken {
   @Column('varchar')
   kakaoId: string;
 
-  @Column('varchar')
+  @Column('text')
   accessToken: string;
 
-  @Column('varchar')
+  @Column('text')
   refreshToken: string;
 
   @CreateDateColumn()

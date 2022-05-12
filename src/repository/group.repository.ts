@@ -1,6 +1,6 @@
-import { When } from 'src/common/interface';
-import { CreateGroupDto, UpdateGroupDto } from 'src/dto/group.dto';
+import { GroupTime } from 'src/common/interface';
 import { Group } from 'src/entity/group.entity';
+import { CreateGroupDto, UpdateGroupDto } from 'src/dto/group.dto';
 import { EntityRepository, Repository } from 'typeorm';
 
 @EntityRepository(Group)
@@ -39,8 +39,7 @@ export class GroupRepository extends Repository<Group> {
         'group.limit',
         'group.locationX',
         'group.locationY',
-        'group.address1',
-        'group.address2',
+        'group.address',
         'group.createdAt',
         'group.updatedAt',
       ])
@@ -115,8 +114,26 @@ export class GroupRepository extends Repository<Group> {
 
   // 조건에 따른 그룹 목록 조회
   // 시간대 추가할 것
-
-  async findGroupsByQuery(x: number, y: number, offset?: number, when?: When) {
+  async findGroupsByQuery(
+    x: number,
+    y: number,
+    offset?: number,
+    time?: GroupTime,
+  ) {
+    const index = offset ? offset : 0;
+    const limit = offset ? 8 : 4;
+    let today: Date;
+    switch (time) {
+      case 'lunch':
+        today = new Date();
+        break;
+      case 'dinner':
+        today = new Date();
+        break;
+      default:
+        today = new Date();
+        break;
+    }
     const groups = await this.createQueryBuilder('groups')
       .select([
         'groups.groupId',
@@ -141,10 +158,10 @@ export class GroupRepository extends Repository<Group> {
       .leftJoin('groups.guests', 'guests')
       .addSelect(['guests.id'])
       // 시간 조건 추가할 것
-      .where('groups.startAt > :today', { today: new Date() })
-      .andWhere('groups.groupId > :offset', { offset })
+      .where('groups.startAt > :today', { today })
+      .andWhere('groups.groupId > :index', { index })
       .orderBy('groups.startAt', 'DESC')
-      .limit(offset ? 8 : 4)
+      .limit(limit)
       .getMany();
 
     return groups.map((group) => {
@@ -159,6 +176,8 @@ export class GroupRepository extends Repository<Group> {
 
   // 사용자가 참여한 모든 그룹 조회
   async findGroupsByUserId(userId: number, offset?: number) {
+    const index = offset ? offset : 0;
+    const limit = offset ? 8 : 4;
     const groups = await this.createQueryBuilder('groups')
       .select([
         'groups.groupId',
@@ -183,9 +202,9 @@ export class GroupRepository extends Repository<Group> {
       .leftJoin('groups.guests', 'guests')
       .addSelect(['guests.id'])
       .where('groups.host.userId = :userId', { userId })
-      .andWhere('groups.groupId > :offset', { offset })
+      .andWhere('groups.groupId > :index', { index })
       .orderBy('groups.startAt', 'DESC')
-      .limit(offset ? 8 : 4)
+      .limit(limit)
       .getMany();
 
     return groups.map((group) => {

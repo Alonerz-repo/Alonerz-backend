@@ -1,8 +1,9 @@
-import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Action, When } from 'src/common/interface';
+import { GroupAction, GroupTime } from 'src/common/interface';
 import { CreateGroupDto, UpdateGroupDto } from 'src/dto/group.dto';
 import { GroupUser } from 'src/entity/group-user.entity';
+import { ForbiddenGroup, NotFoundGroup } from 'src/exception/group.exception';
 import { GroupRepository } from 'src/repository/group.repository';
 import { Repository } from 'typeorm';
 
@@ -17,17 +18,14 @@ export class GroupService {
 
   // 그룹 존재 여부 확인
   private async findGroup(groupId: number) {
-    const group = await this.groupRepository.findOne(groupId, {
-      select: ['groupId'],
-    });
-    if (!group) {
-      throw new NotFoundException({
-        statusCode: HttpStatus.NOT_FOUND,
-        message: ['그룹 정보를 찾을 수 없습니다.'],
-        error: 'Not Found',
-      });
-    }
-    return group;
+    const group = await this.groupRepository.findOne(groupId);
+    return group ? group : NotFoundGroup();
+  }
+
+  // 그룹 접근 권한 확인
+  private async accessGroup(userId: number, groupId: number) {
+    const group = await this.findGroup(groupId);
+    return group.host === userId ? group : ForbiddenGroup();
   }
 
   // 새 그룹 추가
@@ -37,14 +35,18 @@ export class GroupService {
   }
 
   // 그룹 정보 수정
-  async updateGroup(groupId: number, updateGroupDto: UpdateGroupDto) {
-    await this.findGroup(groupId);
+  async updateGroup(
+    userId: number,
+    groupId: number,
+    updateGroupDto: UpdateGroupDto,
+  ) {
+    await this.accessGroup(userId, groupId);
     await this.groupRepository.updateGroup(groupId, updateGroupDto);
   }
 
   // 그룹 삭제
-  async deleteGroup(groupId: number) {
-    await this.findGroup(groupId);
+  async deleteGroup(userId: number, groupId: number) {
+    await this.accessGroup(userId, groupId);
     await this.groupRepository.deleteGroup(groupId);
   }
 
@@ -57,18 +59,16 @@ export class GroupService {
   // 특정 그룹 정보 조회
   async getGroupInfo(groupId: number) {
     const group = await this.groupRepository.findGroupInfo(groupId);
-    if (!group) {
-      throw new NotFoundException({
-        statusCode: HttpStatus.NOT_FOUND,
-        message: ['그룹 정보를 찾을 수 없습니다.'],
-        error: 'Not Found',
-      });
-    }
-    return { group };
+    return group ? { group } : NotFoundGroup();
   }
 
   // 조건에 따른 그룹 목록 조회
-  async getGroupsByQuery(x: number, y: number, offset?: number, when?: When) {
+  async getGroupsByQuery(
+    x: number,
+    y: number,
+    offset?: number,
+    when?: GroupTime,
+  ) {
     return await this.groupRepository.findGroupsByQuery(x, y, offset, when);
   }
 
@@ -78,7 +78,7 @@ export class GroupService {
   }
 
   // 그룹 참여 및 탈퇴
-  async joinOrExitGroup(userId: number, groupId: number, action: Action) {
+  async joinOrExitGroup(userId: number, groupId: number, action: GroupAction) {
     await this.findGroup(groupId);
     action === 'join'
       ? await this.groupUserRepository.save({ groupId, guest: userId })
