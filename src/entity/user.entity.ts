@@ -85,6 +85,7 @@ export class User {
   @JoinColumn({ name: 'hostGroups' })
   hostGroups: Group[];
 
+  // 사용자 : 그룹(참여자) = 1 : N
   @OneToMany(() => GroupUser, (groupUser) => groupUser.guest, {
     cascade: true,
   })
