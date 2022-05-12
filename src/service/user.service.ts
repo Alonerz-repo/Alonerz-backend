@@ -86,7 +86,6 @@ export class UserService {
       );
       return user;
     });
-
     return { users };
   }
 
@@ -104,7 +103,6 @@ export class UserService {
       );
       return user;
     });
-
     return { users };
   }
 

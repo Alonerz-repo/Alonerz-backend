@@ -2,31 +2,31 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsOptional, IsString, Length } from 'class-validator';
 import { Follow } from 'src/entity/follow.entity';
 import { Point } from 'src/entity/point.entity';
-import { UserDtoSwagger } from 'src/swagger/user.swagger';
+import { UserProperty } from 'src/swagger/property/user.property';
 
 export class UpdateUserDto {
-  @ApiProperty(UserDtoSwagger.nickname)
+  @ApiProperty(UserProperty.nickname)
   @IsOptional()
   @IsString()
   @Length(2, 20)
   nickname?: string;
 
-  @ApiProperty(UserDtoSwagger.profileImageUrl)
+  @ApiProperty(UserProperty.profileImageUrl)
   @IsOptional()
   @IsString()
   profileImageUrl?: string;
 
-  @ApiProperty(UserDtoSwagger.careerId)
+  @ApiProperty(UserProperty.careerId)
   @IsOptional()
   @IsNumber()
   careerId?: number;
 
-  @ApiProperty(UserDtoSwagger.year)
+  @ApiProperty(UserProperty.year)
   @IsOptional()
   @IsString()
   year?: string;
 
-  @ApiProperty(UserDtoSwagger.description)
+  @ApiProperty(UserProperty.description)
   @IsOptional()
   @IsString()
   description?: string;
