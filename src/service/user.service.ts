@@ -7,7 +7,6 @@ import {
   UserFollowRow,
   UserInfoData,
 } from 'src/dto/user.dto';
-import { User } from 'src/entity/user.entity';
 import {
   AlreadyUsedFor,
   InternalDBError,
@@ -17,6 +16,7 @@ import {
 import { BlockRepository } from 'src/repository/block.repository';
 import { FollowRepository } from 'src/repository/follow.repository';
 import { UserRepository } from 'src/repository/user.repository';
+import { User } from 'src/entity/user.entity';
 import { Connection } from 'typeorm';
 
 @Injectable()
@@ -78,7 +78,7 @@ export class UserService {
       followType,
     );
     const users = rows.map((row) => {
-      const user = row.followUserId as UserInfoData;
+      const user = row.otherId as UserInfoData;
       user.point = user.point as [];
       user.point = user.point.reduce(
         (pre: number, current: { point: number }) => pre + current.point,
@@ -96,7 +96,7 @@ export class UserService {
       userId,
     );
     const users = rows.map((row) => {
-      const user = row.blockUserId as UserInfoData;
+      const user = row.otherId as UserInfoData;
       user.point = user.point as [];
       user.point = user.point.reduce(
         (pre: number, current: { point: number }) => pre + current.point,
@@ -119,15 +119,12 @@ export class UserService {
   }
 
   // 다른 사용자 팔로잉/취소
-  async followingOtherOrCancel(
-    userId: number,
-    followUserId: number,
-  ): Promise<void> {
+  async followingOtherOrCancel(userId: number, otherId: number): Promise<void> {
     const user = await this.findUserInfo(userId);
-    const other = await this.findUserInfo(followUserId);
+    const other = await this.findUserInfo(otherId);
 
     user.userId === other.userId && SpecialFail();
-    const follow = await this.followRepository.findFollow(userId, followUserId);
+    const follow = await this.followRepository.findFollow(userId, otherId);
 
     follow
       ? await this.followRepository.followCancel(follow.id)
@@ -135,12 +132,12 @@ export class UserService {
   }
 
   // 다른 사용자 차단/취소
-  async blockOtherOrCancel(userId: number, blockUserId: number): Promise<void> {
+  async blockOtherOrCancel(userId: number, otherId: number): Promise<void> {
     const user = await this.findUserInfo(userId);
-    const other = await this.findUserInfo(blockUserId);
+    const other = await this.findUserInfo(otherId);
 
     user.userId === other.userId && SpecialFail();
-    const block = await this.blockRepository.findBlock(userId, blockUserId);
+    const block = await this.blockRepository.findBlock(userId, otherId);
 
     const queryRunner = this.connection.createQueryRunner();
     await queryRunner.connect();
@@ -159,14 +156,14 @@ export class UserService {
         await this.blockRepository.blockDoneTransaction(
           queryRunner,
           userId,
-          blockUserId,
+          otherId,
         );
 
         // 팔로잉 & 팔로워 상태 끊기
         await this.followRepository.followCancelTransaction(
           queryRunner,
           userId,
-          blockUserId,
+          otherId,
         );
       }
       await queryRunner.commitTransaction();

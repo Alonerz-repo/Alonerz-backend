@@ -9,12 +9,12 @@ import { UserModule } from './user.module';
 import { KakaoStrategy } from 'src/guard/kakao.guard';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/entity/user.entity';
-import { UserToken } from 'src/entity/user-token.entity';
+import { Token } from 'src/entity/token.entity';
 
 @Module({
   imports: [
     ConfigModule,
-    TypeOrmModule.forFeature([User, UserToken]),
+    TypeOrmModule.forFeature([User, Token]),
     JwtModule.register(jwtConfig),
     UserModule,
   ],
