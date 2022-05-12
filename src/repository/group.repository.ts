@@ -1,6 +1,6 @@
 import { When } from 'src/common/interface';
-import { CreateGroupDto, UpdateGroupDto } from 'src/dto/group.dto';
 import { Group } from 'src/entity/group.entity';
+import { CreateGroupDto, UpdateGroupDto } from 'src/dto/group.dto';
 import { EntityRepository, Repository } from 'typeorm';
 
 @EntityRepository(Group)

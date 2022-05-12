@@ -96,11 +96,12 @@ export class GroupController {
   @ApiBearerAuth('AccessToken')
   @ApiParam(GroupSwagger.param.groupId)
   async updateGroup(
+    @Req() req: Request,
     @Param('groupId') groupId: number,
     @Body() updateGroupDto: UpdateGroupDto,
   ) {
-    console.log(updateGroupDto);
-    return await this.groupService.updateGroup(groupId, updateGroupDto);
+    const { userId } = req.user as Payload;
+    return await this.groupService.updateGroup(userId, groupId, updateGroupDto);
   }
 
   // 그룹 삭제
@@ -109,8 +110,9 @@ export class GroupController {
   @ApiOperation(GroupSwagger.operations.deleteGroup)
   @ApiBearerAuth('AccessToken')
   @ApiParam(GroupSwagger.param.groupId)
-  async deleteGroup(@Param('groupId') groupId: number) {
-    return await this.groupService.deleteGroup(groupId);
+  async deleteGroup(@Req() req: Request, @Param('groupId') groupId: number) {
+    const { userId } = req.user as Payload;
+    return await this.groupService.deleteGroup(userId, groupId);
   }
 
   // 그룹 참여 및 탈퇴

@@ -1,4 +1,9 @@
-import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Action, When } from 'src/common/interface';
 import { CreateGroupDto, UpdateGroupDto } from 'src/dto/group.dto';
@@ -23,8 +28,21 @@ export class GroupService {
     if (!group) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
-        message: ['그룹 정보를 찾을 수 없습니다.'],
+        message: ['삭제되었거나 존재하지 않는 그룹입니다.'],
         error: 'Not Found',
+      });
+    }
+    return group;
+  }
+
+  // 그룹 접근 권한 확인
+  private async accessGroup(userId: number, groupId: number) {
+    const group = await this.findGroup(groupId);
+    if (group.host !== userId) {
+      throw new ForbiddenException({
+        statusCode: HttpStatus.FORBIDDEN,
+        message: ['해당 그룹의 수정 또는 삭제 권한이 없습니다.'],
+        error: 'Forbidden',
       });
     }
     return group;
@@ -37,14 +55,18 @@ export class GroupService {
   }
 
   // 그룹 정보 수정
-  async updateGroup(groupId: number, updateGroupDto: UpdateGroupDto) {
-    await this.findGroup(groupId);
+  async updateGroup(
+    userId: number,
+    groupId: number,
+    updateGroupDto: UpdateGroupDto,
+  ) {
+    await this.accessGroup(userId, groupId);
     await this.groupRepository.updateGroup(groupId, updateGroupDto);
   }
 
   // 그룹 삭제
-  async deleteGroup(groupId: number) {
-    await this.findGroup(groupId);
+  async deleteGroup(userId: number, groupId: number) {
+    await this.accessGroup(userId, groupId);
     await this.groupRepository.deleteGroup(groupId);
   }
 

@@ -1,17 +1,6 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
-import { Transform } from 'class-transformer';
-import {
-  IsDate,
-  IsDateString,
-  IsNumber,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsDateString, IsNumber, IsOptional, IsString } from 'class-validator';
 import { GroupDtoSwagger } from 'src/swagger/group.swagger';
-
-const transform = ({ value }) => {
-  value ? value : undefined;
-};
 
 export class CreateGroupDto {
   @ApiProperty(GroupDtoSwagger.title)
