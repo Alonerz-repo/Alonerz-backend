@@ -1,7 +1,8 @@
-import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AuthGuard, PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-kakao';
+import { NotFoundUser } from 'src/exception/user.exception';
 
 interface KakaoStrategyConfig {
   clientID: string;
@@ -21,13 +22,6 @@ export class KakaoStrategy extends PassportStrategy(Strategy) {
 
   async validate(_: string, __: string, profile: any, done: any) {
     const user = profile._json;
-    if (!user) {
-      throw new NotFoundException({
-        statusCode: HttpStatus.BAD_REQUEST,
-        message: ['사용자 정보를 찾을 수 없습니다.'],
-        error: 'NotFound',
-      });
-    }
-    done(null, user.id);
+    return user ? done(null, user.id) : NotFoundUser();
   }
 }
