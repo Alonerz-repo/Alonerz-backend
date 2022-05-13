@@ -70,7 +70,6 @@ export const FollowSwagger = {
   },
   query: {
     type: {
-      in: 'path',
       name: 'type',
       type: 'string',
       examples: {
