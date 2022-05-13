@@ -1,5 +1,5 @@
 import { Logger } from '@nestjs/common';
-import { AppModule } from './module/app.module';
+import { AppModule } from './app.module';
 import { useApplication } from './common/application';
 import 'dotenv/config';
 
