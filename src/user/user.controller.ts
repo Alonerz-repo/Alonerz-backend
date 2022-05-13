@@ -11,7 +11,7 @@ import { Request } from 'express';
 import { Payload } from 'src/common/interface';
 import { JwtGuard } from 'src/auth/guard/jwt.guard';
 import { UserService } from './user.service';
-import { UpdateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBearerAuth, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserSwagger } from './user.swagger';
 
