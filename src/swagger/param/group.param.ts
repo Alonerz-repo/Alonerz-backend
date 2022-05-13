@@ -15,4 +15,18 @@ export const GroupParam: SwaggerParam = {
     required: false,
     example: '1',
   },
+  commentId: {
+    in: 'path',
+    name: 'commentId',
+    type: 'int',
+    required: false,
+    example: '1',
+  },
+  parentId: {
+    in: 'path',
+    name: 'parentId',
+    type: 'int',
+    required: false,
+    example: '1',
+  },
 };

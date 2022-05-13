@@ -24,8 +24,8 @@ export class AuthService {
   }
 
   // 사용자 존재 여부 확인
-  private findUser(kakaoId: string) {
-    return this.userRepository.findOne(kakaoId);
+  private async findUser(kakaoId: string) {
+    return await this.userRepository.findOne({ kakaoId });
   }
 
   // 로그인(최초 로그인 시 회원가입 처리)

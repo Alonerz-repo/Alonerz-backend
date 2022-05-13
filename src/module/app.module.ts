@@ -7,7 +7,6 @@ import { AppController } from '../controller/app.controller';
 import { AuthModule } from './auth.module';
 import { UserModule } from './user.module';
 import { GroupModule } from './group.module';
-import { CommentModule } from './comment.module';
 
 @Module({
   imports: [
@@ -17,7 +16,6 @@ import { CommentModule } from './comment.module';
     AuthModule,
     UserModule,
     GroupModule,
-    CommentModule,
   ],
   controllers: [AppController],
   providers: [],

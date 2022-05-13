@@ -14,7 +14,7 @@ export const UserOperation: SwaggerOperation = {
     summary: '내 프로필 수정 API',
     description: '내 프로필 정보를 수정합니다.',
   },
-  getUserFollowings: {
+  getUserFollows: {
     summary: '사용자의 팔로잉 또는 팔로워 목록 조회 API',
     description: '사용자의 팔로잉/팔로워 목록을 조회합니다.',
   },
