@@ -29,6 +29,7 @@ import {
 } from 'src/swagger/operation/group.operation';
 import { GroupQuery } from 'src/swagger/query/group.query';
 import { GroupParam } from 'src/swagger/param/group.param';
+import { CreateCommentDto, UpdateCommentDto } from 'src/dto/comment.dto';
 
 @Controller('groups')
 @ApiTags(GroupTag)
@@ -133,5 +134,116 @@ export class GroupController {
   ) {
     const { userId } = req.user as Payload;
     return this.groupService.joinOrExitGroup(userId, groupId, action);
+  }
+
+  // 그룹 댓글 조회
+  @Get(':groupId/comments')
+  @ApiOperation(GroupOperation.getGroupComments)
+  @ApiParam(GroupParam.groupId)
+  @ApiQuery(GroupQuery.offset)
+  async getGroupComments(
+    @Param('groupId') groupId: number,
+    @Query('offset') offset: number,
+  ) {
+    return await this.groupService.getGroupComments(groupId, offset);
+  }
+
+  // 그룹 댓글 작성
+  @Post(':groupId/comments')
+  @UseGuards(JwtGuard)
+  @ApiBearerAuth('AccessToken')
+  @ApiOperation(GroupOperation.createGroupComment)
+  @ApiParam(GroupParam.groupId)
+  async creteGroupComment(
+    @Req() req: Request,
+    @Param('groupId') groupId: number,
+    @Body() createCommentDto: CreateCommentDto,
+  ) {
+    const { userId } = req.user as Payload;
+    return await this.groupService.createGroupComment(
+      groupId,
+      userId,
+      createCommentDto,
+    );
+  }
+
+  // 하위 댓글 조회
+  @Get(':groupId/comments/:parentId')
+  @ApiOperation(GroupOperation.getChildComments)
+  @ApiParam(GroupParam.groupId)
+  @ApiParam(GroupParam.parentId)
+  @ApiQuery(GroupQuery.offset)
+  async getChildComments(
+    @Param('groupId') groupId: number,
+    @Param('parentId') parentId: number,
+    @Query('offset') offset: number,
+  ) {
+    return await this.groupService.getChildComments(groupId, parentId, offset);
+  }
+
+  // 하위 댓글 작성
+  @Post(':groupId/comments/:parentId')
+  @UseGuards(JwtGuard)
+  @ApiBearerAuth('AccessToken')
+  @ApiOperation(GroupOperation.createChildComment)
+  @ApiParam(GroupParam.groupId)
+  @ApiParam(GroupParam.parentId)
+  async createChildComment(
+    @Req() req: Request,
+    @Param('groupId') groupId: number,
+    @Param('parentId') parentId: number,
+    @Body() createCommentDto: CreateCommentDto,
+  ) {
+    const { userId } = req.user as Payload;
+    return await this.groupService.createChildComment(
+      groupId,
+      parentId,
+      userId,
+      createCommentDto,
+    );
+  }
+
+  // 댓글 수정
+  @Patch(':groupId/comments/:commentId')
+  @UseGuards(JwtGuard)
+  @ApiBearerAuth('AccessToken')
+  @ApiOperation(GroupOperation.updateComment)
+  @ApiParam(GroupParam.groupId)
+  @ApiParam(GroupParam.commentId)
+  async updateComment(
+    @Req() req: Request,
+    @Param('groupId') groupId: number,
+    @Param('commentId') commentId: number,
+    @Body() updateCommentDto: UpdateCommentDto,
+  ) {
+    const { userId } = req.user as Payload;
+    return await this.groupService.updateComment(
+      groupId,
+      userId,
+      commentId,
+      updateCommentDto,
+    );
+  }
+
+  // 댓글 삭제
+  @Delete(':groupId/comments/:commentId')
+  @UseGuards(JwtGuard)
+  @ApiBearerAuth('AccessToken')
+  @ApiOperation(GroupOperation.deleteComment)
+  @ApiParam(GroupParam.groupId)
+  @ApiParam(GroupParam.commentId)
+  async deleteComment(
+    @Req() req: Request,
+    @Param('groupId') groupId: number,
+    @Param('commentId') commentId: number,
+    @Body() updateCommentDto: UpdateCommentDto,
+  ) {
+    const { userId } = req.user as Payload;
+    return await this.groupService.updateComment(
+      groupId,
+      userId,
+      commentId,
+      updateCommentDto,
+    );
   }
 }

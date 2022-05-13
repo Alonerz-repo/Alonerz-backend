@@ -6,6 +6,7 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
   ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { Group } from './group.entity';
 import { User } from './user.entity';
@@ -16,14 +17,14 @@ export class Comment {
   commentId: number;
 
   @ManyToOne(() => Group, (group) => group.groupId)
-  @Column('int')
+  @JoinColumn({ name: 'groupId' })
   groupId: number;
 
   @Column({ type: 'int', default: null })
   parentId: number;
 
   @ManyToOne(() => User, (user) => user.userId)
-  @Column('int')
+  @JoinColumn({ name: 'userId' })
   userId: number;
 
   @Column('text')
