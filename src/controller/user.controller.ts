@@ -60,13 +60,13 @@ export class UserController {
     return this.userService.updateMyProfile(userId, updateUserDto);
   }
 
-  @Get('followings/:userId')
+  @Get('follows/:userId')
   @UseGuards(JwtGuard)
-  @ApiOperation(UserOperation.getUserFollowings)
+  @ApiOperation(UserOperation.getUserFollows)
   @ApiBearerAuth('AccessToken')
   @ApiParam(UserParam.userId)
   @ApiQuery(UserQuery.filter)
-  async getUserFollowings(
+  async getUserFollows(
     @Param('userId') userId: number,
     @Query('filter') filter: FollowFilter,
   ) {
