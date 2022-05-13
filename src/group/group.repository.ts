@@ -130,7 +130,8 @@ export class GroupRepository extends Repository<Group> {
         today = new Date();
         break;
     }
-    const groups = await this.createQueryBuilder('groups')
+
+    return await this.createQueryBuilder('groups')
       .select([
         'groups.groupId',
         'groups.title',
@@ -152,21 +153,12 @@ export class GroupRepository extends Repository<Group> {
       ])
       .leftJoin('groups.guests', 'guests')
       .addSelect(['guests.id'])
+      .where('groups.groupId > :index', { index })
       // 시간 조건 추가할 것
-      .where('groups.startAt > :today', { today })
-      .andWhere('groups.groupId > :index', { index })
+      // .andWhere('groups.startAt > :today', { today })
       .orderBy('groups.startAt', 'DESC')
       .limit(limit)
       .getMany();
-
-    return groups.map((group) => {
-      const row = {
-        ...group,
-        join: group.guests.length + 1,
-      };
-      delete row.guests;
-      return row;
-    });
   }
 
   // 사용자가 참여한 모든 그룹 조회
