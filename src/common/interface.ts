@@ -6,4 +6,4 @@ export interface Payload {
 
 export type GroupTime = 'lunch' | 'dinner';
 export type GroupAction = 'join' | 'exit';
-export type FollowFilter = 'following' | 'follower';
+export type FollowType = 'following' | 'follower';
