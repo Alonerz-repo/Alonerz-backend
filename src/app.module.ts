@@ -10,6 +10,7 @@ import { GroupModule } from './group/group.module';
 import { CommentModule } from './comment/comment.module';
 import { FollowModule } from './follow/follow.module';
 import { BlockModule } from './block/block.module';
+import { ChatModule } from './chatroom/chatroom.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { BlockModule } from './block/block.module';
     BlockModule,
     GroupModule,
     CommentModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [],
