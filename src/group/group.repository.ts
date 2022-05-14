@@ -6,6 +6,15 @@ import { Group } from './group.entity';
 
 @EntityRepository(Group)
 export class GroupRepository extends Repository<Group> {
+  async findGroupHost(groupId: number) {
+    return await this.createQueryBuilder('group')
+      .select()
+      .leftJoin('group.host', 'host')
+      .addSelect(['host.userId'])
+      .where('group.groupId = :groupId', { groupId })
+      .getOne();
+  }
+
   // 그룹 생성
   async createGroup(userId: number, createGroupDto: CreateGroupDto) {
     const { groupId } = await this.save({
