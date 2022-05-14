@@ -59,7 +59,7 @@ export class User {
   following: Follow[];
 
   // 사용자 : 팔로워 = 1 : N
-  @OneToMany(() => Follow, (follow) => follow.userId, { cascade: true })
+  @OneToMany(() => Follow, (follow) => follow.otherId, { cascade: true })
   @JoinColumn({ name: 'follower' })
   follower: Follow[];
 
