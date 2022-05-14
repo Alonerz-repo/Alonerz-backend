@@ -17,6 +17,16 @@ export class GroupService {
     private readonly groupException: GroupException,
   ) {}
 
+  // 그룹 방장 확인
+  private async isHost(groupId: number) {
+    const group = await this.groupRepository.findGroupHost(groupId);
+    const host = group.host as any;
+    if (!host) {
+      this.groupException.NotFound();
+    }
+    return host.userId;
+  }
+
   // 그룹 접근 권한 확인
   private async accessGroup(userId: number, groupId: number) {
     const group = await this.groupRepository.findOne({ groupId, host: userId });
@@ -105,8 +115,8 @@ export class GroupService {
       this.groupException.BadRequest();
     }
 
-    const isHost = await this.accessGroup(userId, groupId);
-    if (isHost) {
+    const hostId = await this.isHost(groupId);
+    if (hostId === userId) {
       this.groupException.YouAreHost();
     }
 
