@@ -1,5 +1,6 @@
 import { FollowType } from 'src/common/interface';
 import { EntityRepository, QueryRunner, Repository } from 'typeorm';
+import { selectFollowUsers } from './select/selectFollowUsers';
 import { Follow } from './follow.entity';
 
 @EntityRepository(Follow)
@@ -10,14 +11,7 @@ export class FollowRepository extends Repository<Follow> {
     const where = followType === 'following' ? 'userId' : 'otherId';
     return await this.createQueryBuilder('follows')
       .leftJoin(`follows.${joinner}`, 'users')
-      .addSelect([
-        'users.userId',
-        'users.nickname',
-        'users.profileImageUrl',
-        'users.careerId',
-        'users.year',
-        'users.description',
-      ])
+      .addSelect(selectFollowUsers)
       .leftJoin('users.point', 'points')
       .addSelect(['points.point'])
       .where(`follows.${where} = :userId`, { userId })
