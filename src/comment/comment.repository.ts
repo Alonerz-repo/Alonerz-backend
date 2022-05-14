@@ -1,29 +1,20 @@
-import { EntityRepository, Repository } from 'typeorm';
 import { Comment } from './comment.entity';
+import { EntityRepository, Repository } from 'typeorm';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
+import { selectComments } from './select/selectComments';
+import { selectCommentUser } from './select/selectCommentUser';
 
 @EntityRepository(Comment)
 export class CommentRepository extends Repository<Comment> {
-  private select = {
-    user: ['user.userId', 'user.nickname', 'user.profileImageUrl'],
-    comments: [
-      'comments.commentId',
-      'comments.groupId',
-      'comments.content',
-      'comments.createdAt',
-      'comments.updatedAt',
-    ],
-  };
-
   // 그룹의 댓글 조회
   async findCommentByGroupId(groupId: number, offset: number) {
     const index = offset ? offset : 0;
     const limit = offset ? 10 : 20;
     return await this.createQueryBuilder('comments')
-      .select(this.select.comments)
+      .select(selectComments)
       .leftJoin('comments.userId', 'user')
-      .addSelect(this.select.user)
+      .addSelect(selectCommentUser)
       .where('comments.groupId = :groupId', { groupId })
       .andWhere('comments.commentId > :index', { index })
       .limit(limit)
@@ -49,9 +40,9 @@ export class CommentRepository extends Repository<Comment> {
     const index = offset ? offset : 0;
     const limit = offset ? 10 : 20;
     return await this.createQueryBuilder('comments')
-      .select(this.select.comments)
+      .select(selectComments)
       .leftJoin('comments.userId', 'user')
-      .addSelect(this.select.user)
+      .addSelect(selectCommentUser)
       .where('comments.groupId = :groupId', { groupId })
       .andWhere('comments.parentId = :parentId', { parentId })
       .andWhere('comments.commentId > :index', { index })

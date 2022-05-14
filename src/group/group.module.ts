@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthException } from 'src/auth/auth.exception';
-import { GroupUser } from './group-user.entity';
+import { GroupUserRepository } from './groupuser.repository';
 import { GroupController } from './group.controller';
 import { GroupException } from './group.exception';
 import { GroupRepository } from './group.repository';
@@ -9,7 +9,7 @@ import { GroupService } from './group.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([GroupRepository, GroupUser]),
+    TypeOrmModule.forFeature([GroupRepository, GroupUserRepository]),
     AuthException,
   ],
   controllers: [GroupController],

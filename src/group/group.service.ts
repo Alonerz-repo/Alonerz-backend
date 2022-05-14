@@ -1,22 +1,31 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { GroupAction, GroupTime } from 'src/common/interface';
-import { Repository } from 'typeorm';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
-import { GroupUser } from './group-user.entity';
 import { GroupException } from './group.exception';
 import { GroupRepository } from './group.repository';
+import { GroupUserRepository } from './groupuser.repository';
 
 @Injectable()
 export class GroupService {
   constructor(
     @InjectRepository(GroupRepository)
     private readonly groupRepository: GroupRepository,
-    @InjectRepository(GroupUser)
-    private readonly groupUserRepository: Repository<GroupUser>,
+    @InjectRepository(GroupUserRepository)
+    private readonly groupUserRepository: GroupUserRepository,
     private readonly groupException: GroupException,
   ) {}
+
+  // 그룹 방장 확인
+  private async isHost(groupId: number) {
+    const group = await this.groupRepository.findGroupHost(groupId);
+    const host = group.host as any;
+    if (!host) {
+      this.groupException.NotFound();
+    }
+    return host.userId;
+  }
 
   // 그룹 접근 권한 확인
   private async accessGroup(userId: number, groupId: number) {
@@ -72,12 +81,22 @@ export class GroupService {
     offset?: number,
     time?: GroupTime,
   ) {
-    const groups = await this.groupRepository.findGroupsByQuery(
+    const rows = await this.groupRepository.findGroupsByQuery(
       x,
       y,
       offset,
       time,
     );
+
+    const groups = rows.map((group) => {
+      const row = {
+        ...group,
+        join: group.guests.length + 1,
+      };
+      delete row.guests;
+      return row;
+    });
+
     return { groups };
   }
 
@@ -96,8 +115,8 @@ export class GroupService {
       this.groupException.BadRequest();
     }
 
-    const isHost = await this.accessGroup(userId, groupId);
-    if (isHost) {
+    const hostId = await this.isHost(groupId);
+    if (hostId === userId) {
       this.groupException.YouAreHost();
     }
 

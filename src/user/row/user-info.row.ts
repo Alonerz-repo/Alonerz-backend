@@ -29,4 +29,7 @@ export class UserInfoRow {
 
   @ApiProperty({ example: 999 })
   point: Point[] | number;
+
+  @ApiProperty({ example: [2] })
+  followers?: number[];
 }

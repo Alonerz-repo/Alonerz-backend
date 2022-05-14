@@ -1,9 +1,10 @@
 import { Block } from 'src/block/block.entity';
 import { Comment } from 'src/comment/comment.entity';
 import { Follow } from 'src/follow/follow.entity';
-import { GroupUser } from 'src/group/group-user.entity';
+import { GroupUser } from 'src/group/groupuser.entity';
 import { Group } from 'src/group/group.entity';
 import { Point } from 'src/point/point.entity';
+import { ChatUser } from 'src/chatroom/chatuser.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -58,7 +59,7 @@ export class User {
   following: Follow[];
 
   // 사용자 : 팔로워 = 1 : N
-  @OneToMany(() => Follow, (follow) => follow.userId, { cascade: true })
+  @OneToMany(() => Follow, (follow) => follow.otherId, { cascade: true })
   @JoinColumn({ name: 'follower' })
   follower: Follow[];
 
@@ -81,4 +82,9 @@ export class User {
   @OneToMany(() => Comment, (comment) => comment.userId, { cascade: true })
   @JoinColumn({ name: 'guestGroups' })
   comments: Comment[];
+
+  // 사용자 : 채팅방 = 1 : N
+  @OneToMany(() => ChatUser, (chatUser) => chatUser.user, { cascade: true })
+  @JoinColumn({ name: 'chatRooms' })
+  rooms: ChatUser[];
 }

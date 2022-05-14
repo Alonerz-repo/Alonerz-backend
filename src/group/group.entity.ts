@@ -12,7 +12,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { Comment } from '../comment/comment.entity';
-import { GroupUser } from './group-user.entity';
+import { GroupUser } from './groupuser.entity';
 
 @Entity('groups')
 export class Group {

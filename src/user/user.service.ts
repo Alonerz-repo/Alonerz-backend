@@ -45,7 +45,8 @@ export class UserService {
     const user: UserInfoRow = await this.findUserInfo(userId);
     if (user) {
       user.follower = user.follower as [];
-      user.follower = user.follower.length;
+      user.followers = user.follower.map((other: any) => other.userId.userId);
+      user.follower = user.followers.length;
       user.following = user.following as [];
       user.following = user.following.length;
       user.point = user.point as [];
