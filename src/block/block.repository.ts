@@ -1,5 +1,6 @@
-import { EntityRepository, QueryRunner, Repository } from 'typeorm';
 import { Block } from './block.entity';
+import { EntityRepository, QueryRunner, Repository } from 'typeorm';
+import { selectBlockUsers } from './select/selectBlockUsers';
 
 @EntityRepository(Block)
 export class BlockRepository extends Repository<Block> {
@@ -7,14 +8,7 @@ export class BlockRepository extends Repository<Block> {
   async findBlockUsers(userId: number) {
     return await this.createQueryBuilder('blocks')
       .leftJoin('blocks.otherId', 'users')
-      .select([
-        'users.userId',
-        'users.nickname',
-        'users.profileImageUrl',
-        'users.careerId',
-        'users.year',
-        'users.description',
-      ])
+      .select(selectBlockUsers)
       .leftJoin('uesrs.point', 'points')
       .addSelect(['points.point'])
       .where('follows.userId = :userId', { userId })

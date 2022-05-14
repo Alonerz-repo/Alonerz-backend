@@ -1,0 +1,16 @@
+export const selectGroup = [
+  'group.groupId',
+  'group.title',
+  'group.description',
+  'group.menu',
+  'group.placeName',
+  'group.imageUrl',
+  'group.startAt',
+  'group.endAt',
+  'group.limit',
+  'group.locationX',
+  'group.locationY',
+  'group.address',
+  'group.createdAt',
+  'group.updatedAt',
+];

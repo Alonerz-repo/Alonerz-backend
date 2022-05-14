@@ -1,5 +1,6 @@
 import { EntityRepository, Repository } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { selectUsers } from './select/selectUsers';
 import { User } from './user.entity';
 
 @EntityRepository(User)
@@ -12,14 +13,7 @@ export class UserRepository extends Repository<User> {
   // 사용자 프로필 조회
   async findUserInfo(userId: number) {
     return await this.createQueryBuilder('users')
-      .select([
-        'users.userId',
-        'users.nickname',
-        'users.profileImageUrl',
-        'users.careerId',
-        'users.year',
-        'users.description',
-      ])
+      .select(selectUsers)
       .leftJoinAndSelect('users.following', 'following')
       .leftJoinAndSelect('users.follower', 'follower')
       .leftJoinAndSelect('follower.userId', 'followerUser')

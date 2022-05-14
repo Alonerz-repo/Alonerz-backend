@@ -23,7 +23,6 @@ export class UserService {
   // 사용자 정보 조회
   private async findUserInfo(userId: number): Promise<User> {
     const user = await this.userRepository.findUserInfo(userId);
-    console.log(user);
     if (!user) {
       this.userException.NotFoundUser();
     }
