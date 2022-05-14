@@ -22,6 +22,7 @@ export class UserRepository extends Repository<User> {
       ])
       .leftJoinAndSelect('users.following', 'following')
       .leftJoinAndSelect('users.follower', 'follower')
+      .leftJoinAndSelect('follower.userId', 'followerUser')
       .leftJoin('users.point', 'points')
       .addSelect(['points.point'])
       .where('users.userId = :userId', { userId })

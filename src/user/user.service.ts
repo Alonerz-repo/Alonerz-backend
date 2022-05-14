@@ -23,6 +23,7 @@ export class UserService {
   // 사용자 정보 조회
   private async findUserInfo(userId: number): Promise<User> {
     const user = await this.userRepository.findUserInfo(userId);
+    console.log(user);
     if (!user) {
       this.userException.NotFoundUser();
     }
@@ -45,7 +46,8 @@ export class UserService {
     const user: UserInfoRow = await this.findUserInfo(userId);
     if (user) {
       user.follower = user.follower as [];
-      user.follower = user.follower.length;
+      user.followers = user.follower.map((other: any) => other.userId.userId);
+      user.follower = user.followers.length;
       user.following = user.following as [];
       user.following = user.following.length;
       user.point = user.point as [];
