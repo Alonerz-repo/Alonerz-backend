@@ -9,9 +9,9 @@ export class BlockRepository extends Repository<Block> {
     return await this.createQueryBuilder('blocks')
       .leftJoin('blocks.otherId', 'users')
       .select(selectBlockUsers)
-      .leftJoin('uesrs.point', 'points')
+      .leftJoin('users.point', 'points')
       .addSelect(['points.point'])
-      .where('follows.userId = :userId', { userId })
+      .where('blocks.userId = :userId', { userId })
       .getMany();
   }
 
