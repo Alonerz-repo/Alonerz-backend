@@ -35,10 +35,8 @@ export class UserService {
   // 닉네임 중복성 검사
   private async findUserByNickname(userId: number, nickname: string) {
     const user = await this.userRepository.findOne({ nickname });
-    if (user) {
-      if (user.userId !== userId) {
-        this.userException.AlreadyUsedNickname();
-      }
+    if (user && user.userId !== userId) {
+      this.userException.AlreadyUsedNickname();
     }
     return user;
   }
@@ -54,13 +52,14 @@ export class UserService {
     if (userId !== otherId) {
       const myBlocks = await this.blockRepository.findBlockUserId(userId);
       const myBlockIds = myBlocks.map((user: any) => user.otherId.userId);
-      const otherBlocks = await this.blockRepository.findBlockUserId(otherId);
-      const otherBlockIds = otherBlocks.map((user: any) => user.otherId.userId);
 
       // 내가 해당 계정을 차단한 경우
       if (myBlockIds.includes(otherId)) {
         return this.userException.BlockedUser();
       }
+
+      const otherBlocks = await this.blockRepository.findBlockUserId(otherId);
+      const otherBlockIds = otherBlocks.map((user: any) => user.otherId.userId);
 
       // 내가 차단당한 경우
       if (otherBlockIds.includes(userId)) {
