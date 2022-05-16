@@ -20,6 +20,16 @@ export const envConfig = {
   ],
 };
 
+export const s3Config: AWS.ConfigurationOptions = {
+  credentials: {
+    accessKeyId: process.env.AWS_S3_ACCESS_KEY,
+    secretAccessKey: process.env.AWS_S3_SECRET_KEY,
+  },
+  region: process.env.AWS_S3_REGION,
+};
+
+export const s3Bucket: string = process.env.AWS_S3_IMAGE_BUCKET;
+
 export const typeormConfig: TypeOrmModuleOptions = {
   type: 'mysql',
   host: String(process.env.DB_HOST),
