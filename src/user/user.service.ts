@@ -17,12 +17,6 @@ export class UserService {
     private userException: UserException,
   ) {}
 
-  // 사용자 존재 여부 확인
-  private async findUserByUserId(userId: number) {
-    const user = await this.userRepository.findOne(userId);
-    return user ? user : this.userException.NotFoundUser();
-  }
-
   // 사용자 정보 조회
   private async findUserInfo(otherId: number): Promise<User> {
     const user = await this.userRepository.findUserInfo(otherId);
