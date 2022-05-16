@@ -5,7 +5,7 @@ import { Follow } from './follow.entity';
 
 @EntityRepository(Follow)
 export class FollowRepository extends Repository<Follow> {
-  // 사용자 팔로잉 목록 조회
+  // 사용자 팔로잉 또는 팔로워 목록 조회
   async findFollowUsers(userId: number, followType: FollowType) {
     const joinner = followType === 'following' ? 'otherId' : 'userId';
     const where = followType === 'following' ? 'userId' : 'otherId';

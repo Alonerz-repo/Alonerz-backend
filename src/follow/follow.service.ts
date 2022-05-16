@@ -28,12 +28,13 @@ export class FollowService {
 
   // 팔로잉 또는 팔로워 목록 조회
   async findFollows(userId: number, followType: FollowType) {
+    const joinner = followType === 'following' ? 'otherId' : 'userId';
     const rows: FollowRow[] = await this.followRepository.findFollowUsers(
       userId,
       followType,
     );
     const users = rows.map((row) => {
-      const user = row.otherId as UserInfoRow;
+      const user = row[joinner] as UserInfoRow;
       user.point = user.point as [];
       user.point = user.point.reduce(
         (pre: number, current: { point: number }) => pre + current.point,

@@ -6,9 +6,10 @@ import { selectBlockUsers } from './select/selectBlockUsers';
 export class BlockRepository extends Repository<Block> {
   // 사용자 차단 목록 조회
   async findBlockUsers(userId: number) {
+    console.log(userId);
     return await this.createQueryBuilder('blocks')
       .leftJoin('blocks.otherId', 'users')
-      .select(selectBlockUsers)
+      .addSelect(selectBlockUsers)
       .leftJoin('users.point', 'points')
       .addSelect(['points.point'])
       .where('blocks.userId = :userId', { userId })
