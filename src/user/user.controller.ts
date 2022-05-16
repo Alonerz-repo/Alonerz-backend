@@ -28,18 +28,22 @@ export class UserController {
   @ApiResponse(UserSwagger.response.getMyProfile[401])
   async getMyProfile(@Req() req: Request) {
     const { userId } = req.user as Payload;
-    return this.userService.getUserProfile(userId);
+    return this.userService.getUserProfile(userId, userId);
   }
 
   // 다른 사용자의 프로필 조회
-  @Get(':userId')
+  @Get(':otherId')
   @UseGuards(JwtGuard)
   @ApiBearerAuth('AccessToken')
   @ApiParam(UserSwagger.param.userId)
   @ApiResponse(UserSwagger.response.getOtherProfile[200])
   @ApiResponse(UserSwagger.response.getOtherProfile[401])
-  async getOtherProfile(@Param('userId') userId: number) {
-    return this.userService.getUserProfile(userId);
+  async getOtherProfile(
+    @Req() req: Request,
+    @Param('otherId') otherId: number,
+  ) {
+    const { userId } = req.user as Payload;
+    return this.userService.getUserProfile(userId, otherId);
   }
 
   // 자신의 프로필 정보 수정
