@@ -4,9 +4,17 @@ import { selectBlockUsers } from './select/selectBlockUsers';
 
 @EntityRepository(Block)
 export class BlockRepository extends Repository<Block> {
+  // 사용자가 차단한 userId 조회
+  async findBlockUserId(userId: number) {
+    return await this.createQueryBuilder('blocks')
+      .leftJoin('blocks.otherId', 'users')
+      .addSelect('users.userId')
+      .where('blocks.userId = :userId', { userId })
+      .getMany();
+  }
+
   // 사용자 차단 목록 조회
   async findBlockUsers(userId: number) {
-    console.log(userId);
     return await this.createQueryBuilder('blocks')
       .leftJoin('blocks.otherId', 'users')
       .addSelect(selectBlockUsers)

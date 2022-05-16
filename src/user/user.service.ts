@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { BlockRepository } from 'src/block/block.repository';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserInfoRow } from './row/user-info.row';
 import { User } from './user.entity';
@@ -11,6 +12,8 @@ export class UserService {
   constructor(
     @InjectRepository(UserRepository)
     private userRepository: UserRepository,
+    @InjectRepository(BlockRepository)
+    private blockRepository: BlockRepository,
     private userException: UserException,
   ) {}
 
@@ -21,8 +24,8 @@ export class UserService {
   }
 
   // 사용자 정보 조회
-  private async findUserInfo(userId: number): Promise<User> {
-    const user = await this.userRepository.findUserInfo(userId);
+  private async findUserInfo(otherId: number): Promise<User> {
+    const user = await this.userRepository.findUserInfo(otherId);
     if (!user) {
       this.userException.NotFoundUser();
     }
@@ -41,25 +44,42 @@ export class UserService {
   }
 
   // 사용자 프로필 조회
-  async getUserProfile(userId: number) {
-    const user: UserInfoRow = await this.findUserInfo(userId);
-    if (user) {
-      user.follower = user.follower as [];
-      user.followers = user.follower.map((other: any) => other.userId.userId);
-      user.follower = user.followers.length;
-      user.following = user.following as [];
-      user.following = user.following.length;
-      user.point = user.point as [];
-      user.point = user.point.reduce(
-        (pre: number, current: { point: number }) => {
-          return pre + current.point;
-        },
-        0,
-      );
-    }
+  async getUserProfile(userId: number, otherId: number) {
+    const user: UserInfoRow = await this.userRepository.findUserInfo(otherId);
+
     if (!user) {
       this.userException.NotFoundUser();
     }
+
+    if (userId !== otherId) {
+      const myBlocks = await this.blockRepository.findBlockUserId(userId);
+      const myBlockIds = myBlocks.map((user: any) => user.otherId.userId);
+      const otherBlocks = await this.blockRepository.findBlockUserId(otherId);
+      const otherBlockIds = otherBlocks.map((user: any) => user.otherId.userId);
+
+      // 내가 해당 계정을 차단한 경우
+      if (myBlockIds.includes(otherId)) {
+        return this.userException.BlockedUser();
+      }
+
+      // 내가 차단당한 경우
+      if (otherBlockIds.includes(userId)) {
+        return this.userException.IwasBlocked();
+      }
+    }
+
+    const followers = user.follower as [];
+    user.followers = followers.map((other: any) => other.userId.userId);
+    user.follower = user.followers.length;
+
+    const following = user.following as [];
+    user.following = following.length;
+
+    const point = user.point as [];
+    user.point = point.reduce((pre: number, point: { point: number }) => {
+      return pre + point.point;
+    }, 0);
+
     return { user };
   }
 
