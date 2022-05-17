@@ -1,5 +1,5 @@
 import { GroupTime } from 'src/common/interface';
-import { EntityRepository, Repository } from 'typeorm';
+import { EntityRepository, QueryRunner, Repository } from 'typeorm';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
 import { selectGroup } from './select/selectGroup';
@@ -19,18 +19,33 @@ export class GroupRepository extends Repository<Group> {
       .getOne();
   }
 
-  // 그룹 생성
-  async createGroup(userId: string, createGroupDto: CreateGroupDto) {
-    const { groupId } = await this.save({
+  // 그룹 생성 트랜젝션
+  async createGroupTransaction(
+    queryRunner: QueryRunner,
+    userId: string,
+    imageUrl: string | null,
+    createGroupDto: CreateGroupDto,
+  ) {
+    const { groupId } = await queryRunner.manager.save(Group, {
       host: userId,
+      imageUrl,
       ...createGroupDto,
     });
-    return { groupId };
+    return groupId;
   }
 
-  // 그룹 수정
-  async updateGroup(groupId: string, updateGroupDto: UpdateGroupDto) {
-    await this.update(groupId, updateGroupDto);
+  // 그룹 수정 트랜젝션
+  async updateGroupTransaction(
+    queryRunner: QueryRunner,
+    groupId: string,
+    imageUrl: string | null,
+    updateGroupDto: UpdateGroupDto,
+  ) {
+    await queryRunner.manager.update(
+      Group,
+      { groupId },
+      { ...updateGroupDto, imageUrl },
+    );
   }
 
   // 그룹 삭제

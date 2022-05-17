@@ -7,6 +7,7 @@ export class ImageRepository extends Repository<Image> {
     queryRunner: QueryRunner,
     image: Express.MulterS3.File,
   ) {
+    console.log(image.location);
     await queryRunner.manager.save(Image, {
       originalName: image.originalname,
       mimeType: image.mimetype,

@@ -13,7 +13,7 @@ export const multerS3Option = (bucket: string): MulterOptions => ({
     bucket,
     acl: 'public-read',
     key: (_, image, callback) => {
-      callback(null, image.originalname);
+      callback(null, `${Date.now()}-${image.originalname}`);
     },
   }),
   limits: { fileSize: 20 * 1024 * 1024 },

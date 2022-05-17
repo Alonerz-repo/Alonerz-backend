@@ -11,16 +11,16 @@ export class Image {
   @PrimaryGeneratedColumn('uuid')
   imageId: string;
 
-  @Column()
+  @Column('varchar')
   originalName: string;
 
-  @Column()
+  @Column('varchar')
   mimeType: string;
 
   @Column('decimal', { precision: 10, scale: 2 })
   size: number;
 
-  @Column()
+  @Column('varchar')
   url: string;
 
   @CreateDateColumn()
