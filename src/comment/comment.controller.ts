@@ -12,6 +12,8 @@ import {
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
   ApiOperation,
   ApiParam,
   ApiQuery,
@@ -32,32 +34,34 @@ export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
   // 그룹 댓글 조회
-  @Get()
-  @ApiQuery(CommentSwagger.query.groupId)
-  @ApiQuery(CommentSwagger.query.offset)
-  @ApiOperation(CommentSwagger.routes.getGroupComments)
-  @ApiResponse(CommentSwagger.response.getGroupComments[200])
-  @ApiResponse(CommentSwagger.response.getGroupComments[404])
+  @Get(':groupId')
+  @ApiParam(CommentSwagger.getGroupComments.param.groupId)
+  @ApiQuery(CommentSwagger.getGroupComments.query.offset)
+  @ApiOperation(CommentSwagger.getGroupComments.operation)
+  @ApiResponse(CommentSwagger.getGroupComments.response[200])
+  @ApiResponse(CommentSwagger.getGroupComments.response[404])
   async getGroupComments(
-    @Query('groupId') groupId: string,
+    @Param('groupId') groupId: string,
     @Query('offset') offset: number,
   ) {
     return await this.commentService.getGroupComments(groupId, offset);
   }
 
   // 그룹 댓글 작성
-  @Post()
+  @Post(':groupId')
   @UseGuards(JwtGuard)
   @ApiBearerAuth('AccessToken')
-  @ApiQuery(CommentSwagger.query.groupId)
-  @ApiOperation(CommentSwagger.routes.creteGroupComment)
-  @ApiResponse(CommentSwagger.response.creteGroupComment[201])
-  @ApiResponse(CommentSwagger.response.creteGroupComment[400])
-  @ApiResponse(CommentSwagger.response.creteGroupComment[401])
-  @ApiResponse(CommentSwagger.response.creteGroupComment[404])
-  async creteGroupComment(
+  @ApiConsumes('application/x-www-form-urlencoded')
+  @ApiBody(CommentSwagger.createGroupComment.body)
+  @ApiQuery(CommentSwagger.createGroupComment.param.groupId)
+  @ApiOperation(CommentSwagger.createGroupComment.operation)
+  @ApiResponse(CommentSwagger.createGroupComment.response[201])
+  @ApiResponse(CommentSwagger.createGroupComment.response[400])
+  @ApiResponse(CommentSwagger.createGroupComment.response[401])
+  @ApiResponse(CommentSwagger.createGroupComment.response[404])
+  async createGroupComment(
     @Req() req: Request,
-    @Query('groupId') groupId: string,
+    @Param('groupId') groupId: string,
     @Body() createCommentDto: CreateCommentDto,
   ) {
     const { userId } = req.user as Payload;
@@ -69,16 +73,16 @@ export class CommentController {
   }
 
   // 하위 댓글 조회
-  @Get(':parentId')
-  @ApiQuery(CommentSwagger.query.groupId)
-  @ApiQuery(CommentSwagger.query.offset)
-  @ApiParam(CommentSwagger.param.parentId)
-  @ApiOperation(CommentSwagger.routes.getChildComments)
-  @ApiResponse(CommentSwagger.response.getChildComments[200])
-  @ApiResponse(CommentSwagger.response.getChildComments[404])
+  @Get(':groupId/:parentId')
+  @ApiQuery(CommentSwagger.getChildComments.query.offset)
+  @ApiParam(CommentSwagger.getChildComments.param.groupId)
+  @ApiParam(CommentSwagger.getChildComments.param.parentId)
+  @ApiOperation(CommentSwagger.getChildComments.operation)
+  @ApiResponse(CommentSwagger.getChildComments.response[200])
+  @ApiResponse(CommentSwagger.getChildComments.response[404])
   async getChildComments(
+    @Param('groupId') groupId: string,
     @Param('parentId') parentId: number,
-    @Query('groupId') groupId: string,
     @Query('offset') offset: number,
   ) {
     return await this.commentService.getChildComments(
@@ -89,20 +93,22 @@ export class CommentController {
   }
 
   // 하위 댓글 작성
-  @Post(':parentId')
+  @Post(':groupId/:parentId')
   @UseGuards(JwtGuard)
   @ApiBearerAuth('AccessToken')
-  @ApiQuery(CommentSwagger.query.groupId)
-  @ApiParam(CommentSwagger.param.parentId)
-  @ApiOperation(CommentSwagger.routes.createChildComment)
-  @ApiResponse(CommentSwagger.response.createChildComment[201])
-  @ApiResponse(CommentSwagger.response.createChildComment[400])
-  @ApiResponse(CommentSwagger.response.createChildComment[401])
-  @ApiResponse(CommentSwagger.response.createChildComment[404])
+  @ApiConsumes('application/x-www-form-urlencoded')
+  @ApiBody(CommentSwagger.createChildComment.body)
+  @ApiParam(CommentSwagger.createChildComment.param.groupId)
+  @ApiParam(CommentSwagger.createChildComment.param.parentId)
+  @ApiOperation(CommentSwagger.createChildComment.operation)
+  @ApiResponse(CommentSwagger.createChildComment.response[201])
+  @ApiResponse(CommentSwagger.createChildComment.response[400])
+  @ApiResponse(CommentSwagger.createChildComment.response[401])
+  @ApiResponse(CommentSwagger.createChildComment.response[404])
   async createChildComment(
     @Req() req: Request,
+    @Param('groupId') groupId: string,
     @Param('parentId') parentId: number,
-    @Query('groupId') groupId: string,
     @Body() createCommentDto: CreateCommentDto,
   ) {
     const { userId } = req.user as Payload;
@@ -118,13 +124,15 @@ export class CommentController {
   @Patch(':commentId')
   @UseGuards(JwtGuard)
   @ApiBearerAuth('AccessToken')
-  @ApiParam(CommentSwagger.param.commentId)
-  @ApiOperation(CommentSwagger.routes.updateComment)
-  @ApiResponse(CommentSwagger.response.updateComment[200])
-  @ApiResponse(CommentSwagger.response.updateComment[400])
-  @ApiResponse(CommentSwagger.response.updateComment[401])
-  @ApiResponse(CommentSwagger.response.updateComment[403])
-  @ApiResponse(CommentSwagger.response.updateComment[404])
+  @ApiConsumes('application/x-www-form-urlencoded')
+  @ApiBody(CommentSwagger.updateComment.body)
+  @ApiParam(CommentSwagger.updateComment.param.commentId)
+  @ApiOperation(CommentSwagger.updateComment.operation)
+  @ApiResponse(CommentSwagger.updateComment.response[200])
+  @ApiResponse(CommentSwagger.updateComment.response[400])
+  @ApiResponse(CommentSwagger.updateComment.response[401])
+  @ApiResponse(CommentSwagger.updateComment.response[403])
+  @ApiResponse(CommentSwagger.updateComment.response[404])
   async updateComment(
     @Req() req: Request,
     @Param('commentId') commentId: number,
@@ -142,12 +150,12 @@ export class CommentController {
   @Delete(':commentId')
   @UseGuards(JwtGuard)
   @ApiBearerAuth('AccessToken')
-  @ApiParam(CommentSwagger.param.commentId)
-  @ApiOperation(CommentSwagger.routes.deleteComment)
-  @ApiResponse(CommentSwagger.response.deleteComment[200])
-  @ApiResponse(CommentSwagger.response.deleteComment[401])
-  @ApiResponse(CommentSwagger.response.deleteComment[403])
-  @ApiResponse(CommentSwagger.response.deleteComment[404])
+  @ApiParam(CommentSwagger.deleteComment.param.commentId)
+  @ApiOperation(CommentSwagger.deleteComment.operation)
+  @ApiResponse(CommentSwagger.deleteComment.response[200])
+  @ApiResponse(CommentSwagger.deleteComment.response[401])
+  @ApiResponse(CommentSwagger.deleteComment.response[403])
+  @ApiResponse(CommentSwagger.deleteComment.response[404])
   async deleteComment(
     @Req() req: Request,
     @Param('commentId') commentId: number,

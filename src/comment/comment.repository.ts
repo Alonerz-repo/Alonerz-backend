@@ -9,15 +9,13 @@ import { selectCommentUser } from './select/selectCommentUser';
 export class CommentRepository extends Repository<Comment> {
   // 그룹의 댓글 조회
   async findCommentByGroupId(groupId: string, offset: number) {
-    const index = offset ? offset : 0;
-    const limit = offset ? 10 : 20;
     return await this.createQueryBuilder('comments')
       .select(selectComments)
       .leftJoin('comments.userId', 'user')
       .addSelect(selectCommentUser)
       .where('comments.groupId = :groupId', { groupId })
-      .andWhere('comments.commentId > :index', { index })
-      .limit(limit)
+      .limit(offset ? 10 : 20)
+      .offset(offset ? offset : 0)
       .getMany();
   }
 
@@ -37,16 +35,14 @@ export class CommentRepository extends Repository<Comment> {
 
   // 하위 댓글 조회
   async findChildComments(groupId: string, parentId: number, offset: number) {
-    const index = offset ? offset : 0;
-    const limit = offset ? 10 : 20;
     return await this.createQueryBuilder('comments')
       .select(selectComments)
       .leftJoin('comments.userId', 'user')
       .addSelect(selectCommentUser)
       .where('comments.groupId = :groupId', { groupId })
       .andWhere('comments.parentId = :parentId', { parentId })
-      .andWhere('comments.commentId > :index', { index })
-      .limit(limit)
+      .limit(offset ? 10 : 20)
+      .offset(offset ? offset : 0)
       .getMany();
   }
 
