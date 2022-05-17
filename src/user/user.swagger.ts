@@ -1,5 +1,5 @@
-export const UserTag = '사용자 정보 API';
 export const UserSwagger = {
+  tag: '사용자 정보 API',
   getUserProfile: {
     operation: {
       summary: '사용자 프로필 정보 조회 API',

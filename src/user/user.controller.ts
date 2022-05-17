@@ -23,10 +23,10 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { UserSwagger, UserTag } from './user.swagger';
+import { UserSwagger } from './user.swagger';
 import { S3Interceptor } from 'src/common/aws-s3';
 
-@ApiTags(UserTag)
+@ApiTags(UserSwagger.tag)
 @Controller('users')
 export class UserController {
   constructor(private userService: UserService) {}
