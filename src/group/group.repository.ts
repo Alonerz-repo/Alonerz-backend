@@ -27,21 +27,11 @@ export class GroupRepository extends Repository<Group> {
     imageUrl: string | null,
     createGroupDto: CreateGroupDto,
   ) {
-    let groupId: string;
-    if (imageUrl) {
-      const group = await queryRunner.manager.save(Group, {
-        host: userId,
-        imageUrl,
-        ...createGroupDto,
-      });
-      groupId = group.groupId;
-    } else {
-      const group = await queryRunner.manager.save(Group, {
-        host: userId,
-        ...createGroupDto,
-      });
-      groupId = group.groupId;
-    }
+    const { groupId } = await queryRunner.manager.save(Group, {
+      host: userId,
+      imageUrl,
+      ...createGroupDto,
+    });
     return groupId;
   }
 
@@ -52,11 +42,14 @@ export class GroupRepository extends Repository<Group> {
     imageUrl: string | null,
     updateGroupDto: UpdateGroupDto,
   ) {
-    await queryRunner.manager.update(
-      Group,
-      { groupId },
-      { ...updateGroupDto, imageUrl },
-    );
+    if (imageUrl) {
+      return await queryRunner.manager.update(
+        Group,
+        { groupId },
+        { ...updateGroupDto, imageUrl },
+      );
+    }
+    await queryRunner.manager.update(Group, { groupId }, updateGroupDto);
   }
 
   // 그룹 삭제
