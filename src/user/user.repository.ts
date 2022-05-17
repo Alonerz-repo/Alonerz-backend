@@ -30,10 +30,13 @@ export class UserRepository extends Repository<User> {
     imageUrl: string,
     updateUserDto: UpdateUserDto,
   ) {
-    await queryRunner.manager.update(
-      User,
-      { userId },
-      { ...updateUserDto, imageUrl },
-    );
+    if (imageUrl) {
+      return await queryRunner.manager.update(
+        User,
+        { userId },
+        { ...updateUserDto, imageUrl },
+      );
+    }
+    await queryRunner.manager.update(User, { userId }, updateUserDto);
   }
 }
