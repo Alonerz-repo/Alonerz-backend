@@ -72,7 +72,7 @@ export class GroupController {
   @ApiResponse(GroupSwagger.response.getUserGroups[401])
   @ApiResponse(GroupSwagger.response.getUserGroups[404])
   async getUserGroups(
-    @Param('userId') userId: number,
+    @Param('userId') userId: string,
     @Query('offset') offset?: number,
   ) {
     return await this.groupService.getUserGroups(userId, offset);
@@ -87,7 +87,7 @@ export class GroupController {
   @ApiResponse(GroupSwagger.response.getGroupDetail[200])
   @ApiResponse(GroupSwagger.response.getGroupDetail[401])
   @ApiResponse(GroupSwagger.response.getGroupDetail[404])
-  async getGroupDetail(@Param('groupId') groupId: number) {
+  async getGroupDetail(@Param('groupId') groupId: string) {
     return await this.groupService.getGroupDetail(groupId);
   }
 
@@ -119,7 +119,7 @@ export class GroupController {
   @ApiResponse(GroupSwagger.response.updateGroup[404])
   async updateGroup(
     @Req() req: Request,
-    @Param('groupId') groupId: number,
+    @Param('groupId') groupId: string,
     @Body() updateGroupDto: UpdateGroupDto,
   ) {
     const { userId } = req.user as Payload;
@@ -135,7 +135,7 @@ export class GroupController {
   @ApiResponse(GroupSwagger.response.deleteGroup[200])
   @ApiResponse(GroupSwagger.response.deleteGroup[401])
   @ApiResponse(GroupSwagger.response.deleteGroup[404])
-  async deleteGroup(@Req() req: Request, @Param('groupId') groupId: number) {
+  async deleteGroup(@Req() req: Request, @Param('groupId') groupId: string) {
     const { userId } = req.user as Payload;
     return await this.groupService.deleteGroup(userId, groupId);
   }
@@ -153,7 +153,7 @@ export class GroupController {
   @ApiResponse(GroupSwagger.response.joinOrExit[404])
   async joinOrExit(
     @Req() req: Request,
-    @Param('groupId') groupId: number,
+    @Param('groupId') groupId: string,
     @Query('action') action: GroupAction,
   ) {
     const { userId } = req.user as Payload;

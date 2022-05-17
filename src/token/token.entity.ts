@@ -11,8 +11,8 @@ export class Token {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column('int')
-  userId: number;
+  @Column('varchar')
+  userId: string;
 
   @Column('varchar')
   kakaoId: string;

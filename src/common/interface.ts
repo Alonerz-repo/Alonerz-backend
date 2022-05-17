@@ -1,5 +1,5 @@
 export interface Payload {
-  userId: number;
+  userId: string;
   kakaoId: string;
   nickname: string;
 }

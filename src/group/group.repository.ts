@@ -10,7 +10,7 @@ import { Group } from './group.entity';
 
 @EntityRepository(Group)
 export class GroupRepository extends Repository<Group> {
-  async findGroupHost(groupId: number) {
+  async findGroupHost(groupId: string) {
     return await this.createQueryBuilder('group')
       .select()
       .leftJoin('group.host', 'host')
@@ -20,7 +20,7 @@ export class GroupRepository extends Repository<Group> {
   }
 
   // 그룹 생성
-  async createGroup(userId: number, createGroupDto: CreateGroupDto) {
+  async createGroup(userId: string, createGroupDto: CreateGroupDto) {
     const { groupId } = await this.save({
       host: userId,
       ...createGroupDto,
@@ -29,17 +29,17 @@ export class GroupRepository extends Repository<Group> {
   }
 
   // 그룹 수정
-  async updateGroup(groupId: number, updateGroupDto: UpdateGroupDto) {
+  async updateGroup(groupId: string, updateGroupDto: UpdateGroupDto) {
     await this.update(groupId, updateGroupDto);
   }
 
   // 그룹 삭제
-  async deleteGroup(groupId: number) {
+  async deleteGroup(groupId: string) {
     await this.softDelete(groupId);
   }
 
   // 그룹 상세 정보 조회
-  async findGroupInfo(groupId: number) {
+  async findGroupInfo(groupId: string) {
     const group = await this.createQueryBuilder('group')
       .select(selectGroup)
       .leftJoin('group.host', 'host')
@@ -53,7 +53,7 @@ export class GroupRepository extends Repository<Group> {
   }
 
   // 오늘 참여 그룹 목록 조회
-  async findTodayGroups(userId: number) {
+  async findTodayGroups(userId: string) {
     const groups = await this.createQueryBuilder('groups')
       .select(selectGroups)
       .leftJoin('groups.host', 'host')
@@ -116,7 +116,7 @@ export class GroupRepository extends Repository<Group> {
   }
 
   // 사용자가 참여한 모든 그룹 조회
-  async findGroupsByUserId(userId: number, offset?: number) {
+  async findGroupsByUserId(userId: string, offset?: number) {
     const index = offset ? offset : 0;
     const limit = offset ? 8 : 4;
     const groups = await this.createQueryBuilder('groups')

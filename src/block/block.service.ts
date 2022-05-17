@@ -22,7 +22,7 @@ export class BlockService {
   ) {}
 
   // 계정 조회
-  private async findUser(userId: number) {
+  private async findUser(userId: string) {
     const user = await this.userRepository.findOne({ userId });
     if (!user) {
       this.blockException.NotFound();
@@ -31,7 +31,7 @@ export class BlockService {
   }
 
   // 자신의 차단 목록 조회
-  async findBlocks(userId: number) {
+  async findBlocks(userId: string) {
     const rows: UserBlockRow[] = await this.blockRepository.findBlockUsers(
       userId,
     );
@@ -48,7 +48,7 @@ export class BlockService {
   }
 
   // 다른 사용자 차단 또는 철회
-  async blockOrCancel(userId: number, otherId: number): Promise<void> {
+  async blockOrCancel(userId: string, otherId: string): Promise<void> {
     if (userId === otherId) {
       this.blockException.AreYouTired();
     }

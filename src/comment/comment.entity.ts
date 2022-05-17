@@ -18,14 +18,14 @@ export class Comment {
 
   @ManyToOne(() => Group, (group) => group.groupId)
   @JoinColumn({ name: 'groupId' })
-  groupId: number;
+  groupId: string;
 
   @Column({ type: 'int', default: null })
   parentId: number;
 
   @ManyToOne(() => User, (user) => user.userId)
   @JoinColumn({ name: 'userId' })
-  userId: number;
+  userId: string;
 
   @Column('text')
   content: string;

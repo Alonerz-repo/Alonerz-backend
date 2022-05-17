@@ -23,7 +23,7 @@ export class CommentService {
   }
 
   // 그룹 댓글 접근 권한 확인
-  private async accessComment(userId: number, commentId: number) {
+  private async accessComment(userId: string, commentId: number) {
     const comment = await this.commentRepository.findOne({ userId, commentId });
     if (!comment) {
       this.commentException.AccessDenined();
@@ -32,7 +32,7 @@ export class CommentService {
   }
 
   // 그룹 댓글 조회
-  async getGroupComments(groupId: number, offset: number) {
+  async getGroupComments(groupId: string, offset: number) {
     const rows = await this.commentRepository.findCommentByGroupId(
       groupId,
       offset,
@@ -48,8 +48,8 @@ export class CommentService {
 
   // 그룹 댓글 작성
   async createGroupComment(
-    groupId: number,
-    userId: number,
+    groupId: string,
+    userId: string,
     createCommentDto: CreateCommentDto,
   ) {
     await this.commentRepository.createGroupComment(
@@ -60,7 +60,7 @@ export class CommentService {
   }
 
   // 하위 댓글 조회
-  async getChildComments(groupId: number, parentId: number, offset: number) {
+  async getChildComments(groupId: string, parentId: number, offset: number) {
     await this.findComment(parentId);
     const rows = await this.commentRepository.findChildComments(
       groupId,
@@ -78,9 +78,9 @@ export class CommentService {
 
   // 하위 댓글 작성
   async createChildComment(
-    groupId: number,
+    groupId: string,
     parentId: number,
-    userId: number,
+    userId: string,
     createCommentDto: CreateCommentDto,
   ) {
     await this.findComment(parentId);
@@ -94,7 +94,7 @@ export class CommentService {
 
   // 댓글 수정
   async updateComment(
-    userId: number,
+    userId: string,
     commentId: number,
     updateCommentDto: UpdateCommentDto,
   ) {
@@ -103,7 +103,7 @@ export class CommentService {
   }
 
   // 댓글 삭제
-  async deleteComment(userId: number, commentId: number) {
+  async deleteComment(userId: string, commentId: number) {
     await this.accessComment(userId, commentId);
     await this.commentRepository.deleteComment(commentId);
   }

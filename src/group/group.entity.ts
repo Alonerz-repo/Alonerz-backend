@@ -16,8 +16,8 @@ import { GroupUser } from './groupuser.entity';
 
 @Entity('groups')
 export class Group {
-  @PrimaryGeneratedColumn()
-  groupId: number;
+  @PrimaryGeneratedColumn('uuid')
+  groupId: string;
 
   @Column('varchar')
   title: string;
@@ -63,13 +63,13 @@ export class Group {
 
   @ManyToOne(() => User, (user) => user.userId)
   @JoinColumn({ name: 'host' })
-  host: number;
+  host: string;
 
   @OneToMany(() => GroupUser, (groupUser) => groupUser.groupId, {
     cascade: true,
   })
   @JoinColumn({ name: 'guests' })
-  guests: number[];
+  guests: string[];
 
   @OneToMany(() => Comment, (comment) => comment.groupId, { cascade: true })
   @JoinColumn({ name: 'comments' })

@@ -10,8 +10,8 @@ import { ChatUser } from './chatuser.entity';
 
 @Entity('chatrooms')
 export class ChatRoom {
-  @PrimaryGeneratedColumn()
-  roomId: number;
+  @PrimaryGeneratedColumn('uuid')
+  roomId: string;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -21,5 +21,5 @@ export class ChatRoom {
 
   @OneToMany(() => ChatUser, (chatUser) => chatUser.room)
   @JoinColumn({ name: 'users' })
-  users: number[];
+  users: string[];
 }

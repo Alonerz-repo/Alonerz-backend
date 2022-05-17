@@ -6,7 +6,7 @@ import { Follow } from './follow.entity';
 @EntityRepository(Follow)
 export class FollowRepository extends Repository<Follow> {
   // 사용자 팔로잉 또는 팔로워 목록 조회
-  async findFollowUsers(userId: number, followType: FollowType) {
+  async findFollowUsers(userId: string, followType: FollowType) {
     const joinner = followType === 'following' ? 'otherId' : 'userId';
     const where = followType === 'following' ? 'userId' : 'otherId';
     return await this.createQueryBuilder('follows')
@@ -19,12 +19,12 @@ export class FollowRepository extends Repository<Follow> {
   }
 
   // 팔로우 상태 조회
-  async findFollow(userId: number, otherId: number) {
+  async findFollow(userId: string, otherId: string) {
     return await this.findOne({ userId, otherId });
   }
 
   // 다른 사용자 팔로잉
-  async follow(userId: number, otherId: number): Promise<void> {
+  async follow(userId: string, otherId: string): Promise<void> {
     await this.save({ userId, otherId });
   }
 
@@ -36,8 +36,8 @@ export class FollowRepository extends Repository<Follow> {
   // 차단 시 팔로잉, 팔로우 상태 해제 트랜젝션
   async followCancelTransaction(
     queryRunner: QueryRunner,
-    userId: number,
-    blockUserId: number,
+    userId: string,
+    blockUserId: string,
   ) {
     await queryRunner.manager.delete(Follow, {
       userId,

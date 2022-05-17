@@ -18,8 +18,8 @@ import {
 
 @Entity('users')
 export class User {
-  @PrimaryGeneratedColumn()
-  userId: number;
+  @PrimaryGeneratedColumn('uuid')
+  userId: string;
 
   @Column('varchar')
   kakaoId: string;
@@ -28,7 +28,7 @@ export class User {
   nickname: string;
 
   @Column({ type: 'varchar', default: null })
-  profileImageUrl: string;
+  imageUrl: string;
 
   @Column({ type: 'int', default: null })
   careerId: number;

@@ -8,7 +8,7 @@ import { selectCommentUser } from './select/selectCommentUser';
 @EntityRepository(Comment)
 export class CommentRepository extends Repository<Comment> {
   // 그룹의 댓글 조회
-  async findCommentByGroupId(groupId: number, offset: number) {
+  async findCommentByGroupId(groupId: string, offset: number) {
     const index = offset ? offset : 0;
     const limit = offset ? 10 : 20;
     return await this.createQueryBuilder('comments')
@@ -23,8 +23,8 @@ export class CommentRepository extends Repository<Comment> {
 
   // 그룹 댓글 작성
   async createGroupComment(
-    groupId: number,
-    userId: number,
+    groupId: string,
+    userId: string,
     createCommentDto: CreateCommentDto,
   ) {
     console.log(groupId, userId);
@@ -36,7 +36,7 @@ export class CommentRepository extends Repository<Comment> {
   }
 
   // 하위 댓글 조회
-  async findChildComments(groupId: number, parentId: number, offset: number) {
+  async findChildComments(groupId: string, parentId: number, offset: number) {
     const index = offset ? offset : 0;
     const limit = offset ? 10 : 20;
     return await this.createQueryBuilder('comments')
@@ -52,12 +52,11 @@ export class CommentRepository extends Repository<Comment> {
 
   // 하위 댓글 작성
   async createChildComment(
-    groupId: number,
-    userId: number,
+    groupId: string,
+    userId: string,
     parentId: number,
     createCommentDto: CreateCommentDto,
   ) {
-    console.log(groupId, userId);
     await this.save({
       ...createCommentDto,
       groupId,

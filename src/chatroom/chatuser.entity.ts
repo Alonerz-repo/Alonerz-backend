@@ -9,9 +9,9 @@ export class ChatUser {
 
   @ManyToOne(() => User, (user) => user.userId, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user' })
-  user: number;
+  user: string;
 
   @ManyToOne(() => ChatRoom, (room) => room.roomId, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'room' })
-  room: number;
+  room: string;
 }

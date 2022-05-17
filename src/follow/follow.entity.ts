@@ -8,9 +8,9 @@ export class Follow {
 
   @ManyToOne(() => User, (user) => user.userId, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })
-  userId: number;
+  userId: string;
 
   @ManyToOne(() => User, (user) => user.userId, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'otherId' })
-  otherId: number;
+  otherId: string;
 }

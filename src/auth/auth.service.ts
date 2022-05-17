@@ -78,7 +78,7 @@ export class AuthService {
   }
 
   // 로그아웃(accessToken 삭제)
-  async logout(userId: number, authorization: string) {
+  async logout(userId: string, authorization: string) {
     const accessToken = (authorization || ' ').split(' ')[1];
     return await this.tokenRepository.deleteToken(userId, accessToken);
   }

@@ -5,7 +5,7 @@ import { selectBlockUsers } from './select/selectBlockUsers';
 @EntityRepository(Block)
 export class BlockRepository extends Repository<Block> {
   // 사용자가 차단한 userId 조회
-  async findBlockUserId(userId: number) {
+  async findBlockUserId(userId: string) {
     return await this.createQueryBuilder('blocks')
       .leftJoin('blocks.otherId', 'users')
       .addSelect('users.userId')
@@ -14,7 +14,7 @@ export class BlockRepository extends Repository<Block> {
   }
 
   // 사용자 차단 목록 조회
-  async findBlockUsers(userId: number) {
+  async findBlockUsers(userId: string) {
     return await this.createQueryBuilder('blocks')
       .leftJoin('blocks.otherId', 'users')
       .addSelect(selectBlockUsers)
@@ -25,15 +25,15 @@ export class BlockRepository extends Repository<Block> {
   }
 
   // 차단 상태 조회
-  async findBlock(userId: number, otherId: number) {
+  async findBlock(userId: string, otherId: string) {
     return await this.findOne({ userId, otherId });
   }
 
   // 차단 상태 등록 트랜젝션
   async blockDoneTransaction(
     queryRunner: QueryRunner,
-    userId: number,
-    otherId: number,
+    userId: string,
+    otherId: string,
   ) {
     await queryRunner.manager.save(Block, { userId, otherId });
   }

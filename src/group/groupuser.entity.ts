@@ -22,9 +22,9 @@ export class GroupUser {
 
   @ManyToOne(() => Group, (group) => group.groupId)
   @JoinColumn({ name: 'groupId' })
-  groupId: number;
+  groupId: string;
 
   @ManyToOne(() => User, (user) => user.userId)
   @JoinColumn({ name: 'guest' })
-  guest: number;
+  guest: string;
 }

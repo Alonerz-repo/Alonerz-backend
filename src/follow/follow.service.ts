@@ -18,7 +18,7 @@ export class FollowService {
   ) {}
 
   // 계정 조회
-  private async findUser(userId: number) {
+  private async findUser(userId: string) {
     const user = await this.userRepository.findOne({ userId });
     if (!user) {
       this.followException.NotFound();
@@ -27,7 +27,7 @@ export class FollowService {
   }
 
   // 팔로잉 또는 팔로워 목록 조회
-  async findFollows(userId: number, followType: FollowType) {
+  async findFollows(userId: string, followType: FollowType) {
     const joinner = followType === 'following' ? 'otherId' : 'userId';
     const rows: FollowRow[] = await this.followRepository.findFollowUsers(
       userId,
@@ -46,7 +46,7 @@ export class FollowService {
   }
 
   // 팔로잉 또는 팔로잉 상태 철회
-  async followOrCancel(userId: number, otherId: number): Promise<void> {
+  async followOrCancel(userId: string, otherId: string): Promise<void> {
     if (userId === otherId) {
       this.followException.AreYouTired();
     }
