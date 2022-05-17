@@ -5,9 +5,8 @@ import { Image } from './image.entity';
 export class ImageRepository extends Repository<Image> {
   async uploadImageTransaction(
     queryRunner: QueryRunner,
-    image: Express.MulterS3.File,
+    image: Partial<Express.MulterS3.File>,
   ) {
-    console.log(image.location);
     await queryRunner.manager.save(Image, {
       originalName: image.originalname,
       mimeType: image.mimetype,

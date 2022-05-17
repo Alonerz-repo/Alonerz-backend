@@ -15,6 +15,9 @@ export const multerS3Option = (bucket: string): MulterOptions => ({
     key: (_, image, callback) => {
       callback(null, `${Date.now()}-${image.originalname}`);
     },
+    contentType: (_, image, callback) => {
+      callback(null, image.mimetype);
+    },
   }),
   limits: { fileSize: 20 * 1024 * 1024 },
 });

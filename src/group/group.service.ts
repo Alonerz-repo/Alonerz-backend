@@ -80,7 +80,7 @@ export class GroupService {
       this.groupException.Transaction();
     }
 
-    return groupId;
+    return { groupId };
   }
 
   // 그룹 정보 수정

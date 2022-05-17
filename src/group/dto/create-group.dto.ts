@@ -1,4 +1,4 @@
-import { IsDateString, IsNumber, IsString } from 'class-validator';
+import { IsDate, IsNumber, IsString } from 'class-validator';
 
 export class CreateGroupDto {
   @IsString()
@@ -13,10 +13,10 @@ export class CreateGroupDto {
   @IsString()
   placeName: string;
 
-  @IsDateString()
+  @IsDate()
   startAt: Date;
 
-  @IsDateString()
+  @IsDate()
   endAt: Date;
 
   @IsNumber()
