@@ -4,5 +4,5 @@ export const selectGroupHost = [
   'host.careerId',
   'host.year',
   'host.description',
-  'host.profileImageUrl',
+  'host.imageUrl',
 ];
