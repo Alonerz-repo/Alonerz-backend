@@ -22,7 +22,7 @@ export const UserSwagger = {
         in: 'path',
         name: 'otherId',
         type: 'string',
-        example: '000001',
+        example: 'c4ef4a2a-b215-45cc-b98c-101438104540',
         required: true,
       },
     },

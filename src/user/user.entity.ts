@@ -16,6 +16,8 @@ import {
   JoinColumn,
 } from 'typeorm';
 
+const now = () => String(Date.now());
+
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
@@ -24,7 +26,7 @@ export class User {
   @Column('varchar')
   kakaoId: string;
 
-  @Column({ type: 'varchar', default: String(Date.now()) })
+  @Column({ type: 'varchar', default: now() })
   nickname: string;
 
   @Column({ type: 'varchar', default: null })

@@ -28,7 +28,11 @@ export const s3Config: AWS.ConfigurationOptions = {
   region: process.env.AWS_S3_REGION,
 };
 
-export const s3Bucket: string = process.env.AWS_S3_IMAGE_BUCKET;
+export const s3Buckets = {
+  profileImage: process.env.AWS_S3_PROFILE_BUCKET,
+  groupImage: process.env.AWS_S3_GROUP_BUCKET,
+  assetImage: process.env.AWS_S3_ASSET_BUCKET,
+};
 
 export const typeormConfig: TypeOrmModuleOptions = {
   type: 'mysql',

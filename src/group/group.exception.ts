@@ -4,6 +4,7 @@ import {
   ForbiddenException,
   BadRequestException,
   Injectable,
+  InternalServerErrorException,
 } from '@nestjs/common';
 
 @Injectable()
@@ -37,6 +38,15 @@ export class GroupException {
       statusCode: HttpStatus.BAD_REQUEST,
       message: ['방장은 그룹을 지켜야합니다.'],
       error: 'Bad Request',
+    });
+  }
+
+  // DB 트랜젝션 오류
+  Transaction() {
+    throw new InternalServerErrorException({
+      statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+      message: ['처리 중에 예기치 않은 오류가 발생하였습니다.'],
+      error: 'Internal Server Error',
     });
   }
 }

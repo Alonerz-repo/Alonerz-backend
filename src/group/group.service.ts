@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { GroupAction, GroupTime } from 'src/common/interface';
+import { ImageRepository } from 'src/image/image.repository';
+import { Connection } from 'typeorm';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
 import { GroupException } from './group.exception';
@@ -14,6 +16,9 @@ export class GroupService {
     private readonly groupRepository: GroupRepository,
     @InjectRepository(GroupUserRepository)
     private readonly groupUserRepository: GroupUserRepository,
+    @InjectRepository(ImageRepository)
+    private readonly imageRepository: ImageRepository,
+    private connection: Connection,
     private readonly groupException: GroupException,
   ) {}
 
@@ -37,19 +42,86 @@ export class GroupService {
   }
 
   // 새 그룹 추가
-  async createGroup(userId: string, createGroupDto: CreateGroupDto) {
+  async createGroup(
+    userId: string,
+    image: Express.MulterS3.File,
+    createGroupDto: CreateGroupDto,
+  ) {
     // 현재 사용자가 참여 중인 그룹의 시간과 겹치는지 확인 후 생성
-    return await this.groupRepository.createGroup(userId, createGroupDto);
+    const queryRunner = this.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    let error = null;
+    let groupId: string;
+    try {
+      let imageUrl = null;
+      if (image) {
+        imageUrl = await this.imageRepository.uploadImageTransaction(
+          queryRunner,
+          image,
+        );
+      }
+      groupId = await this.groupRepository.createGroupTransaction(
+        queryRunner,
+        userId,
+        imageUrl,
+        createGroupDto,
+      );
+      await queryRunner.commitTransaction();
+    } catch (e) {
+      error = e;
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
+    }
+
+    if (error) {
+      this.groupException.Transaction();
+    }
+
+    return groupId;
   }
 
   // 그룹 정보 수정
   async updateGroup(
     userId: string,
     groupId: string,
+    image: Express.MulterS3.File,
     updateGroupDto: UpdateGroupDto,
   ) {
     await this.accessGroup(userId, groupId);
-    await this.groupRepository.updateGroup(groupId, updateGroupDto);
+
+    const queryRunner = this.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    let error = null;
+    try {
+      let imageUrl = null;
+      if (image) {
+        imageUrl = await this.imageRepository.uploadImageTransaction(
+          queryRunner,
+          image,
+        );
+      }
+      await this.groupRepository.updateGroupTransaction(
+        queryRunner,
+        groupId,
+        imageUrl,
+        updateGroupDto,
+      );
+      await queryRunner.commitTransaction();
+    } catch (e) {
+      error = e;
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
+    }
+
+    if (error) {
+      this.groupException.Transaction();
+    }
   }
 
   // 그룹 삭제
