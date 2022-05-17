@@ -88,8 +88,8 @@ export const GroupSwagger = {
       userId: {
         in: 'path',
         name: 'userId',
-        type: 'number',
-        example: 1,
+        type: 'string',
+        example: 'c4ef4a2a-b215-45cc-b98c-101438104540',
         required: true,
       },
     },
@@ -128,8 +128,8 @@ export const GroupSwagger = {
       groupId: {
         in: 'path',
         name: 'groupId',
-        type: 'number',
-        example: 1,
+        type: 'string',
+        example: '050b9744-b833-4c49-b35a-c9c7e631c2e2',
         required: true,
       },
     },
@@ -165,6 +165,11 @@ export const GroupSwagger = {
             description: '그룹 제목',
             example: '퇴근 후 치맥하실분~',
           },
+          description: {
+            type: 'string',
+            description: '덧붙일 내용',
+            example: '내일 출근이니 가볍게 적실 예정입니다.',
+          },
           menu: {
             type: 'string',
             description: '메뉴',
@@ -186,7 +191,7 @@ export const GroupSwagger = {
             example: new Date(),
           },
           limit: {
-            type: 'interger',
+            type: 'integer',
             description: '인원 제한',
             example: 4,
           },
@@ -245,8 +250,8 @@ export const GroupSwagger = {
       groupId: {
         in: 'path',
         name: 'groupId',
-        type: 'number',
-        example: 1,
+        type: 'string',
+        example: '050b9744-b833-4c49-b35a-c9c7e631c2e2',
         required: true,
       },
     },
@@ -285,7 +290,7 @@ export const GroupSwagger = {
             example: new Date(),
           },
           limit: {
-            type: 'interger',
+            type: 'integer',
             description: '인원 제한',
             example: 4,
           },
@@ -322,8 +327,8 @@ export const GroupSwagger = {
       groupId: {
         in: 'path',
         name: 'groupId',
-        type: 'number',
-        example: 1,
+        type: 'string',
+        example: '050b9744-b833-4c49-b35a-c9c7e631c2e2',
         required: true,
       },
     },
@@ -354,8 +359,8 @@ export const GroupSwagger = {
       groupId: {
         in: 'path',
         name: 'groupId',
-        type: 'number',
-        example: 1,
+        type: 'string',
+        example: '050b9744-b833-4c49-b35a-c9c7e631c2e2',
         required: true,
       },
     },

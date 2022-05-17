@@ -1,4 +1,3 @@
-import { GroupTime } from 'src/common/interface';
 import { EntityRepository, QueryRunner, Repository } from 'typeorm';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
@@ -6,10 +5,12 @@ import { selectGroup } from './select/selectGroup';
 import { selectGroupGuest } from './select/selectGroupGuest';
 import { selectGroupHost } from './select/selectGroupHost';
 import { selectGroups } from './select/selectGroups';
+import { GroupTime } from 'src/common/interface';
 import { Group } from './group.entity';
 
 @EntityRepository(Group)
 export class GroupRepository extends Repository<Group> {
+  // 그룹 방장 조회
   async findGroupHost(groupId: string) {
     return await this.createQueryBuilder('group')
       .select()
@@ -99,8 +100,6 @@ export class GroupRepository extends Repository<Group> {
     offset?: number,
     time?: GroupTime,
   ) {
-    const index = offset ? offset : 0;
-    const limit = offset ? 8 : 4;
     let today: Date;
     switch (time) {
       case 'lunch':
@@ -113,7 +112,6 @@ export class GroupRepository extends Repository<Group> {
         today = new Date();
         break;
     }
-
     console.log(today);
 
     return await this.createQueryBuilder('groups')
@@ -122,18 +120,15 @@ export class GroupRepository extends Repository<Group> {
       .addSelect(selectGroupHost)
       .leftJoin('groups.guests', 'guests')
       .addSelect(['guests.id'])
-      .where('groups.groupId > :index', { index })
-      // 시간 조건 추가할 것
-      // .andWhere('groups.startAt > :today', { today })
+      // .where('groups.startAt > :today', { today })
       .orderBy('groups.startAt', 'DESC')
-      .limit(limit)
+      .limit(offset ? 8 : 4)
+      .offset(offset ? offset : 0)
       .getMany();
   }
 
   // 사용자가 참여한 모든 그룹 조회
   async findGroupsByUserId(userId: string, offset?: number) {
-    const index = offset ? offset : 0;
-    const limit = offset ? 8 : 4;
     const groups = await this.createQueryBuilder('groups')
       .select(selectGroups)
       .leftJoin('groups.host', 'host')
@@ -141,9 +136,9 @@ export class GroupRepository extends Repository<Group> {
       .leftJoin('groups.guests', 'guests')
       .addSelect(['guests.id'])
       .where('groups.host.userId = :userId', { userId })
-      .andWhere('groups.groupId > :index', { index })
       .orderBy('groups.startAt', 'DESC')
-      .limit(limit)
+      .limit(offset ? 8 : 4)
+      .offset(offset ? offset : 0)
       .getMany();
 
     return groups.map((group) => {

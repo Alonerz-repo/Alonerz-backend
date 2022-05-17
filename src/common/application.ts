@@ -13,6 +13,9 @@ export const useApplication = async (
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
     }),
   );
   app.enableCors({
