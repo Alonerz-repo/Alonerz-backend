@@ -67,7 +67,7 @@ export class GroupController {
   }
 
   // 사용자의 모든 참여 그룹 목록 조회
-  @Get('joined/:userId')
+  @Get(':userId/joined')
   @UseGuards(JwtGuard)
   @ApiBearerAuth('AccessToken')
   @ApiQuery(GroupSwagger.getUserGroups.query.offset)
