@@ -21,9 +21,9 @@ export class BlockController {
   @Get()
   @UseGuards(JwtGuard)
   @ApiBasicAuth('AccessToken')
-  @ApiOperation(BlockSwagger.routes.getBlocks)
-  @ApiResponse(BlockSwagger.response.getBlocks[200])
-  @ApiResponse(BlockSwagger.response.getBlocks[401])
+  @ApiOperation(BlockSwagger.getBlocks.operation)
+  @ApiResponse(BlockSwagger.getBlocks.response[200])
+  @ApiResponse(BlockSwagger.getBlocks.response[401])
   async getBlocks(@Req() req: Request) {
     const { userId } = req.user as Payload;
     return await this.blockService.findBlocks(userId);
@@ -33,10 +33,10 @@ export class BlockController {
   @Put(':otherId')
   @UseGuards(JwtGuard)
   @ApiBasicAuth('AccessToken')
-  @ApiOperation(BlockSwagger.routes.blockOrCancel)
-  @ApiParam(BlockSwagger.param.otherId)
-  @ApiResponse(BlockSwagger.response.blockOrCancel[200])
-  @ApiResponse(BlockSwagger.response.blockOrCancel[401])
+  @ApiOperation(BlockSwagger.blockOrCancel.operation)
+  @ApiParam(BlockSwagger.blockOrCancel.param.otherId)
+  @ApiResponse(BlockSwagger.blockOrCancel.response[200])
+  @ApiResponse(BlockSwagger.blockOrCancel.response[401])
   async blockOrCancel(@Req() req: Request, @Param('otherId') otherId: string) {
     const { userId } = req.user as Payload;
     return await this.blockService.blockOrCancel(userId, otherId);

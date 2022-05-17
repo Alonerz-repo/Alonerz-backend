@@ -31,15 +31,15 @@ import { ProfileImageInterceptor } from 'src/image/image.interceptors';
 export class UserController {
   constructor(private userService: UserService) {}
 
-  // 다른 사용자의 프로필 조회
-  @Get(':otherId')
+  // 사용자의 프로필 조회
+  @Get(':userId')
   @UseGuards(JwtGuard)
   @ApiBearerAuth('AccessToken')
-  @ApiParam(UserSwagger.getUserProfile.param.otherId)
+  @ApiParam(UserSwagger.getUserProfile.param.userId)
   @ApiOperation(UserSwagger.getUserProfile.operation)
   @ApiResponse(UserSwagger.getUserProfile.response[200])
   @ApiResponse(UserSwagger.getUserProfile.response[401])
-  async getUserProfile(@Req() req: Request, @Param('otherId') otherId: string) {
+  async getUserProfile(@Req() req: Request, @Param('userId') otherId: string) {
     const { userId } = req.user as Payload;
     return this.userService.getUserProfile(userId, otherId);
   }

@@ -14,14 +14,17 @@ import { JwtGuard } from 'src/auth/guard/jwt.guard';
 import { Payload } from 'src/common/interface';
 import { ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service';
-import { AuthLoginDto, RefreshTokenDto } from './auth.dto';
 import {
   ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
   ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { AuthSwagger } from './auth.swagger';
+import { AuthLoginDto } from './dto/auth-login.dto';
+import { AuthReissueDto } from './dto/auth-reissue.dto';
 
 @ApiTags(AuthSwagger.tag)
 @Controller('auth')
@@ -35,9 +38,9 @@ export class AuthController {
   @Get()
   @UseGuards(JwtGuard)
   @ApiBearerAuth('AccessToken')
-  @ApiOperation(AuthSwagger.routes.auth)
-  @ApiResponse(AuthSwagger.response.auth[200])
-  @ApiResponse(AuthSwagger.response.auth[401])
+  @ApiOperation(AuthSwagger.auth.operation)
+  @ApiResponse(AuthSwagger.auth.response[200])
+  @ApiResponse(AuthSwagger.auth.response[401])
   async auth(@Req() req: Request) {
     return { auth: req.user };
   }
@@ -46,9 +49,9 @@ export class AuthController {
   @Get('kakao')
   @UseGuards(KakaoGuard)
   @ApiBearerAuth('AccessToken')
-  @ApiOperation(AuthSwagger.routes.kakao)
-  @ApiResponse(AuthSwagger.response.kakao[304])
-  @ApiResponse(AuthSwagger.response.kakao[401])
+  @ApiOperation(AuthSwagger.kakao.operation)
+  @ApiResponse(AuthSwagger.kakao.response[304])
+  @ApiResponse(AuthSwagger.kakao.response[401])
   async kakao(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const kakaoId = req.user;
     const { clientUrl } = this.configService.get('auth');
@@ -58,23 +61,26 @@ export class AuthController {
 
   // 서비스 로그인
   @Post('login')
-  @ApiOperation(AuthSwagger.routes.login)
-  @ApiResponse(AuthSwagger.response.login[201])
-  @ApiResponse(AuthSwagger.response.login[401])
-  async login(@Body() body: AuthLoginDto) {
-    const { kakaoId } = body;
+  @ApiConsumes('application/x-www-form-urlencoded')
+  @ApiBody(AuthSwagger.login.body)
+  @ApiOperation(AuthSwagger.login.operation)
+  @ApiResponse(AuthSwagger.login.response[201])
+  async login(@Body() authLoginDto: AuthLoginDto) {
+    const { kakaoId } = authLoginDto;
     return await this.authService.loginOrSignup(kakaoId);
   }
 
   // 토큰 재발급
   @Post('reissue')
   @ApiBearerAuth('AccessToken')
-  @ApiOperation(AuthSwagger.routes.reissue)
-  @ApiResponse(AuthSwagger.response.reissue[201])
-  @ApiResponse(AuthSwagger.response.reissue[401])
-  async reissue(@Req() req: Request, @Body() refreshTokenDto: RefreshTokenDto) {
+  @ApiConsumes('application/x-www-form-urlencoded')
+  @ApiBody(AuthSwagger.reissue.body)
+  @ApiOperation(AuthSwagger.reissue.operation)
+  @ApiResponse(AuthSwagger.reissue.response[201])
+  @ApiResponse(AuthSwagger.reissue.response[401])
+  async reissue(@Req() req: Request, @Body() authReissueDto: AuthReissueDto) {
     const { authorization } = req.headers;
-    const { refreshToken } = refreshTokenDto;
+    const { refreshToken } = authReissueDto;
     return await this.authService.reissueTokens(authorization, refreshToken);
   }
 
@@ -82,9 +88,9 @@ export class AuthController {
   @Delete('logout')
   @UseGuards(JwtGuard)
   @ApiBearerAuth('AccessToken')
-  @ApiOperation(AuthSwagger.routes.logout)
-  @ApiResponse(AuthSwagger.response.logout[200])
-  @ApiResponse(AuthSwagger.response.logout[401])
+  @ApiOperation(AuthSwagger.logout.operation)
+  @ApiResponse(AuthSwagger.logout.response[200])
+  @ApiResponse(AuthSwagger.logout.response[401])
   async logout(@Req() req: Request) {
     const { authorization } = req.headers;
     const { userId } = req.user as Payload;

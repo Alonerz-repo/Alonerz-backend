@@ -18,9 +18,9 @@ export const UserSwagger = {
       },
     },
     param: {
-      otherId: {
+      userId: {
         in: 'path',
-        name: 'otherId',
+        name: 'userId',
         type: 'string',
         example: 'c4ef4a2a-b215-45cc-b98c-101438104540',
         required: true,
