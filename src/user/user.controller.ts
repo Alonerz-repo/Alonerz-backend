@@ -24,7 +24,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { UserSwagger } from './user.swagger';
-import { S3Interceptor } from 'src/common/aws-s3';
+import { ProfileImageInterceptor } from 'src/image/image.interceptors';
 
 @ApiTags(UserSwagger.tag)
 @Controller('users')
@@ -47,7 +47,7 @@ export class UserController {
   // 자신의 프로필 정보 수정
   @Patch()
   @UseGuards(JwtGuard)
-  @UseInterceptors(S3Interceptor())
+  @UseInterceptors(ProfileImageInterceptor())
   @ApiBearerAuth('AccessToken')
   @ApiConsumes('multipart/form-data')
   @ApiBody(UserSwagger.editMyProfile.body)
