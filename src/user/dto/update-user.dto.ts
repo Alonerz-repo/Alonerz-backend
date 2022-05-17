@@ -1,17 +1,21 @@
-import { IsOptional, IsString, Length } from 'class-validator';
+import { IsNumber, IsOptional, IsString, Length } from 'class-validator';
+import { validMessage } from 'src/common/validation.message';
 
 export class UpdateUserDto {
   @IsOptional()
-  @IsString()
-  @Length(2, 20)
-  nickname?: string;
+  @IsString({ message: validMessage.IsString('nickname') })
+  @Length(2, 20, { message: validMessage.Length('nickname', 2, 20) })
+  nickname: string;
 
   @IsOptional()
-  careerId?: number;
+  @IsNumber({}, { message: validMessage.IsNumber('careerId') })
+  careerId: number;
 
   @IsOptional()
-  year?: string;
+  @IsString({ message: validMessage.IsString('year') })
+  year: string;
 
   @IsOptional()
-  description?: string;
+  @IsString({ message: validMessage.IsString('description') })
+  description: string;
 }

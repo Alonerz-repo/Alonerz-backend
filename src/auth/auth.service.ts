@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Payload } from 'src/common/interface';
 import { TokenRepository } from 'src/token/token.repository';
 import { UserRepository } from 'src/user/user.repository';
+import { AuthException } from './auth.exception';
 
 @Injectable()
 export class AuthService {
@@ -13,6 +14,7 @@ export class AuthService {
     @InjectRepository(TokenRepository)
     private readonly tokenRepository: TokenRepository,
     private jwtService: JwtService,
+    private authException: AuthException,
   ) {}
 
   // 토큰 쌍 생성
@@ -55,6 +57,11 @@ export class AuthService {
     const payload = Object(this.jwtService.decode(accessToken));
 
     const { userId, kakaoId } = payload;
+
+    if (!userId || !kakaoId) {
+      this.authException.InvalidToken();
+    }
+
     const userToken = await this.tokenRepository.findToken(
       userId,
       kakaoId,
