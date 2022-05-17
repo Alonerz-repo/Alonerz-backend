@@ -4,5 +4,5 @@ export const selectGroupGuest = [
   'guest.year',
   'guest.careerId',
   'guest.description',
-  'guest.profileImageUrl',
+  'guest.imageUrl',
 ];
