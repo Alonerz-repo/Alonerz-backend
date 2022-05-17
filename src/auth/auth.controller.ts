@@ -61,7 +61,7 @@ export class AuthController {
 
   // 서비스 로그인
   @Post('login')
-  @ApiConsumes('application/json')
+  @ApiConsumes('application/x-www-form-urlencoded')
   @ApiBody(AuthSwagger.login.body)
   @ApiOperation(AuthSwagger.login.operation)
   @ApiResponse(AuthSwagger.login.response[201])
@@ -73,7 +73,7 @@ export class AuthController {
   // 토큰 재발급
   @Post('reissue')
   @ApiBearerAuth('AccessToken')
-  @ApiConsumes('application/json')
+  @ApiConsumes('application/x-www-form-urlencoded')
   @ApiBody(AuthSwagger.reissue.body)
   @ApiOperation(AuthSwagger.reissue.operation)
   @ApiResponse(AuthSwagger.reissue.response[201])
