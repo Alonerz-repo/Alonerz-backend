@@ -9,7 +9,7 @@ import {
 @Entity('images')
 export class Image {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  imageId: string;
 
   @Column()
   originalName: string;

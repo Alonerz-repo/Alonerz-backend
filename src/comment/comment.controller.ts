@@ -39,7 +39,7 @@ export class CommentController {
   @ApiResponse(CommentSwagger.response.getGroupComments[200])
   @ApiResponse(CommentSwagger.response.getGroupComments[404])
   async getGroupComments(
-    @Query('groupId') groupId: number,
+    @Query('groupId') groupId: string,
     @Query('offset') offset: number,
   ) {
     return await this.commentService.getGroupComments(groupId, offset);
@@ -57,7 +57,7 @@ export class CommentController {
   @ApiResponse(CommentSwagger.response.creteGroupComment[404])
   async creteGroupComment(
     @Req() req: Request,
-    @Query('groupId') groupId: number,
+    @Query('groupId') groupId: string,
     @Body() createCommentDto: CreateCommentDto,
   ) {
     const { userId } = req.user as Payload;
@@ -78,7 +78,7 @@ export class CommentController {
   @ApiResponse(CommentSwagger.response.getChildComments[404])
   async getChildComments(
     @Param('parentId') parentId: number,
-    @Query('groupId') groupId: number,
+    @Query('groupId') groupId: string,
     @Query('offset') offset: number,
   ) {
     return await this.commentService.getChildComments(
@@ -102,7 +102,7 @@ export class CommentController {
   async createChildComment(
     @Req() req: Request,
     @Param('parentId') parentId: number,
-    @Query('groupId') groupId: number,
+    @Query('groupId') groupId: string,
     @Body() createCommentDto: CreateCommentDto,
   ) {
     const { userId } = req.user as Payload;

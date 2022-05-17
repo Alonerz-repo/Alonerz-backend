@@ -4,7 +4,7 @@ import { ChatUser } from './chatuser.entity';
 @EntityRepository(ChatUser)
 export class ChatUserRepository extends Repository<ChatUser> {
   // 자신이 참여중인 채팅방 조회
-  async findUserChatRooms(userId: number) {
+  async findUserChatRooms(userId: string) {
     return await this.createQueryBuilder('chatusers')
       .select('chatusers.id')
       .leftJoin('chatusers.user', 'user')
@@ -24,8 +24,8 @@ export class ChatUserRepository extends Repository<ChatUser> {
   // 채팅방 생성 후 유저 입장 트랜젝션
   async enterChatRoomTransaction(
     queryRunner: QueryRunner,
-    userId: number,
-    roomId: number,
+    userId: string,
+    roomId: string,
   ) {
     await queryRunner.manager.save(ChatUser, {
       user: userId,

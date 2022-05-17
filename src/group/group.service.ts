@@ -18,7 +18,7 @@ export class GroupService {
   ) {}
 
   // 그룹 방장 확인
-  private async isHost(groupId: number) {
+  private async isHost(groupId: string) {
     const group = await this.groupRepository.findGroupHost(groupId);
     const host = group.host as any;
     if (!host) {
@@ -28,7 +28,7 @@ export class GroupService {
   }
 
   // 그룹 접근 권한 확인
-  private async accessGroup(userId: number, groupId: number) {
+  private async accessGroup(userId: string, groupId: string) {
     const group = await this.groupRepository.findOne({ groupId, host: userId });
     if (!group) {
       this.groupException.AccessDenined();
@@ -37,15 +37,15 @@ export class GroupService {
   }
 
   // 새 그룹 추가
-  async createGroup(userId: number, createGroupDto: CreateGroupDto) {
+  async createGroup(userId: string, createGroupDto: CreateGroupDto) {
     // 현재 사용자가 참여 중인 그룹의 시간과 겹치는지 확인 후 생성
     return await this.groupRepository.createGroup(userId, createGroupDto);
   }
 
   // 그룹 정보 수정
   async updateGroup(
-    userId: number,
-    groupId: number,
+    userId: string,
+    groupId: string,
     updateGroupDto: UpdateGroupDto,
   ) {
     await this.accessGroup(userId, groupId);
@@ -53,19 +53,19 @@ export class GroupService {
   }
 
   // 그룹 삭제
-  async deleteGroup(userId: number, groupId: number) {
+  async deleteGroup(userId: string, groupId: string) {
     await this.accessGroup(userId, groupId);
     await this.groupRepository.deleteGroup(groupId);
   }
 
   // 오늘 참여 그룹 목록 조회
-  async getTodayGroups(userId: number) {
+  async getTodayGroups(userId: string) {
     const groups = await this.groupRepository.findTodayGroups(userId);
     return { groups };
   }
 
   // 특정 그룹 정보 조회
-  async getGroupDetail(groupId: number) {
+  async getGroupDetail(groupId: string) {
     const group = await this.groupRepository.findGroupInfo(groupId);
     if (!group) {
       this.groupException.NotFound();
@@ -101,7 +101,7 @@ export class GroupService {
   }
 
   // 사용자의 모든 그룹 조회
-  async getUserGroups(userId: number, offset?: number) {
+  async getUserGroups(userId: string, offset?: number) {
     const groups = await this.groupRepository.findGroupsByUserId(
       userId,
       offset,
@@ -110,7 +110,7 @@ export class GroupService {
   }
 
   // 그룹 참여 및 탈퇴
-  async joinOrExitGroup(userId: number, groupId: number, action: GroupAction) {
+  async joinOrExitGroup(userId: string, groupId: string, action: GroupAction) {
     if (!['join', 'exit'].includes(action)) {
       this.groupException.BadRequest();
     }

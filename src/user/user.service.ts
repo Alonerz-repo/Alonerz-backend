@@ -1,33 +1,28 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BlockRepository } from 'src/block/block.repository';
+import { ImageRepository } from 'src/image/image.repository';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserInfoRow } from './row/user-info.row';
-import { User } from './user.entity';
 import { UserException } from './user.exception';
 import { UserRepository } from './user.repository';
+import { Connection } from 'typeorm';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(UserRepository)
     private userRepository: UserRepository,
+    @InjectRepository(ImageRepository)
+    private imageRepository: ImageRepository,
     @InjectRepository(BlockRepository)
     private blockRepository: BlockRepository,
+    private connection: Connection,
     private userException: UserException,
   ) {}
 
-  // 사용자 정보 조회
-  private async findUserInfo(otherId: number): Promise<User> {
-    const user = await this.userRepository.findUserInfo(otherId);
-    if (!user) {
-      this.userException.NotFoundUser();
-    }
-    return user;
-  }
-
   // 닉네임 중복성 검사
-  private async findUserByNickname(userId: number, nickname: string) {
+  private async findUserByNickname(userId: string, nickname: string) {
     const user = await this.userRepository.findOne({ nickname });
     if (user && user.userId !== userId) {
       this.userException.AlreadyUsedNickname();
@@ -36,7 +31,7 @@ export class UserService {
   }
 
   // 사용자 프로필 조회
-  async getUserProfile(userId: number, otherId: number) {
+  async getUserProfile(userId: string, otherId: string) {
     const user: UserInfoRow = await this.userRepository.findUserInfo(otherId);
 
     if (!user) {
@@ -78,11 +73,42 @@ export class UserService {
 
   // 사용자 프로필 수정
   async updateMyProfile(
-    userId: number,
+    userId: string,
+    image: Express.MulterS3.File,
     updateUserDto: UpdateUserDto,
   ): Promise<void> {
     const { nickname } = updateUserDto;
     await this.findUserByNickname(userId, nickname);
-    await this.userRepository.updateUserProfile(userId, updateUserDto);
+
+    const queryRunner = this.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    let error = null;
+    try {
+      let imageUrl = null;
+      if (image) {
+        imageUrl = await this.imageRepository.uploadImageTransaction(
+          queryRunner,
+          image,
+        );
+      }
+      await this.userRepository.updateUserProfileTransaction(
+        queryRunner,
+        userId,
+        imageUrl,
+        updateUserDto,
+      );
+      await queryRunner.commitTransaction();
+    } catch (e) {
+      error = e;
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
+    }
+
+    if (error) {
+      this.userException.Transaction();
+    }
   }
 }

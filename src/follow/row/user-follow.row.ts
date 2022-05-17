@@ -7,8 +7,8 @@ export class FollowRow {
   id: number;
 
   @ApiProperty({ example: userInfo })
-  userId?: number | UserInfoRow;
+  userId?: string | UserInfoRow;
 
   @ApiProperty({ example: userInfo })
-  otherId?: number | UserInfoRow;
+  otherId?: string | UserInfoRow;
 }

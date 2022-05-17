@@ -37,7 +37,7 @@ export class BlockController {
   @ApiParam(BlockSwagger.param.otherId)
   @ApiResponse(BlockSwagger.response.blockOrCancel[200])
   @ApiResponse(BlockSwagger.response.blockOrCancel[401])
-  async blockOrCancel(@Req() req: Request, @Param('otherId') otherId: number) {
+  async blockOrCancel(@Req() req: Request, @Param('otherId') otherId: string) {
     const { userId } = req.user as Payload;
     return await this.blockService.blockOrCancel(userId, otherId);
   }

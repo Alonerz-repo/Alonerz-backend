@@ -3,6 +3,7 @@ import {
   ForbiddenException,
   HttpStatus,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 
@@ -37,6 +38,15 @@ export class UserException {
       statusCode: HttpStatus.CONFLICT,
       message: [`이미 사용중인 닉네임 입니다.`],
       error: 'Conflict',
+    });
+  }
+
+  // DB 트랜젝션 오류
+  Transaction() {
+    throw new InternalServerErrorException({
+      statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+      message: ['처리 중에 예기치 않은 오류가 발생하였습니다.'],
+      error: 'Internal Server Error',
     });
   }
 }

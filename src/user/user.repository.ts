@@ -1,4 +1,4 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { EntityRepository, QueryRunner, Repository } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { selectUsers } from './select/selectUsers';
 import { User } from './user.entity';
@@ -11,7 +11,7 @@ export class UserRepository extends Repository<User> {
   }
 
   // 사용자 프로필 조회
-  async findUserInfo(userId: number) {
+  async findUserInfo(userId: string) {
     return await this.createQueryBuilder('users')
       .select(selectUsers)
       .leftJoinAndSelect('users.following', 'following')
@@ -23,8 +23,17 @@ export class UserRepository extends Repository<User> {
       .getOne();
   }
 
-  // 사용자 프로필 수정
-  async updateUserProfile(userId: number, updateUserDto: UpdateUserDto) {
-    await this.update(userId, updateUserDto);
+  // 사용자 프로필 수정 트랜젝션
+  async updateUserProfileTransaction(
+    queryRunner: QueryRunner,
+    userId: string,
+    imageUrl: string,
+    updateUserDto: UpdateUserDto,
+  ) {
+    await queryRunner.manager.update(
+      User,
+      { userId },
+      { ...updateUserDto, imageUrl },
+    );
   }
 }

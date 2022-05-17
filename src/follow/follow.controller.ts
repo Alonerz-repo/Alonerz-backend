@@ -53,7 +53,7 @@ export class FollowController {
   @ApiResponse(FollowSwagger.response.getOtherFollows[200])
   @ApiResponse(FollowSwagger.response.getOtherFollows[401])
   async getOtherFollows(
-    @Param('userId') userId: number,
+    @Param('userId') userId: string,
     @Query('type') followType: FollowType,
   ) {
     return await this.followService.findFollows(userId, followType);
@@ -67,7 +67,7 @@ export class FollowController {
   @ApiParam(FollowSwagger.param.otherId)
   @ApiResponse(FollowSwagger.response.followOrCancel[200])
   @ApiResponse(FollowSwagger.response.followOrCancel[401])
-  async followOrCancel(@Req() req: Request, @Param('otherId') otherId: number) {
+  async followOrCancel(@Req() req: Request, @Param('otherId') otherId: string) {
     const { userId } = req.user as Payload;
     return await this.followService.followOrCancel(userId, otherId);
   }

@@ -4,7 +4,7 @@ import { ChatRoom } from './chatroom.entity';
 @EntityRepository(ChatRoom)
 export class ChatRoomRepository extends Repository<ChatRoom> {
   // 상대방과의 채팅방이 있는지 확인
-  async findChatRoomWithOther(otherId: number) {
+  async findChatRoomWithOther(otherId: string) {
     return await this.createQueryBuilder('chatrooms')
       .select(['chatrooms.roomId'])
       .leftJoinAndSelect('chatrooms.users', 'users')
@@ -19,7 +19,7 @@ export class ChatRoomRepository extends Repository<ChatRoom> {
   }
 
   // 채팅방 닫기
-  async deleteChatRoom(roomId: number) {
+  async deleteChatRoom(roomId: string) {
     return await this.softDelete({ roomId });
   }
 }

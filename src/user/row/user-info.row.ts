@@ -4,14 +4,14 @@ import { Follow } from 'src/follow/follow.entity';
 import { Point } from 'src/point/point.entity';
 
 export class UserInfoRow {
-  @ApiProperty({ example: 1 })
-  userId: number;
+  @ApiProperty({ example: '000001' })
+  userId: string;
 
   @ApiProperty({ example: 'alonerz' })
   nickname: string;
 
   @ApiProperty({ example: null })
-  profileImageUrl: string;
+  imageUrl: string;
 
   @ApiProperty({ example: '신입' })
   year: string;

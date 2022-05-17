@@ -18,7 +18,7 @@ export class ChatRoomService {
   ) {}
 
   // 자신이 참여중인 채팅방 조회
-  async getChatRooms(userId: number) {
+  async getChatRooms(userId: string) {
     const rows = await this.chatUserRepository.findUserChatRooms(userId);
     const rooms = rows.map((row: any) => {
       const room = row.room;
@@ -29,7 +29,7 @@ export class ChatRoomService {
   }
 
   // 1:1 채팅방 생성 및 참여
-  async createChatRoom(userId: number, createChatRoomDto: CreateChatRoomDto) {
+  async createChatRoom(userId: string, createChatRoomDto: CreateChatRoomDto) {
     const { otherId } = createChatRoomDto;
     let room = await this.chatRoomRepository.findChatRoomWithOther(otherId);
 

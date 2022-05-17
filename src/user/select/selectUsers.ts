@@ -1,7 +1,7 @@
 export const selectUsers = [
   'users.userId',
   'users.nickname',
-  'users.profileImageUrl',
+  'users.imageUrl',
   'users.careerId',
   'users.year',
   'users.description',
