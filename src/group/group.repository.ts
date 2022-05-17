@@ -27,11 +27,21 @@ export class GroupRepository extends Repository<Group> {
     imageUrl: string | null,
     createGroupDto: CreateGroupDto,
   ) {
-    const { groupId } = await queryRunner.manager.save(Group, {
-      host: userId,
-      imageUrl,
-      ...createGroupDto,
-    });
+    let groupId: string;
+    if (imageUrl) {
+      const group = await queryRunner.manager.save(Group, {
+        host: userId,
+        imageUrl,
+        ...createGroupDto,
+      });
+      groupId = group.groupId;
+    } else {
+      const group = await queryRunner.manager.save(Group, {
+        host: userId,
+        ...createGroupDto,
+      });
+      groupId = group.groupId;
+    }
     return groupId;
   }
 
