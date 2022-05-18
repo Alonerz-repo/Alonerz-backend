@@ -98,6 +98,7 @@ export class CommentService {
         queryRunner,
         groupId,
         parentId,
+        userId,
         createCommentDto,
       );
       // 상위 comment의 childComments += 1
