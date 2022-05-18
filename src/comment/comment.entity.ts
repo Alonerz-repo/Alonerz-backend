@@ -23,6 +23,9 @@ export class Comment {
   @Column({ type: 'int', default: null })
   parentId: number;
 
+  @Column({ type: 'int', default: 0 })
+  childComments: number;
+
   @ManyToOne(() => User, (user) => user.userId)
   @JoinColumn({ name: 'userId' })
   userId: string;

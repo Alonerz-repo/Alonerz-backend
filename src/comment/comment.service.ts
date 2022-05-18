@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Connection } from 'typeorm';
 import { CommentException } from './comment.exception';
 import { CommentRepository } from './comment.repository';
 import { CreateCommentDto } from './dto/create-comment.dto';
@@ -11,6 +12,7 @@ export class CommentService {
     @InjectRepository(CommentRepository)
     private readonly commentRepository: CommentRepository,
     private readonly commentException: CommentException,
+    private readonly connection: Connection,
   ) {}
 
   // 그룹 댓글 존재 여부 확인
@@ -19,7 +21,7 @@ export class CommentService {
     if (!comment) {
       this.commentException.NotFound();
     }
-    return comment;
+    return comment.childComments;
   }
 
   // 그룹 댓글 접근 권한 확인
@@ -83,13 +85,38 @@ export class CommentService {
     userId: string,
     createCommentDto: CreateCommentDto,
   ) {
-    await this.findComment(parentId);
-    await this.commentRepository.createChildComment(
-      groupId,
-      userId,
-      parentId,
-      createCommentDto,
-    );
+    const childComments = await this.findComment(parentId);
+
+    const queryRunner = this.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    let error = null;
+    try {
+      // 하위 comment 등록
+      await this.commentRepository.createChildCommentTransaction(
+        queryRunner,
+        groupId,
+        parentId,
+        createCommentDto,
+      );
+      // 상위 comment의 childComments += 1
+      await this.commentRepository.increaseChildCommentCountTransaction(
+        queryRunner,
+        parentId,
+        childComments + 1,
+      );
+      await queryRunner.commitTransaction();
+    } catch (e) {
+      error = e;
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
+    }
+
+    if (error) {
+      this.commentException.Transaction();
+    }
   }
 
   // 댓글 수정

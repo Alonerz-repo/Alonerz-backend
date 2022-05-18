@@ -1,4 +1,14 @@
-export const selectComments = [
+// 하위 댓글 개수 파악
+export const selectGroupComments = [
+  'comments.commentId',
+  'comments.groupId',
+  'comments.childComments',
+  'comments.content',
+  'comments.createdAt',
+  'comments.updatedAt',
+];
+
+export const selectChildComments = [
   'comments.commentId',
   'comments.groupId',
   'comments.content',
