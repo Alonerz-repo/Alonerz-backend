@@ -14,6 +14,7 @@ export class CommentRepository extends Repository<Comment> {
       .leftJoin('comments.userId', 'user')
       .addSelect(selectCommentUser)
       .where('comments.groupId = :groupId', { groupId })
+      .andWhere('comments.parentId IS NULL')
       .limit(offset ? 10 : 20)
       .offset(offset ? offset : 0)
       .getMany();
