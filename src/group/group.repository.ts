@@ -77,11 +77,12 @@ export class GroupRepository extends Repository<Group> {
       .select(selectGroups)
       .leftJoin('groups.host', 'host')
       .addSelect(selectGroupHost)
-      .leftJoin('groups.guests', 'guests')
-      .addSelect(['guests.id'])
+      .leftJoinAndSelect('groups.guests', 'guests')
+      .leftJoin('guests.guest', 'guest')
+      .addSelect('guest.userId')
       .where('groups.host.userId = :userId', { userId })
-      .orWhere(':userId IN (SELECT guest from groupusers)', { userId })
-      .andWhere('groups.startAt > :today', { today: new Date() })
+      .orWhere('guest.userId = :userId', { userId })
+      // .andWhere('groups.startAt > :today', { today: new Date() })
       .orderBy('groups.startAt', 'DESC')
       .getMany();
 
