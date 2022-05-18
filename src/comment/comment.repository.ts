@@ -1,16 +1,19 @@
 import { Comment } from './comment.entity';
-import { EntityRepository, Repository } from 'typeorm';
+import { EntityRepository, QueryRunner, Repository } from 'typeorm';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
-import { selectComments } from './select/selectComments';
+import {
+  selectChildComments,
+  selectGroupComments,
+} from './select/selectComments';
 import { selectCommentUser } from './select/selectCommentUser';
 
 @EntityRepository(Comment)
 export class CommentRepository extends Repository<Comment> {
   // 그룹의 댓글 조회
   async findCommentByGroupId(groupId: string, offset: number) {
-    return await this.createQueryBuilder('comments')
-      .select(selectComments)
+    const comment = await this.createQueryBuilder('comments')
+      .select(selectGroupComments)
       .leftJoin('comments.userId', 'user')
       .addSelect(selectCommentUser)
       .where('comments.groupId = :groupId', { groupId })
@@ -18,6 +21,8 @@ export class CommentRepository extends Repository<Comment> {
       .limit(offset ? 10 : 20)
       .offset(offset ? offset : 0)
       .getMany();
+
+    return comment;
   }
 
   // 그룹 댓글 작성
@@ -26,7 +31,6 @@ export class CommentRepository extends Repository<Comment> {
     userId: string,
     createCommentDto: CreateCommentDto,
   ) {
-    console.log(groupId, userId);
     await this.save({
       ...createCommentDto,
       groupId,
@@ -37,7 +41,7 @@ export class CommentRepository extends Repository<Comment> {
   // 하위 댓글 조회
   async findChildComments(groupId: string, parentId: number, offset: number) {
     return await this.createQueryBuilder('comments')
-      .select(selectComments)
+      .select(selectChildComments)
       .leftJoin('comments.userId', 'user')
       .addSelect(selectCommentUser)
       .where('comments.groupId = :groupId', { groupId })
@@ -47,19 +51,31 @@ export class CommentRepository extends Repository<Comment> {
       .getMany();
   }
 
-  // 하위 댓글 작성
-  async createChildComment(
+  // 하위 댓글 작성 트랜젝션
+  async createChildCommentTransaction(
+    queryRunner: QueryRunner,
     groupId: string,
-    userId: string,
     parentId: number,
     createCommentDto: CreateCommentDto,
   ) {
-    await this.save({
-      ...createCommentDto,
+    await queryRunner.manager.save(Comment, {
       groupId,
-      userId,
       parentId,
+      ...createCommentDto,
     });
+  }
+
+  // 그룹 댓글의 하위 댓글 개수 증가 트랜젝션
+  async increaseChildCommentCountTransaction(
+    queryRunner: QueryRunner,
+    parentId: number,
+    childComments: number,
+  ) {
+    await queryRunner.manager.update(
+      Comment,
+      { commentId: parentId },
+      { childComments },
+    );
   }
 
   // 댓글 수정
