@@ -25,9 +25,12 @@ export class GroupService {
   // 그룹 방장 확인
   private async isHost(groupId: string) {
     const group = await this.groupRepository.findGroupHost(groupId);
+    if (!group) {
+      return this.groupException.NotFound();
+    }
     const host = group.host as any;
     if (!host) {
-      this.groupException.NotFound();
+      return this.groupException.NotFound();
     }
     return host.userId;
   }

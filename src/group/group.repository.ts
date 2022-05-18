@@ -136,14 +136,15 @@ export class GroupRepository extends Repository<Group> {
       .select(selectGroups)
       .leftJoin('groups.host', 'host')
       .addSelect(selectGroupHost)
-      .leftJoin('groups.guests', 'guests')
-      .addSelect(['guests.id'])
+      .leftJoinAndSelect('groups.guests', 'guests')
+      .leftJoin('guests.guest', 'guest')
+      .addSelect('guest.userId')
       .where('groups.host.userId = :userId', { userId })
+      .orWhere('guest.userId = :userId', { userId })
       .orderBy('groups.startAt', 'DESC')
       .limit(offset ? 8 : 4)
       .offset(offset ? offset : 0)
       .getMany();
-
     return groups.map((group) => {
       const row = {
         ...group,
