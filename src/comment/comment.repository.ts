@@ -56,11 +56,13 @@ export class CommentRepository extends Repository<Comment> {
     queryRunner: QueryRunner,
     groupId: string,
     parentId: number,
+    userId: string,
     createCommentDto: CreateCommentDto,
   ) {
     await queryRunner.manager.save(Comment, {
       groupId,
       parentId,
+      userId,
       ...createCommentDto,
     });
   }
