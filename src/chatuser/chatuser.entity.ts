@@ -1,6 +1,14 @@
 import { ChatRoom } from 'src/chatroom/chatroom.entity';
 import { User } from 'src/user/user.entity';
-import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity('chatusers')
 export class ChatUser {
@@ -16,4 +24,13 @@ export class ChatUser {
   @ManyToOne(() => User, (user) => user.userId, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user' })
   user: string;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updateAt: Date;
+
+  @DeleteDateColumn({ default: null })
+  deleteAt: Date;
 }

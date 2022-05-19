@@ -5,18 +5,18 @@ import {
   Entity,
   JoinColumn,
   OneToMany,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
 } from 'typeorm';
 
 @Entity('chatrooms')
 export class ChatRoom {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn()
   roomId: string;
 
   @CreateDateColumn()
   createdAt: Date;
 
-  @DeleteDateColumn()
+  @DeleteDateColumn({ default: null })
   deletedAt: Date;
 
   // 채팅방 : 참여자 = 1 : N

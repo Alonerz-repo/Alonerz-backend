@@ -10,10 +10,13 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity('chat')
+@Entity('chats')
 export class Chat {
   @PrimaryGeneratedColumn()
   chatId: number;
+
+  @Column('varchar')
+  roomId: string;
 
   @Column('text')
   message: string;

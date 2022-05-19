@@ -21,6 +21,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@types/uuid": "^8.3.4",
     "app-root-path": "^3.0.0",
     "aws-sdk": "^2.1135.0",
     "class-transformer": "^0.5.1",
@@ -37,7 +38,8 @@
     "rxjs": "^7.2.0",
     "socket.io": "^4.5.0",
     "swagger-ui-express": "^4.3.0",
-    "typeorm": "^0.2.45"
+    "typeorm": "^0.2.45",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@nestjs/cli": "^8.0.0",

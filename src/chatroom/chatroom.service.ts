@@ -2,6 +2,7 @@ import {
   HttpStatus,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ChatUserRepository } from 'src/chatuser/chatuser.repository';
@@ -18,6 +19,19 @@ export class ChatRoomService {
     private readonly chatUserRepository: ChatUserRepository,
     private readonly connection: Connection,
   ) {}
+
+  // 채팅방 존재 여부 확인 (RoomId)
+  private async getOneByRoomId(roomId: string) {
+    const room = await this.chatRoomRepository.findOneByRoomId(roomId);
+    if (!room) {
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: ['삭제되었거나, 존재하지 않는 채팅방입니다.'],
+        error: 'Not Found',
+      });
+    }
+    return room;
+  }
 
   // 자신이 참여중인 채팅방 조회
   // 레거시 코드이므로 상황에 맞게 수정하세요.
@@ -75,5 +89,25 @@ export class ChatRoomService {
     }
 
     return { roomId: room.roomId };
+  }
+
+  // 채팅방 입장 (채팅방 목록에서)
+  async EnterChatRoomToServer(roomId: string) {
+    const chats = [];
+    return chats;
+  }
+
+  // 채팅방 입장 (생성은 메시지 보낼 시)
+  async enterRoom(enterRoomDto: EnterRoomDto) {
+    // (1:1 DM을 통해 채팅방에 간접적으로 들어오는 경우)
+    // { userId } AND { otherId }에 해당하는 roomId 조회
+    // 없으면 { roomId } 생성
+
+    // (채팅목록을 통해 채팅방에 직접적으로 들어온 경우)
+    // 해당 roomId 사용
+
+    // roomId로 최근 채팅내역 조회 후 emit
+    const chats = [];
+    return;
   }
 }
