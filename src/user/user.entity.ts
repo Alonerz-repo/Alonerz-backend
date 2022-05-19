@@ -1,7 +1,7 @@
 import { Block } from 'src/block/block.entity';
 import { Comment } from 'src/comment/comment.entity';
 import { Follow } from 'src/follow/follow.entity';
-import { GroupUser } from 'src/group/groupuser.entity';
+import { GroupUser } from 'src/groupuser/groupuser.entity';
 import { Group } from 'src/group/group.entity';
 import { Point } from 'src/point/point.entity';
 import {
@@ -14,6 +14,8 @@ import {
   OneToMany,
   JoinColumn,
 } from 'typeorm';
+import { ChatUser } from 'src/chatuser/chatuser.entity';
+import { Chat } from 'src/chat/chat.entity';
 
 const now = () => String(Date.now());
 
@@ -84,8 +86,13 @@ export class User {
   @JoinColumn({ name: 'guestGroups' })
   comments: Comment[];
 
-  // // 사용자 : 채팅방 = 1 : N
-  // @OneToMany(() => ChatUser, (chatUser) => chatUser.user, { cascade: true })
-  // @JoinColumn({ name: 'chatRooms' })
-  // rooms: ChatUser[];
+  // 사용자 : 채팅방 = 1 : N
+  @OneToMany(() => ChatUser, (chatUser) => chatUser.user, { cascade: true })
+  @JoinColumn({ name: 'chatRooms' })
+  rooms: ChatUser[];
+
+  // 사용자 : 채팅 = 1 : N
+  @OneToMany(() => Chat, (chat) => chat.user, { cascade: true })
+  @JoinColumn({ name: 'chats' })
+  chats: Chat[];
 }

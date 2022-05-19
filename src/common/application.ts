@@ -1,12 +1,13 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { SocketAdapter } from './socket-adapter';
 import { useSwagger } from './swagger';
 
 export const useApplication = async (
   AppModule: any,
 ): Promise<INestApplication> => {
   const app = await NestFactory.create(AppModule);
-  useSwagger(app);
+  app.useWebSocketAdapter(new SocketAdapter(app));
   app.setGlobalPrefix('api');
   app.useGlobalPipes(
     new ValidationPipe({
@@ -22,5 +23,6 @@ export const useApplication = async (
     origin: '*',
     credentials: true,
   });
+  useSwagger(app);
   return app;
 };
