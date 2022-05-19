@@ -7,7 +7,7 @@ import { CreateGroupDto } from './dto/create-group.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
 import { GroupException } from './group.exception';
 import { GroupRepository } from './group.repository';
-import { GroupUserRepository } from './groupuser.repository';
+import { GroupUserRepository } from '../groupuser/groupuser.repository';
 
 @Injectable()
 export class GroupService {
