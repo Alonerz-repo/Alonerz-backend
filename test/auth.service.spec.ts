@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthService } from 'src/service/auth.service';
+import { AuthService } from 'src/auth/auth.service';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -10,9 +10,11 @@ describe('AuthService', () => {
     }).compile();
 
     service = module.get<AuthService>(AuthService);
+    console.log(service);
   });
 
   it('should be defined', () => {
-    expect(service).toBeDefined();
+    console.log(service);
+    return expect(service).toBeDefined();
   });
 });

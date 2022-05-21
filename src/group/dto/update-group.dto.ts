@@ -7,8 +7,8 @@ export class UpdateGroupDto {
   readonly title: string;
 
   @IsOptional()
-  @IsString({ message: validMessage.IsString('menu') })
-  readonly menu: string;
+  @IsNumber({}, { message: validMessage.IsNumber('categoryId') })
+  readonly categoryId: number;
 
   @IsOptional()
   @IsString({ message: validMessage.IsString('description') })
