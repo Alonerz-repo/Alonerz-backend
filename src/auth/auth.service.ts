@@ -6,6 +6,7 @@ import { Payload } from 'src/common/interface';
 import { TokenRepository } from 'src/token/token.repository';
 import { UserRepository } from 'src/user/user.repository';
 import { AuthException } from './auth.exception';
+import { User } from 'src/user/user.entity';
 import axios from 'axios';
 
 @Injectable()
@@ -39,16 +40,13 @@ export class AuthService {
   // 로그인(최초 로그인 시 회원가입 처리)
   async loginOrSignup(kakaoId: string) {
     const existUser = await this.findUser(kakaoId);
-
-    // 계정이 없으면 회원가임 처리
     const user = existUser
       ? existUser
       : await this.userRepository.createUser(kakaoId);
 
+    // TODO : 삭제할 것
     // 계정 복구
-    if (user.deletedAt) {
-      await this.userRepository.retoreUser(user.userId);
-    }
+    await this.restore(user);
 
     const { userId, nickname, careerId, year, description } = user;
     const needProfile =
@@ -103,6 +101,16 @@ export class AuthService {
     return await this.tokenRepository.deleteToken(userId, accessToken);
   }
 
+  // TODO : 삭제할 것
+  // 계정 복구
+  async restore(user: User) {
+    const { userId } = user;
+    if (user.deletedAt) {
+      await this.userRepository.restore({ userId });
+    }
+  }
+
+  // TODO : 삭제할 것
   // 계정 탈퇴(kakao 계정 탈퇴, 서비스 계정 삭제)
   async unlink(userId: string, kakaoId: string) {
     const kakaoAdmin = this.configService.get('kakaoAdmin');
@@ -114,7 +122,7 @@ export class AuthService {
 
     try {
       await axios.post(`${host}${url}`, {}, { headers });
-      await this.userRepository.unlinkUser(userId, kakaoId);
+      await this.userRepository.softDelete({ userId, kakaoId });
     } catch (e) {
       console.log(e);
     }

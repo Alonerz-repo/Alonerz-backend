@@ -97,6 +97,7 @@ export class AuthController {
     return await this.authService.logout(userId, authorization);
   }
 
+  // TODO : 삭제할 것
   // 계정 탈퇴
   @Delete('unlink')
   @UseGuards(JwtGuard)
