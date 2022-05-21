@@ -44,4 +44,9 @@ export class UserRepository extends Repository<User> {
   async unlinkUser(userId: string, kakaoId: string) {
     await this.softDelete({ userId, kakaoId });
   }
+
+  // 서비스 계정 복구
+  async retoreUser(userId: string) {
+    await this.restore({ userId });
+  }
 }
