@@ -117,4 +117,22 @@ export const AuthSwagger = {
       },
     },
   },
+  unlink: {
+    operation: {
+      summary: '계정 탈퇴 API',
+      description: '카카오 계정 연결을 해제하고, 서비스의 계정을 삭제합니다.',
+    },
+    response: {
+      200: {
+        status: 200,
+        description: '성공',
+        // type
+      },
+      401: {
+        status: 401,
+        description: '로그인 필요',
+        // type
+      },
+    },
+  },
 };

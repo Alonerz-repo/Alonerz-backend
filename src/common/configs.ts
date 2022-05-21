@@ -16,6 +16,7 @@ export const envConfig = {
         callbackURL: process.env.KAKAO_SERVER_REDIRECT_URL,
         clientSecret: '',
       },
+      kakaoAdmin: process.env.KAKAO_ADMIN_KEY,
     }),
   ],
 };

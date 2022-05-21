@@ -96,4 +96,16 @@ export class AuthController {
     const { userId } = req.user as Payload;
     return await this.authService.logout(userId, authorization);
   }
+
+  // 계정 탈퇴
+  @Delete('unlink')
+  @UseGuards(JwtGuard)
+  @ApiBearerAuth('AccessToken')
+  @ApiOperation(AuthSwagger.unlink.operation)
+  @ApiResponse(AuthSwagger.logout.response[200])
+  @ApiResponse(AuthSwagger.logout.response[401])
+  async unlink(@Req() req: Request) {
+    const { userId, kakaoId } = req.user as Payload;
+    return await this.authService.unlink(userId, kakaoId);
+  }
 }
