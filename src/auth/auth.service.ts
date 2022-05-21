@@ -30,15 +30,25 @@ export class AuthService {
 
   // 사용자 존재 여부 확인
   private async findUser(kakaoId: string) {
-    return await this.userRepository.findOne({ kakaoId });
+    return await this.userRepository.findOne(
+      { kakaoId },
+      { withDeleted: true },
+    );
   }
 
   // 로그인(최초 로그인 시 회원가입 처리)
   async loginOrSignup(kakaoId: string) {
     const existUser = await this.findUser(kakaoId);
+
+    // 계정이 없으면 회원가임 처리
     const user = existUser
       ? existUser
       : await this.userRepository.createUser(kakaoId);
+
+    // 계정 복구
+    if (user.deletedAt) {
+      await this.userRepository.retoreUser(user.userId);
+    }
 
     const { userId, nickname, careerId, year, description } = user;
     const needProfile =
