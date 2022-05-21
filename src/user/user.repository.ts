@@ -39,4 +39,9 @@ export class UserRepository extends Repository<User> {
     }
     await queryRunner.manager.update(User, { userId }, updateUserDto);
   }
+
+  // 서비스 계정 삭제
+  async unlinkUser(userId: string, kakaoId: string) {
+    await this.softDelete({ userId, kakaoId });
+  }
 }

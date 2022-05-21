@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Payload } from 'src/common/interface';
 import { TokenRepository } from 'src/token/token.repository';
 import { UserRepository } from 'src/user/user.repository';
 import { AuthException } from './auth.exception';
+import axios from 'axios';
 
 @Injectable()
 export class AuthService {
@@ -14,6 +16,7 @@ export class AuthService {
     @InjectRepository(TokenRepository)
     private readonly tokenRepository: TokenRepository,
     private jwtService: JwtService,
+    private configService: ConfigService,
     private authException: AuthException,
   ) {}
 
@@ -88,5 +91,22 @@ export class AuthService {
   async logout(userId: string, authorization: string) {
     const accessToken = (authorization || ' ').split(' ')[1];
     return await this.tokenRepository.deleteToken(userId, accessToken);
+  }
+
+  // 계정 탈퇴(kakao 계정 탈퇴, 서비스 계정 삭제)
+  async unlink(userId: string, kakaoId: string) {
+    const kakaoAdmin = this.configService.get('kakaoAdmin');
+    const host = 'https://kapi.kakao.com';
+    const url = `/v1/user/unlink?target_id_type=user_id&target_id=${kakaoId}`;
+    const headers = {
+      Authorization: `KakaoAK ${kakaoAdmin}`,
+    };
+
+    try {
+      await axios.post(`${host}${url}`, {}, { headers });
+      await this.userRepository.unlinkUser(userId, kakaoId);
+    } catch (e) {
+      console.log(e);
+    }
   }
 }
