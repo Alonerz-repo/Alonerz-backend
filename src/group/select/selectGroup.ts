@@ -2,7 +2,7 @@ export const selectGroup = [
   'group.groupId',
   'group.title',
   'group.description',
-  'group.menu',
+  'group.categoryId',
   'group.placeName',
   'group.imageUrl',
   'group.startAt',

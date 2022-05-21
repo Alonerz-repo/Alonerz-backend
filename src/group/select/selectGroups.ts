@@ -1,7 +1,7 @@
 export const selectGroups = [
   'groups.groupId',
   'groups.title',
-  'groups.menu',
+  'groups.categoryId',
   'groups.placeName',
   'groups.address',
   'groups.limit',

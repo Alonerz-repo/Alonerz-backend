@@ -22,8 +22,8 @@ export class Group {
   @Column('varchar')
   title: string;
 
-  @Column('varchar')
-  menu: string;
+  @Column('int')
+  caretoryId: number;
 
   @Column('varchar')
   placeName: string;

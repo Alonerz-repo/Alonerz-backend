@@ -6,9 +6,9 @@ export class CreateGroupDto {
   @IsString({ message: validMessage.IsString('title') })
   readonly title: string;
 
-  @IsNotEmpty({ message: validMessage.IsNotEmpty('menu') })
-  @IsString({ message: validMessage.IsString('menu') })
-  readonly menu: string;
+  @IsNotEmpty({ message: validMessage.IsNotEmpty('categoryId') })
+  @IsNumber({}, { message: validMessage.IsNumber('categoryId') })
+  readonly categoryId: number;
 
   @IsNotEmpty({ message: validMessage.IsNotEmpty('description') })
   @IsString({ message: validMessage.IsString('description') })
