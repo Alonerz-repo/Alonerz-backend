@@ -1,6 +1,7 @@
 import { User } from 'src/user/user.entity';
-import { SelectStickerDto, SelectStickersDto } from './select-stickers.dto';
+import { SelectStickersDto } from './select-stickers.dto';
 import { ApiResponseProperty } from '@nestjs/swagger';
+import { SelectStickerDto } from 'src/sticker/dto/response/select-sticker.dto';
 
 class BoardDto {
   @ApiResponseProperty()

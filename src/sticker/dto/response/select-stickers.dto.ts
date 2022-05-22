@@ -4,11 +4,9 @@ import { ApiResponseProperty } from '@nestjs/swagger';
 
 export class SelectStickersDto {
   @ApiResponseProperty()
-  stickers: SelectStickerDto[];
+  readonly stickers: SelectStickerDto[];
 
   constructor(stickers: Sticker[]) {
-    this.stickers = stickers.map(
-      (sticker: Sticker) => new SelectStickerDto(sticker),
-    );
+    this.stickers = stickers.map((sticker) => new SelectStickerDto(sticker));
   }
 }

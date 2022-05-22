@@ -2,10 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateStickerDto } from './dto/request/create-sticker.dto';
 import { CreatedStickerDto } from './dto/response/created-sticker.dto';
-import { SelectedStickersDto } from './dto/response/selected-stickers.dto';
+import { SelectStickersDto } from './dto/response/select-stickers.dto';
 import { UpdateStickerDto } from './dto/request/update-sticker.dto';
 import { StickerException } from './sticker.exception';
 import { StickerRepository } from './sticker.repository';
+import { Sticker } from './sticker.entity';
 
 @Injectable()
 export class StickerService {
@@ -16,7 +17,7 @@ export class StickerService {
   ) {}
 
   // 스티커 존재여부 확인
-  private async getSticker(stickerId: number) {
+  private async getSticker(stickerId: number): Promise<Sticker> {
     const sticker = await this.stickerRepository.findOne({ stickerId });
     if (!sticker) {
       this.stickerException.NotFound();
@@ -25,9 +26,9 @@ export class StickerService {
   }
 
   // 사용자의 모든 스티커 조회
-  async getStickers(userId: string): Promise<SelectedStickersDto> {
+  async getStickers(userId: string): Promise<SelectStickersDto> {
     const stickers = await this.stickerRepository.getStickers(userId);
-    return { stickers };
+    return new SelectStickersDto(stickers);
   }
 
   // 스티커 저장
@@ -35,9 +36,11 @@ export class StickerService {
     userId: string,
     createStickerDto: CreateStickerDto,
   ): Promise<CreatedStickerDto> {
-    const { stickerId, stickerImageId, stickerOrder } =
-      await this.stickerRepository.createSticker(userId, createStickerDto);
-    return { stickerId, stickerImageId, stickerOrder };
+    const sticker = await this.stickerRepository.createSticker(
+      userId,
+      createStickerDto,
+    );
+    return new CreatedStickerDto(sticker);
   }
 
   // 스티커 이미지 및 위치 변경
@@ -46,15 +49,14 @@ export class StickerService {
     updateStickerDto: UpdateStickerDto,
   ): Promise<void> {
     await this.getSticker(stickerId);
-    return await this.stickerRepository.updateSticker(
-      stickerId,
-      updateStickerDto,
-    );
+    await this.stickerRepository.updateSticker(stickerId, updateStickerDto);
+    return;
   }
 
   // 스티커 제거
   async deleteSticker(stickerId: number): Promise<void> {
     await this.getSticker(stickerId);
-    return await this.stickerRepository.deleteSticker(stickerId);
+    await this.stickerRepository.deleteSticker(stickerId);
+    return;
   }
 }

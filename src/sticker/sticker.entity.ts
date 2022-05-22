@@ -1,5 +1,11 @@
 import { User } from 'src/user/user.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity('stickers')
 export class Sticker {
@@ -13,5 +19,6 @@ export class Sticker {
   stickerOrder: number;
 
   @ManyToOne(() => User, (user) => user.userId, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'userId' })
   userId: string;
 }

@@ -1,12 +1,12 @@
 import { ErrorDto } from 'src/common/dto/error.dto';
 import { CreatedStickerDto } from './dto/response/created-sticker.dto';
-import { SelectedStickersDto } from './dto/response/selected-stickers.dto';
+import { SelectStickersDto } from './dto/response/select-stickers.dto';
 
 export const StickerSwagger = {
   tag: '스티커 API',
   getStickers: {
     operation: {
-      summary: '사용자의 모든 스티커 조회 API',
+      summary: '스티커 조회 API',
       description: '사용자의 모든 스티커 정보를 조회합니다.',
     },
     param: {
@@ -22,7 +22,12 @@ export const StickerSwagger = {
       200: {
         status: 200,
         description: '성공',
-        type: SelectedStickersDto,
+        type: SelectStickersDto,
+      },
+      401: {
+        status: 401,
+        description: '로그인 필요',
+        type: ErrorDto,
       },
     },
   },
@@ -30,23 +35,6 @@ export const StickerSwagger = {
     operation: {
       summary: '스티커 입력 API',
       description: '스티커 정보를 입력합니다.',
-    },
-    body: {
-      schema: {
-        type: 'object',
-        properties: {
-          stickerImageId: {
-            type: 'number',
-            description: '스티커 이미지 URL id',
-            example: 0,
-          },
-          stickerOrder: {
-            type: 'number',
-            description: '스티커 위치',
-            example: 0,
-          },
-        },
-      },
     },
     response: {
       201: {
@@ -78,25 +66,6 @@ export const StickerSwagger = {
         type: 'number',
         example: 0,
         required: true,
-      },
-    },
-    body: {
-      schema: {
-        type: 'object',
-        properties: {
-          stickerImageId: {
-            type: 'number',
-            description: '스티커 이미지 URL id',
-            example: 0,
-            require: false,
-          },
-          stickerOrder: {
-            type: 'number',
-            description: '스티커 위치',
-            example: 0,
-            require: false,
-          },
-        },
       },
     },
     response: {
