@@ -1,14 +1,12 @@
 import { ErrorDto } from 'src/common/dto/error.dto';
-import { CreatedStickerDto } from './dto/created-sticker.dto';
-import { DeletedStickerDto } from './dto/deleted-sticker.dto';
-import { SelectedStickersDto } from './dto/selected-stickers.dto';
-import { UpdatedStickerDto } from './dto/updated-sticker.dto';
+import { CreatedStickerDto } from './dto/response/created-sticker.dto';
+import { SelectStickersDto } from './dto/response/select-stickers.dto';
 
 export const StickerSwagger = {
   tag: '스티커 API',
   getStickers: {
     operation: {
-      summary: '사용자의 모든 스티커 조회 API',
+      summary: '스티커 조회 API',
       description: '사용자의 모든 스티커 정보를 조회합니다.',
     },
     param: {
@@ -24,7 +22,12 @@ export const StickerSwagger = {
       200: {
         status: 200,
         description: '성공',
-        type: SelectedStickersDto,
+        type: SelectStickersDto,
+      },
+      401: {
+        status: 401,
+        description: '로그인 필요',
+        type: ErrorDto,
       },
     },
   },
@@ -32,23 +35,6 @@ export const StickerSwagger = {
     operation: {
       summary: '스티커 입력 API',
       description: '스티커 정보를 입력합니다.',
-    },
-    body: {
-      schema: {
-        type: 'object',
-        properties: {
-          stickerUrl: {
-            type: 'string',
-            description: '스티커 이미지 URL',
-            example: '',
-          },
-          stickerOrder: {
-            type: 'number',
-            description: '스티커 위치',
-            example: 0,
-          },
-        },
-      },
     },
     response: {
       201: {
@@ -82,30 +68,11 @@ export const StickerSwagger = {
         required: true,
       },
     },
-    body: {
-      schema: {
-        type: 'object',
-        properties: {
-          stickerUrl: {
-            type: 'string',
-            description: '스티커 이미지 URL',
-            example: '',
-            require: false,
-          },
-          stickerOrder: {
-            type: 'number',
-            description: '스티커 위치',
-            example: 0,
-            require: false,
-          },
-        },
-      },
-    },
     response: {
       200: {
         status: 200,
         description: '성공',
-        type: UpdatedStickerDto,
+        type: null,
       },
       401: {
         status: 401,
@@ -137,7 +104,7 @@ export const StickerSwagger = {
       200: {
         status: 200,
         description: '성공',
-        type: DeletedStickerDto,
+        type: null,
       },
       401: {
         status: 401,

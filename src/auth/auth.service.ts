@@ -48,9 +48,9 @@ export class AuthService {
     // 계정 복구
     await this.restore(user);
 
-    const { userId, nickname, careerId, year, description } = user;
+    const { userId, nickname, careerId, yearId, description } = user;
     const needProfile =
-      careerId === null || year === null || description === null;
+      careerId === null || yearId === null || description === null;
 
     const payload = { userId, kakaoId, nickname };
     const tokens = await this.tokenRepository.saveToken(

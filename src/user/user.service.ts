@@ -1,23 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BlockRepository } from 'src/block/block.repository';
-import { ImageRepository } from 'src/image/image.repository';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { UserInfoRow } from './row/user-info.row';
 import { UserException } from './user.exception';
 import { UserRepository } from './user.repository';
-import { Connection } from 'typeorm';
+import { UpdateProfileDto } from './dto/request/update-profile.dto';
+import { SelectProfileDto } from './dto/response/select-profile.dto';
+import { SelectUserDto } from './dto/response/select-user.dto';
+import { SelectBoardDto } from './dto/response/select-board.dto';
+import { UpdatedProfileImageDto } from './dto/response/updated-profile-image.dto';
+import { UpdateBoardDto } from './dto/request/update-board.dto';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(UserRepository)
     private userRepository: UserRepository,
-    @InjectRepository(ImageRepository)
-    private imageRepository: ImageRepository,
     @InjectRepository(BlockRepository)
     private blockRepository: BlockRepository,
-    private connection: Connection,
     private userException: UserException,
   ) {}
 
@@ -30,85 +29,84 @@ export class UserService {
     return user;
   }
 
-  // 사용자 프로필 조회
-  async getUserProfile(userId: string, otherId: string) {
-    const user: UserInfoRow = await this.userRepository.findUserInfo(otherId);
+  // 차단 관계 확인
+  private async checkBlockRelation(userId: string, otherId: string) {
+    const myBlocks = await this.blockRepository.findBlockUserId(userId);
+    const myBlockIds = myBlocks.map((user: any) => user.otherId.userId);
 
+    // 내가 해당 계정을 차단한 경우
+    if (myBlockIds.includes(otherId)) {
+      this.userException.BlockedUser();
+    }
+
+    const otherBlocks = await this.blockRepository.findBlockUserId(otherId);
+    const otherBlockIds = otherBlocks.map((user: any) => user.otherId.userId);
+
+    // 내가 차단당한 경우
+    if (otherBlockIds.includes(userId)) {
+      this.userException.IwasBlocked();
+    }
+  }
+
+  // 사용자 프로필 조회
+  async getUser(userId: string, otherId: string): Promise<SelectUserDto> {
+    const user = await this.userRepository.selectUserMain(otherId);
     if (!user) {
       this.userException.NotFoundUser();
     }
+    this.checkBlockRelation(userId, otherId);
+    return new SelectUserDto(userId, user);
+  }
 
-    if (userId !== otherId) {
-      const myBlocks = await this.blockRepository.findBlockUserId(userId);
-      const myBlockIds = myBlocks.map((user: any) => user.otherId.userId);
+  // 사용자 프로필(프로필 사진, 닉네임, 전문분야, 경력, 한 줄 소개) 조회
+  async getProfile(userId: string): Promise<SelectProfileDto> {
+    const user = await this.userRepository.selectUserProfile(userId);
+    return new SelectProfileDto(user);
+  }
 
-      // 내가 해당 계정을 차단한 경우
-      if (myBlockIds.includes(otherId)) {
-        return this.userException.BlockedUser();
-      }
-
-      const otherBlocks = await this.blockRepository.findBlockUserId(otherId);
-      const otherBlockIds = otherBlocks.map((user: any) => user.otherId.userId);
-
-      // 내가 차단당한 경우
-      if (otherBlockIds.includes(userId)) {
-        return this.userException.IwasBlocked();
-      }
-    }
-
-    const followers = user.follower as [];
-    user.followers = followers.map((other: any) => other.userId.userId);
-    user.follower = user.followers.length;
-
-    const following = user.following as [];
-    user.following = following.length;
-
-    const point = user.point as [];
-    user.point = point.reduce((pre: number, point: { point: number }) => {
-      return pre + point.point;
-    }, 0);
-
-    return { user };
+  // 사용자 보드(스티커, 캐릭터, 배경색)
+  async getBoard(userId: string): Promise<SelectBoardDto> {
+    const user = await this.userRepository.selectBoard(userId);
+    return new SelectBoardDto(user);
   }
 
   // 사용자 프로필 수정
-  async updateMyProfile(
+  async updateProfile(
+    userId: string,
+    updateProfileInfoDto: UpdateProfileDto,
+  ): Promise<void> {
+    const { nickname } = updateProfileInfoDto;
+    await this.findUserByNickname(userId, nickname);
+    await this.userRepository.updateProfile(userId, updateProfileInfoDto);
+    return;
+  }
+
+  // 사용자 프로필 이미지 수정
+  async updateProfileImage(
     userId: string,
     image: Express.MulterS3.File,
-    updateUserDto: UpdateUserDto,
+  ): Promise<UpdatedProfileImageDto> {
+    if (!image) {
+      this.userException.NotImage();
+    }
+    const profileImageUrl = await this.userRepository.updateProfileImage(
+      userId,
+      image,
+    );
+    return new UpdatedProfileImageDto(profileImageUrl);
+  }
+
+  // 사용자 프로필 이미지 삭제
+  async deleteProfileImage(userId: string): Promise<void> {
+    await this.userRepository.deleteProfileImage(userId);
+    return;
+  }
+
+  // 사용자 보드(캐릭터, 배경색) 수정
+  async updateBoard(
+    userId: string,
+    updateBoardDto: UpdateBoardDto,
   ): Promise<void> {
-    const { nickname } = updateUserDto;
-    await this.findUserByNickname(userId, nickname);
-
-    const queryRunner = this.connection.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
-    let error = null;
-    try {
-      let imageUrl = null;
-      if (image) {
-        imageUrl = await this.imageRepository.uploadImageTransaction(
-          queryRunner,
-          image,
-        );
-      }
-      await this.userRepository.updateUserProfileTransaction(
-        queryRunner,
-        userId,
-        imageUrl,
-        updateUserDto,
-      );
-      await queryRunner.commitTransaction();
-    } catch (e) {
-      error = e;
-      await queryRunner.rollbackTransaction();
-    } finally {
-      await queryRunner.release();
-    }
-
-    if (error) {
-      this.userException.Transaction();
-    }
+    await this.userRepository.updateBoard(userId, updateBoardDto);
   }
 }

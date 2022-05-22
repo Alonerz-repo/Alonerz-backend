@@ -3,6 +3,7 @@ import { Block } from 'src/block/block.entity';
 import { Follow } from 'src/follow/follow.entity';
 import { Point } from 'src/point/point.entity';
 
+// TODO : 삭제
 export class UserInfoRow {
   @ApiProperty({ example: '000001' })
   userId: string;
