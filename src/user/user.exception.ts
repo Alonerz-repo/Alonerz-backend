@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   ForbiddenException,
   HttpStatus,
@@ -29,6 +30,15 @@ export class UserException {
       statusCode: HttpStatus.FORBIDDEN,
       message: ['차단한 사용자이므로 접근할 수 없습니다.'],
       error: 'Forbidden',
+    });
+  }
+
+  // 이미지 파일이 없는 경우
+  NotImage() {
+    throw new BadRequestException({
+      statusCode: HttpStatus.BAD_REQUEST,
+      message: ['이미지 파일을 선택하세요.'],
+      error: 'Bad Request',
     });
   }
 

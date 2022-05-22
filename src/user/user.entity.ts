@@ -32,21 +32,21 @@ export class User {
   nickname: string;
 
   @Column({ type: 'varchar', default: null })
-  imageUrl: string;
+  profileImageUrl: string;
 
-  @Column({ type: 'varchar', default: null })
-  characterUrl: string;
+  @Column({ type: 'int', default: 0 })
+  characterImageId: number;
 
-  @Column({ type: 'varchar', default: null })
-  backgroundColor: string;
+  @Column({ type: 'int', default: 0 })
+  backgroundColorId: number;
 
-  @Column({ type: 'int', default: null })
+  @Column({ type: 'int', default: 0 })
   careerId: number;
 
-  @Column({ type: 'varchar', default: null })
-  year: string;
+  @Column({ type: 'int', default: 0 })
+  yearId: number;
 
-  @Column({ type: 'text', default: null })
+  @Column({ type: 'text' })
   description: string;
 
   @CreateDateColumn()
@@ -66,17 +66,17 @@ export class User {
   // 사용자 : 팔로잉 = 1 : N
   @OneToMany(() => Follow, (follow) => follow.userId, { cascade: true })
   @JoinColumn({ name: 'following' })
-  following: Follow[];
+  followingUserIds: Follow[];
 
   // 사용자 : 팔로워 = 1 : N
   @OneToMany(() => Follow, (follow) => follow.otherId, { cascade: true })
   @JoinColumn({ name: 'follower' })
-  follower: Follow[];
+  followerUserIds: Follow[];
 
   // 사용자 : 차단 = 1 : N
   @OneToMany(() => Block, (block) => block.userId, { cascade: true })
   @JoinColumn({ name: 'blocker' })
-  blocker: Block[];
+  blockerUserIds: Block[];
 
   // 사용자 : 그룹(호스트) = 1 : N
   @OneToMany(() => Group, (group) => group.host, { cascade: true })
@@ -94,7 +94,7 @@ export class User {
   comments: Comment[];
 
   // 사용자 : 스티커 = 1 : N
-  @OneToMany(() => Sticker, (sticker) => sticker.stickerId, { cascade: true })
+  @OneToMany(() => Sticker, (sticker) => sticker.userId, { cascade: true })
   @JoinColumn({ name: 'stickers' })
   stickers: Sticker[];
 
