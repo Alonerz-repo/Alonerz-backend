@@ -1,7 +1,7 @@
 import { ErrorDto } from 'src/common/dto/error.dto';
 import { SelectBoardDto } from './dto/response/select-board.dto';
 import { SelectProfileDto } from './dto/response/select-profile.dto';
-import { SelectUserDto } from './dto/response/select-user.dto';
+import { SelectMainDto } from './dto/response/select-main.dto';
 
 export const UserSwagger = {
   tag: '사용자 API',
@@ -14,7 +14,7 @@ export const UserSwagger = {
       200: {
         status: 200,
         description: '성공',
-        type: SelectUserDto,
+        type: SelectMainDto,
       },
       401: {
         status: 401,

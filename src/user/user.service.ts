@@ -5,7 +5,7 @@ import { UserException } from './user.exception';
 import { UserRepository } from './user.repository';
 import { UpdateProfileDto } from './dto/request/update-profile.dto';
 import { SelectProfileDto } from './dto/response/select-profile.dto';
-import { SelectUserDto } from './dto/response/select-user.dto';
+import { SelectMainDto } from './dto/response/select-main.dto';
 import { SelectBoardDto } from './dto/response/select-board.dto';
 import { UpdatedProfileImageDto } from './dto/response/updated-profile-image.dto';
 import { UpdateBoardDto } from './dto/request/update-board.dto';
@@ -49,13 +49,13 @@ export class UserService {
   }
 
   // 사용자 프로필 조회
-  async getUser(userId: string, otherId: string): Promise<SelectUserDto> {
+  async getUser(userId: string, otherId: string): Promise<SelectMainDto> {
     const user = await this.userRepository.selectUserMain(otherId);
     if (!user) {
       this.userException.NotFoundUser();
     }
     this.checkBlockRelation(userId, otherId);
-    return new SelectUserDto(userId, user);
+    return new SelectMainDto(userId, user);
   }
 
   // 사용자 프로필(프로필 사진, 닉네임, 전문분야, 경력, 한 줄 소개) 조회
