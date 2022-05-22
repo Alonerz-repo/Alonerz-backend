@@ -8,7 +8,6 @@ import { User } from './user.entity';
 import { EntityRepository, Repository } from 'typeorm';
 import { UpdateBoardDto } from './dto/request/update-board.dto';
 import { UpdateProfileDto } from './dto/request/update-profile.dto';
-import { UpdateProfileImageDto } from './dto/request/update-profile-image.dto';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {

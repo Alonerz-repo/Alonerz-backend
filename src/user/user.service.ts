@@ -9,7 +9,6 @@ import { SelectUserDto } from './dto/response/select-user.dto';
 import { SelectBoardDto } from './dto/response/select-board.dto';
 import { UpdatedProfileImageDto } from './dto/response/updated-profile-image.dto';
 import { UpdateBoardDto } from './dto/request/update-board.dto';
-import { UpdateProfileImageDto } from './dto/request/update-profile-image.dto';
 
 @Injectable()
 export class UserService {
