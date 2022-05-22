@@ -6,6 +6,7 @@ import { envConfig, typeormConfig } from './common/configs';
 import { AppController } from './app.controller';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
+import { StickerModule } from './sticker/sticker.module';
 import { GroupModule } from './group/group.module';
 import { CommentModule } from './comment/comment.module';
 import { FollowModule } from './follow/follow.module';
@@ -27,6 +28,7 @@ import * as path from 'path';
     SocketModule,
     AuthModule,
     UserModule,
+    StickerModule,
     FollowModule,
     BlockModule,
     GroupModule,

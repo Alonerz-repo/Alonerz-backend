@@ -16,6 +16,7 @@ import {
 } from 'typeorm';
 import { ChatUser } from 'src/chatuser/chatuser.entity';
 import { Chat } from 'src/chat/chat.entity';
+import { Sticker } from 'src/sticker/sticker.entity';
 
 const now = () => String(Date.now());
 
@@ -32,6 +33,12 @@ export class User {
 
   @Column({ type: 'varchar', default: null })
   imageUrl: string;
+
+  @Column({ type: 'varchar', default: null })
+  characterUrl: string;
+
+  @Column({ type: 'varchar', default: null })
+  backgroundColor: string;
 
   @Column({ type: 'int', default: null })
   careerId: number;
@@ -85,6 +92,11 @@ export class User {
   @OneToMany(() => Comment, (comment) => comment.userId, { cascade: true })
   @JoinColumn({ name: 'guestGroups' })
   comments: Comment[];
+
+  // 사용자 : 스티커 = 1 : N
+  @OneToMany(() => Sticker, (sticker) => sticker.stickerId, { cascade: true })
+  @JoinColumn({ name: 'stickers' })
+  stickers: Sticker[];
 
   // 사용자 : 채팅방 = 1 : N
   @OneToMany(() => ChatUser, (chatUser) => chatUser.user, { cascade: true })
