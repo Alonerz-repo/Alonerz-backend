@@ -1,11 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateStickerDto } from './dto/create-sticker.dto';
-import { CreatedStickerDto } from './dto/created-sticker.dto';
-import { DeletedStickerDto } from './dto/deleted-sticker.dto';
-import { SelectedStickersDto } from './dto/selected-stickers.dto';
-import { UpdateStickerDto } from './dto/update-sticker.dto';
-import { UpdatedStickerDto } from './dto/updated-sticker.dto';
+import { CreateStickerDto } from './dto/request/create-sticker.dto';
+import { CreatedStickerDto } from './dto/response/created-sticker.dto';
+import { SelectedStickersDto } from './dto/response/selected-stickers.dto';
+import { UpdateStickerDto } from './dto/request/update-sticker.dto';
 import { StickerException } from './sticker.exception';
 import { StickerRepository } from './sticker.repository';
 
@@ -37,16 +35,16 @@ export class StickerService {
     userId: string,
     createStickerDto: CreateStickerDto,
   ): Promise<CreatedStickerDto> {
-    const { stickerId, stickerUrl, stickerOrder } =
+    const { stickerId, stickerImageId, stickerOrder } =
       await this.stickerRepository.createSticker(userId, createStickerDto);
-    return { stickerId, stickerUrl, stickerOrder };
+    return { stickerId, stickerImageId, stickerOrder };
   }
 
   // 스티커 이미지 및 위치 변경
   async updateSticker(
     stickerId: number,
     updateStickerDto: UpdateStickerDto,
-  ): Promise<UpdatedStickerDto> {
+  ): Promise<void> {
     await this.getSticker(stickerId);
     return await this.stickerRepository.updateSticker(
       stickerId,
@@ -55,9 +53,8 @@ export class StickerService {
   }
 
   // 스티커 제거
-  async deleteSticker(stickerId: number): Promise<DeletedStickerDto> {
+  async deleteSticker(stickerId: number): Promise<void> {
     await this.getSticker(stickerId);
-    await this.stickerRepository.deleteSticker(stickerId);
-    return { stickerId };
+    return await this.stickerRepository.deleteSticker(stickerId);
   }
 }

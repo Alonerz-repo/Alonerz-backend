@@ -6,8 +6,8 @@ export class Sticker {
   @PrimaryGeneratedColumn()
   stickerId: number;
 
-  @Column('varchar')
-  stickerUrl: string;
+  @Column({ type: 'int', default: 0 })
+  stickerImageId: number;
 
   @Column('int')
   stickerOrder: number;

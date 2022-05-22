@@ -1,6 +1,6 @@
 import { EntityRepository, Repository } from 'typeorm';
-import { CreateStickerDto } from './dto/create-sticker.dto';
-import { UpdateStickerDto } from './dto/update-sticker.dto';
+import { CreateStickerDto } from './dto/request/create-sticker.dto';
+import { UpdateStickerDto } from './dto/request/update-sticker.dto';
 import { Sticker } from './sticker.entity';
 
 @EntityRepository(Sticker)
@@ -9,7 +9,7 @@ export class StickerRepository extends Repository<Sticker> {
   async getStickers(userId: string) {
     return this.find({
       where: { userId },
-      select: ['stickerId', 'stickerUrl', 'stickerOrder'],
+      select: ['stickerId', 'stickerImageId', 'stickerOrder'],
     });
   }
 
@@ -22,8 +22,11 @@ export class StickerRepository extends Repository<Sticker> {
   }
 
   // 스티커 이미지 및 위치 변경
-  async updateSticker(stickerId: number, updateStickerDto: UpdateStickerDto) {
-    return await this.save({ stickerId, ...updateStickerDto });
+  async updateSticker(
+    stickerId: number,
+    updateStickerDto: UpdateStickerDto,
+  ): Promise<void> {
+    await this.update({ stickerId }, updateStickerDto);
   }
 
   // 스티커 제거

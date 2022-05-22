@@ -1,8 +1,6 @@
 import { ErrorDto } from 'src/common/dto/error.dto';
-import { CreatedStickerDto } from './dto/created-sticker.dto';
-import { DeletedStickerDto } from './dto/deleted-sticker.dto';
-import { SelectedStickersDto } from './dto/selected-stickers.dto';
-import { UpdatedStickerDto } from './dto/updated-sticker.dto';
+import { CreatedStickerDto } from './dto/response/created-sticker.dto';
+import { SelectedStickersDto } from './dto/response/selected-stickers.dto';
 
 export const StickerSwagger = {
   tag: '스티커 API',
@@ -37,10 +35,10 @@ export const StickerSwagger = {
       schema: {
         type: 'object',
         properties: {
-          stickerUrl: {
-            type: 'string',
-            description: '스티커 이미지 URL',
-            example: '',
+          stickerImageId: {
+            type: 'number',
+            description: '스티커 이미지 URL id',
+            example: 0,
           },
           stickerOrder: {
             type: 'number',
@@ -86,10 +84,10 @@ export const StickerSwagger = {
       schema: {
         type: 'object',
         properties: {
-          stickerUrl: {
-            type: 'string',
-            description: '스티커 이미지 URL',
-            example: '',
+          stickerImageId: {
+            type: 'number',
+            description: '스티커 이미지 URL id',
+            example: 0,
             require: false,
           },
           stickerOrder: {
@@ -105,7 +103,7 @@ export const StickerSwagger = {
       200: {
         status: 200,
         description: '성공',
-        type: UpdatedStickerDto,
+        type: null,
       },
       401: {
         status: 401,
@@ -137,7 +135,7 @@ export const StickerSwagger = {
       200: {
         status: 200,
         description: '성공',
-        type: DeletedStickerDto,
+        type: null,
       },
       401: {
         status: 401,

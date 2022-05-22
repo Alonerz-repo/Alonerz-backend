@@ -21,12 +21,10 @@ import {
 import { Request } from 'express';
 import { JwtGuard } from 'src/auth/guard/jwt.guard';
 import { Payload } from 'src/common/interface';
-import { CreateStickerDto } from './dto/create-sticker.dto';
-import { CreatedStickerDto } from './dto/created-sticker.dto';
-import { DeletedStickerDto } from './dto/deleted-sticker.dto';
-import { SelectedStickersDto } from './dto/selected-stickers.dto';
-import { UpdateStickerDto } from './dto/update-sticker.dto';
-import { UpdatedStickerDto } from './dto/updated-sticker.dto';
+import { CreateStickerDto } from './dto/request/create-sticker.dto';
+import { CreatedStickerDto } from './dto/response/created-sticker.dto';
+import { SelectedStickersDto } from './dto/response/selected-stickers.dto';
+import { UpdateStickerDto } from './dto/request/update-sticker.dto';
 import { StickerService } from './sticker.service';
 import { StickerSwagger } from './sticker.swagger';
 
@@ -74,7 +72,7 @@ export class StickerController {
   async updateSticker(
     @Param('stickerId') stickerId: number,
     @Body() updateStickerDto: UpdateStickerDto,
-  ): Promise<UpdatedStickerDto> {
+  ): Promise<void> {
     return await this.stickerService.updateSticker(stickerId, updateStickerDto);
   }
 
@@ -86,9 +84,7 @@ export class StickerController {
   @ApiResponse(StickerSwagger.deleteSticker.response[200])
   @ApiResponse(StickerSwagger.deleteSticker.response[401])
   @ApiResponse(StickerSwagger.deleteSticker.response[404])
-  async deleteSticker(
-    @Param('stickerId') stickerId: number,
-  ): Promise<DeletedStickerDto> {
+  async deleteSticker(@Param('stickerId') stickerId: number): Promise<void> {
     return await this.stickerService.deleteSticker(stickerId);
   }
 }
