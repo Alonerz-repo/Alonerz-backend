@@ -26,7 +26,7 @@ import {
 import { UserSwagger } from './user.swagger';
 import { ProfileImageInterceptor } from 'src/image/image.interceptors';
 import { UpdateProfileDto } from './dto/request/update-profile.dto';
-import { SelectUserDto } from './dto/response/select-user.dto';
+import { SelectMainDto } from './dto/response/select-main.dto';
 import { UpdatedProfileImageDto } from './dto/response/updated-profile-image.dto';
 import { SelectBoardDto } from './dto/response/select-board.dto';
 import { SelectProfileDto } from './dto/response/select-profile.dto';
@@ -37,9 +37,10 @@ import { UpdateProfileImageDto } from './dto/request/update-profile-image.dto';
 @Controller('users')
 export class UserController {
   constructor(private userService: UserService) {}
+  // 사용자 정보 조회
 
   // 사용자 메인 페이지의 정보 조회
-  @Get(':userId')
+  @Get(':userId/main')
   @UseGuards(JwtGuard)
   @ApiBearerAuth('AccessToken')
   @ApiParam(UserSwagger.getUser.param.userId)
@@ -50,7 +51,7 @@ export class UserController {
   async getUser(
     @Req() req: Request,
     @Param('userId') otherId: string,
-  ): Promise<SelectUserDto> {
+  ): Promise<SelectMainDto> {
     const { userId } = req.user as Payload;
     return this.userService.getUser(userId, otherId);
   }

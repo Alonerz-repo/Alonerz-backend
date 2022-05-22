@@ -44,7 +44,7 @@ class UserDto {
   point: number;
 }
 
-export class SelectUserDto {
+export class SelectMainDto {
   @ApiResponseProperty()
   user: UserDto;
 
