@@ -111,7 +111,6 @@ export class AuthController {
   @ApiBearerAuth('AccessToken')
   @ApiOperation(AuthSwagger.logout.operation)
   @ApiResponse(AuthSwagger.logout.response[200])
-  @ApiResponse(AuthSwagger.logout.response[401])
   async logout(@Req() req: Request): Promise<void> {
     const { userId } = req.user as Payload;
     return await this.authService.logout(userId);
@@ -124,7 +123,6 @@ export class AuthController {
   @ApiBearerAuth('AccessToken')
   @ApiOperation(AuthSwagger.unlink.operation)
   @ApiResponse(AuthSwagger.logout.response[200])
-  @ApiResponse(AuthSwagger.logout.response[401])
   async unlink(@Req() req: Request) {
     const { userId } = req.user as Payload;
     return await this.authService.unlink(userId);

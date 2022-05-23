@@ -15,6 +15,11 @@ export const CommentSwagger = {
         description: '성공',
         type: SelectCommentsDto,
       },
+      403: {
+        status: 403,
+        description: '토큰 만료',
+        type: ErrorDto,
+      },
       404: {
         status: 404,
         description: '그룹 없음',
@@ -66,6 +71,11 @@ export const CommentSwagger = {
         description: '로그인 필요',
         type: ErrorDto,
       },
+      403: {
+        status: 403,
+        description: '토큰 만료',
+        type: ErrorDto,
+      },
       404: {
         status: 404,
         description: '그룹 없음',
@@ -104,6 +114,11 @@ export const CommentSwagger = {
         status: 200,
         description: '성공',
         type: SelectCommentsDto,
+      },
+      403: {
+        status: 403,
+        description: '토큰 만료',
+        type: ErrorDto,
       },
       404: {
         status: 404,
@@ -147,6 +162,11 @@ export const CommentSwagger = {
         description: '로그인 필요',
         type: ErrorDto,
       },
+      403: {
+        status: 403,
+        description: '토큰 만료',
+        type: ErrorDto,
+      },
       404: {
         status: 404,
         description: '그룹 또는 상위 댓글 없음',
@@ -183,9 +203,14 @@ export const CommentSwagger = {
         description: '로그인 필요',
         type: ErrorDto,
       },
-      403: {
+      402: {
         status: 403,
         description: '수정 권한 없음',
+        type: ErrorDto,
+      },
+      403: {
+        status: 403,
+        description: '토큰 만료',
         type: ErrorDto,
       },
       404: {
@@ -221,7 +246,7 @@ export const CommentSwagger = {
       },
       403: {
         status: 403,
-        description: '삭제 권한 없음',
+        description: '토큰 만료/삭제 권한 없음',
         type: ErrorDto,
       },
       404: {
