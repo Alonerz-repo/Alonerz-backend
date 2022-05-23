@@ -31,36 +31,31 @@ export class StickerService {
     return new SelectStickersDto(stickers);
   }
 
-  // 스티커 저장
-  async createSticker(
-    userId: string,
-    createStickerDto: CreateStickerDto,
-  ): Promise<CreatedStickerDto> {
-    const sticker = await this.stickerRepository.createSticker(
-      userId,
-      createStickerDto,
-    );
-    return new CreatedStickerDto(sticker);
-  }
-
   // 스티커 저장(v2)
   async putSticker(
     userId: string,
     createStickerDto: CreateStickerDto,
   ): Promise<CreatedStickerDto> {
     const { stickerImageId, stickerOrder } = createStickerDto;
-    const exist = await this.stickerRepository.findOne({
-      userId,
-      stickerOrder,
-    });
+    const exist = await this.stickerRepository
+      .createQueryBuilder('stickers')
+      .select()
+      .leftJoinAndSelect('stickers.userId', 'user')
+      .where('user.userId = :userId', { userId })
+      .andWhere('stickers.stickerOrder = :stickerOrder', { stickerOrder })
+      .getOne();
+
+    // 내일 맨정신으로 코드 수정해놓고
+    // Repository 불필요한 코드 싹다 정리하고
 
     let sticker;
     if (exist) {
       const { stickerId } = exist;
-      sticker = await this.stickerRepository.update(
-        { stickerId },
-        { stickerImageId, stickerOrder },
-      );
+      sticker = await this.stickerRepository.save({
+        stickerId,
+        stickerImageId,
+        stickerOrder,
+      });
     } else {
       sticker = await this.stickerRepository.save({
         userId,
@@ -68,16 +63,6 @@ export class StickerService {
       });
     }
     return new CreatedStickerDto(sticker);
-  }
-
-  // 스티커 이미지 및 위치 변경
-  async updateSticker(
-    stickerId: number,
-    updateStickerDto: UpdateStickerDto,
-  ): Promise<void> {
-    await this.getSticker(stickerId);
-    await this.stickerRepository.updateSticker(stickerId, updateStickerDto);
-    return;
   }
 
   // 스티커 제거

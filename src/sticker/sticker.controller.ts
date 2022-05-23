@@ -58,7 +58,7 @@ export class StickerController {
     @Body() createStickerDto: CreateStickerDto,
   ): Promise<CreatedStickerDto> {
     const { userId } = req.user as Payload;
-    return await this.stickerService.createSticker(userId, createStickerDto);
+    return await this.stickerService.putSticker(userId, createStickerDto);
   }
 
   @Delete(':stickerId')
