@@ -37,7 +37,6 @@ import { UpdateProfileImageDto } from './dto/request/update-profile-image.dto';
 @Controller('users')
 export class UserController {
   constructor(private userService: UserService) {}
-  // 사용자 정보 조회
 
   // 사용자 메인 페이지의 정보 조회
   @Get(':userId/main')
