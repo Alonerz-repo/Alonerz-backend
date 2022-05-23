@@ -18,25 +18,25 @@ export class FollowController {
   constructor(private readonly followService: FollowService) {}
 
   // 사용자의 팔로잉 목록 조회
-  @Get(':userId/following')
+  @Get(':userId/followings')
   @UseGuards(JwtGuard)
   @ApiBearerAuth('AccessToken')
-  @ApiOperation(FollowSwagger.getUserFollows.operation)
-  @ApiParam(FollowSwagger.getUserFollows.param.userId)
-  @ApiResponse(FollowSwagger.getUserFollows.response[200])
-  @ApiResponse(FollowSwagger.getUserFollows.response[401])
+  @ApiOperation(FollowSwagger.getFollowings.operation)
+  @ApiParam(FollowSwagger.getFollowings.param.userId)
+  @ApiResponse(FollowSwagger.getFollowings.response[200])
+  @ApiResponse(FollowSwagger.getFollowings.response[401])
   async getFollowings(@Param('userId') userId: string) {
     return await this.followService.getFollowings(userId);
   }
 
   // 사용자의 팔로워 목록 조회
-  @Get(':userId/follower')
+  @Get(':userId/followers')
   @UseGuards(JwtGuard)
   @ApiBearerAuth('AccessToken')
-  @ApiOperation(FollowSwagger.getUserFollows.operation)
-  @ApiParam(FollowSwagger.getUserFollows.param.userId)
-  @ApiResponse(FollowSwagger.getUserFollows.response[200])
-  @ApiResponse(FollowSwagger.getUserFollows.response[401])
+  @ApiOperation(FollowSwagger.getFollowers.operation)
+  @ApiParam(FollowSwagger.getFollowers.param.userId)
+  @ApiResponse(FollowSwagger.getFollowers.response[200])
+  @ApiResponse(FollowSwagger.getFollowers.response[401])
   async getFollowers(@Param('userId') userId: string) {
     return await this.followService.getFollowers(userId);
   }
