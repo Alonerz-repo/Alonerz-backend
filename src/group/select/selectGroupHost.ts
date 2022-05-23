@@ -1,8 +1,9 @@
 export const selectGroupHost = [
   'host.userId',
   'host.nickname',
+  'host.profileImageUrl',
+  'host.characterImageId',
   'host.careerId',
-  'host.year',
+  'host.yearId',
   'host.description',
-  'host.imageUrl',
 ];
