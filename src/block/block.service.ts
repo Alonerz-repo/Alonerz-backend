@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FollowRepository } from 'src/follow/follow.repository';
-import { UserInfoRow } from 'src/user/row/user-info.row';
+import { User } from 'src/user/user.entity';
 import { UserRepository } from 'src/user/user.repository';
 import { Connection } from 'typeorm';
 import { BlockException } from './block.exception';
 import { BlockRepository } from './block.repository';
-import { UserBlockRow } from './row/user-block.row';
+import { BlocksDto } from './dto/response/blocks.dto';
 
 @Injectable()
 export class BlockService {
@@ -22,7 +22,7 @@ export class BlockService {
   ) {}
 
   // 계정 조회
-  private async findUser(userId: string) {
+  private async findUser(userId: string): Promise<User> {
     const user = await this.userRepository.findOne({ userId });
     if (!user) {
       this.blockException.NotFound();
@@ -31,20 +31,9 @@ export class BlockService {
   }
 
   // 자신의 차단 목록 조회
-  async findBlocks(userId: string) {
-    const rows: UserBlockRow[] = await this.blockRepository.findBlockUsers(
-      userId,
-    );
-    const users = rows.map((row) => {
-      const user = row.otherId as UserInfoRow;
-      user.point = user.point as [];
-      user.point = user.point.reduce(
-        (pre: number, current: { point: number }) => pre + current.point,
-        0,
-      );
-      return user;
-    });
-    return { users };
+  async findBlocks(userId: string): Promise<BlocksDto> {
+    const users = await this.blockRepository.findBlockUsers(userId);
+    return new BlocksDto(users);
   }
 
   // 다른 사용자 차단 또는 철회
