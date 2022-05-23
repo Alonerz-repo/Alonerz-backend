@@ -39,6 +39,7 @@ export class StickerController {
   @ApiParam(StickerSwagger.getStickers.param.userId)
   @ApiResponse(StickerSwagger.getStickers.response[200])
   @ApiResponse(StickerSwagger.getStickers.response[401])
+  @ApiResponse(StickerSwagger.getStickers.response[403])
   async getStickers(
     @Param('userId') userId: string,
   ): Promise<SelectStickersDto> {
@@ -53,6 +54,7 @@ export class StickerController {
   @ApiResponse(StickerSwagger.createSticker.response[201])
   @ApiResponse(StickerSwagger.createSticker.response[400])
   @ApiResponse(StickerSwagger.createSticker.response[401])
+  @ApiResponse(StickerSwagger.createSticker.response[403])
   async createSticker(
     @Req() req: Request,
     @Body() createStickerDto: CreateStickerDto,
@@ -69,6 +71,7 @@ export class StickerController {
   @ApiParam(StickerSwagger.updateSticker.param.stickerId)
   @ApiResponse(StickerSwagger.updateSticker.response[200])
   @ApiResponse(StickerSwagger.updateSticker.response[401])
+  @ApiResponse(StickerSwagger.updateSticker.response[403])
   @ApiResponse(StickerSwagger.updateSticker.response[404])
   async updateSticker(
     @Param('stickerId') stickerId: number,
@@ -84,6 +87,7 @@ export class StickerController {
   @ApiOperation(StickerSwagger.deleteSticker.operation)
   @ApiResponse(StickerSwagger.deleteSticker.response[200])
   @ApiResponse(StickerSwagger.deleteSticker.response[401])
+  @ApiResponse(StickerSwagger.deleteSticker.response[403])
   @ApiResponse(StickerSwagger.deleteSticker.response[404])
   async deleteSticker(@Param('stickerId') stickerId: number): Promise<void> {
     return await this.stickerService.deleteSticker(stickerId);

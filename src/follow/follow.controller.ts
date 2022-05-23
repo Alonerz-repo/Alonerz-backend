@@ -25,6 +25,7 @@ export class FollowController {
   @ApiParam(FollowSwagger.getFollowings.param.userId)
   @ApiResponse(FollowSwagger.getFollowings.response[200])
   @ApiResponse(FollowSwagger.getFollowings.response[401])
+  @ApiResponse(FollowSwagger.getFollowings.response[403])
   async getFollowings(@Param('userId') userId: string) {
     return await this.followService.getFollowings(userId);
   }
@@ -37,6 +38,7 @@ export class FollowController {
   @ApiParam(FollowSwagger.getFollowers.param.userId)
   @ApiResponse(FollowSwagger.getFollowers.response[200])
   @ApiResponse(FollowSwagger.getFollowers.response[401])
+  @ApiResponse(FollowSwagger.getFollowers.response[403])
   async getFollowers(@Param('userId') userId: string) {
     return await this.followService.getFollowers(userId);
   }
@@ -49,6 +51,7 @@ export class FollowController {
   @ApiParam(FollowSwagger.followOrCancel.param.otherId)
   @ApiResponse(FollowSwagger.followOrCancel.response[200])
   @ApiResponse(FollowSwagger.followOrCancel.response[401])
+  @ApiResponse(FollowSwagger.followOrCancel.response[403])
   async followOrCancel(@Req() req: Request, @Param('otherId') otherId: string) {
     const { userId } = req.user as Payload;
     return await this.followService.followOrCancel(userId, otherId);

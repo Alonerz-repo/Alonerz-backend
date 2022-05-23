@@ -21,6 +21,11 @@ export const UserSwagger = {
         description: '로그인 필요',
         type: ErrorDto,
       },
+      403: {
+        status: 403,
+        description: '토큰 만료',
+        type: ErrorDto,
+      },
       404: {
         status: 404,
         description: '사용자 없음',
@@ -52,6 +57,11 @@ export const UserSwagger = {
       401: {
         status: 401,
         description: '로그인 필요',
+        type: ErrorDto,
+      },
+      403: {
+        status: 403,
+        description: '토큰 만료',
         type: ErrorDto,
       },
       404: {
@@ -86,6 +96,11 @@ export const UserSwagger = {
         description: '로그인 필요',
         type: ErrorDto,
       },
+      403: {
+        status: 403,
+        description: '토큰 만료',
+        type: ErrorDto,
+      },
       404: {
         status: 404,
         description: '사용자 없음',
@@ -116,6 +131,11 @@ export const UserSwagger = {
       400: {
         status: 400,
         description: '잘못된 요청',
+        type: ErrorDto,
+      },
+      403: {
+        status: 403,
+        description: '토큰 만료',
         type: ErrorDto,
       },
       401: {
@@ -158,6 +178,11 @@ export const UserSwagger = {
         description: '로그인 필요',
         type: ErrorDto,
       },
+      403: {
+        status: 403,
+        description: '토큰 만료',
+        type: ErrorDto,
+      },
     },
   },
   deleteProfileImage: {
@@ -174,6 +199,11 @@ export const UserSwagger = {
       401: {
         status: 401,
         description: '로그인 필요',
+        type: ErrorDto,
+      },
+      403: {
+        status: 403,
+        description: '토큰 만료',
         type: ErrorDto,
       },
     },
@@ -197,6 +227,11 @@ export const UserSwagger = {
       401: {
         status: 401,
         description: '로그인 필요',
+        type: ErrorDto,
+      },
+      403: {
+        status: 403,
+        description: '토큰 만료',
         type: ErrorDto,
       },
     },

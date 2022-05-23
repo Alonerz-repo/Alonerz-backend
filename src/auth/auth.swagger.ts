@@ -92,11 +92,6 @@ export const AuthSwagger = {
         description: '성공',
         type: null,
       },
-      401: {
-        status: 401,
-        description: '로그인 필요',
-        type: ErrorDto,
-      },
     },
   },
   unlink: {

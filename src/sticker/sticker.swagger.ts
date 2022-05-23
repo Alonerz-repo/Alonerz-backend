@@ -29,6 +29,11 @@ export const StickerSwagger = {
         description: '로그인 필요',
         type: ErrorDto,
       },
+      403: {
+        status: 403,
+        description: '토큰 만료',
+        type: ErrorDto,
+      },
     },
   },
   createSticker: {
@@ -50,6 +55,11 @@ export const StickerSwagger = {
       401: {
         status: 401,
         description: '로그인 필요',
+        type: ErrorDto,
+      },
+      403: {
+        status: 403,
+        description: '토큰 만료',
         type: ErrorDto,
       },
     },
@@ -84,6 +94,11 @@ export const StickerSwagger = {
         description: '조회 실패',
         type: ErrorDto,
       },
+      403: {
+        status: 403,
+        description: '토큰 만료',
+        type: ErrorDto,
+      },
     },
   },
   deleteSticker: {
@@ -114,6 +129,11 @@ export const StickerSwagger = {
       404: {
         status: 404,
         description: '조회 실패',
+        type: ErrorDto,
+      },
+      403: {
+        status: 403,
+        description: '토큰 만료',
         type: ErrorDto,
       },
     },

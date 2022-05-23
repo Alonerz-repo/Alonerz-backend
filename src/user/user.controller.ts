@@ -24,14 +24,14 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { UserSwagger } from './user.swagger';
-import { ProfileImageInterceptor } from 'src/image/image.interceptors';
+import { ProfileImageInterceptor } from 'src/common/interceptors';
 import { UpdateProfileDto } from './dto/request/update-profile.dto';
 import { SelectMainDto } from './dto/response/select-main.dto';
 import { UpdatedProfileImageDto } from './dto/response/updated-profile-image.dto';
 import { SelectBoardDto } from './dto/response/select-board.dto';
 import { SelectProfileDto } from './dto/response/select-profile.dto';
 import { UpdateBoardDto } from './dto/request/update-board.dto';
-import { UpdateProfileImageDto } from './dto/request/update-profile-image.dto';
+import { ProfileImageDto } from './dto/request/profile-image.dto';
 
 @ApiTags(UserSwagger.tag)
 @Controller('users')
@@ -46,6 +46,7 @@ export class UserController {
   @ApiOperation(UserSwagger.getUser.operation)
   @ApiResponse(UserSwagger.getUser.response[200])
   @ApiResponse(UserSwagger.getUser.response[401])
+  @ApiResponse(UserSwagger.getUser.response[403])
   @ApiResponse(UserSwagger.getUser.response[404])
   async getUser(
     @Req() req: Request,
@@ -63,6 +64,7 @@ export class UserController {
   @ApiOperation(UserSwagger.getProfile.operation)
   @ApiResponse(UserSwagger.getProfile.response[200])
   @ApiResponse(UserSwagger.getProfile.response[401])
+  @ApiResponse(UserSwagger.getProfile.response[403])
   @ApiResponse(UserSwagger.getProfile.response[404])
   async getProfile(@Param('userId') userId: string): Promise<SelectProfileDto> {
     return this.userService.getProfile(userId);
@@ -76,6 +78,7 @@ export class UserController {
   @ApiOperation(UserSwagger.getBoard.operation)
   @ApiResponse(UserSwagger.getBoard.response[200])
   @ApiResponse(UserSwagger.getBoard.response[401])
+  @ApiResponse(UserSwagger.getBoard.response[403])
   async getBoard(@Param('userId') userId: string): Promise<SelectBoardDto> {
     return this.userService.getBoard(userId);
   }
@@ -89,6 +92,7 @@ export class UserController {
   @ApiResponse(UserSwagger.updateProfile.response[200])
   @ApiResponse(UserSwagger.updateProfile.response[400])
   @ApiResponse(UserSwagger.updateProfile.response[401])
+  @ApiResponse(UserSwagger.updateProfile.response[403])
   async updateProfile(
     @Req() req: Request,
     @Body() updateProfileDto: UpdateProfileDto,
@@ -108,12 +112,13 @@ export class UserController {
   @ApiResponse(UserSwagger.updateProfileImage.response[200])
   @ApiResponse(UserSwagger.updateProfileImage.response[400])
   @ApiResponse(UserSwagger.updateProfileImage.response[401])
+  @ApiResponse(UserSwagger.updateProfileImage.response[403])
   async updateProfileImage(
     @Req() req: Request,
-    @UploadedFile() updateProfileImageDto: UpdateProfileImageDto,
+    @UploadedFile() profileImageDto: ProfileImageDto,
   ): Promise<UpdatedProfileImageDto> {
     const { userId } = req.user as Payload;
-    const image = updateProfileImageDto as unknown as Express.MulterS3.File;
+    const image = profileImageDto as unknown as Express.MulterS3.File;
     return this.userService.updateProfileImage(userId, image);
   }
 
@@ -124,6 +129,7 @@ export class UserController {
   @ApiOperation(UserSwagger.deleteProfileImage.operation)
   @ApiResponse(UserSwagger.deleteProfileImage.response[200])
   @ApiResponse(UserSwagger.deleteProfileImage.response[401])
+  @ApiResponse(UserSwagger.deleteProfileImage.response[403])
   async deleteProfileImage(@Req() req: Request): Promise<void> {
     const { userId } = req.user as Payload;
     return this.userService.deleteProfileImage(userId);
@@ -138,6 +144,7 @@ export class UserController {
   @ApiResponse(UserSwagger.updateBoard.response[200])
   @ApiResponse(UserSwagger.updateBoard.response[400])
   @ApiResponse(UserSwagger.updateBoard.response[401])
+  @ApiResponse(UserSwagger.updateBoard.response[403])
   async updateBoard(
     @Req() req: Request,
     @Body() updateBoardDto: UpdateBoardDto,

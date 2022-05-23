@@ -23,12 +23,12 @@ export class Group {
   title: string;
 
   @Column('int')
-  caretoryId: number;
+  categoryId: number;
 
   @Column('varchar')
   placeName: string;
 
-  @Column('text')
+  @Column({ type: 'text', default: null })
   description: string;
 
   @Column({ type: 'varchar', default: null })

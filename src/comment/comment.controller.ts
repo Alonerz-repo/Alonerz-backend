@@ -58,6 +58,7 @@ export class CommentController {
   @ApiResponse(CommentSwagger.createGroupComment.response[201])
   @ApiResponse(CommentSwagger.createGroupComment.response[400])
   @ApiResponse(CommentSwagger.createGroupComment.response[401])
+  @ApiResponse(CommentSwagger.createGroupComment.response[403])
   @ApiResponse(CommentSwagger.createGroupComment.response[404])
   async createGroupComment(
     @Req() req: Request,
@@ -103,6 +104,7 @@ export class CommentController {
   @ApiResponse(CommentSwagger.createChildComment.response[201])
   @ApiResponse(CommentSwagger.createChildComment.response[400])
   @ApiResponse(CommentSwagger.createChildComment.response[401])
+  @ApiResponse(CommentSwagger.createChildComment.response[403])
   @ApiResponse(CommentSwagger.createChildComment.response[404])
   async createChildComment(
     @Req() req: Request,

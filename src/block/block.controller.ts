@@ -25,6 +25,7 @@ export class BlockController {
   @ApiOperation(BlockSwagger.getBlocks.operation)
   @ApiResponse(BlockSwagger.getBlocks.response[200])
   @ApiResponse(BlockSwagger.getBlocks.response[401])
+  @ApiResponse(BlockSwagger.getBlocks.response[403])
   async getBlocks(@Req() req: Request): Promise<BlocksDto> {
     const { userId } = req.user as Payload;
     return await this.blockService.findBlocks(userId);
@@ -38,6 +39,7 @@ export class BlockController {
   @ApiParam(BlockSwagger.blockOrCancel.param.otherId)
   @ApiResponse(BlockSwagger.blockOrCancel.response[200])
   @ApiResponse(BlockSwagger.blockOrCancel.response[401])
+  @ApiResponse(BlockSwagger.blockOrCancel.response[403])
   async blockOrCancel(
     @Req() req: Request,
     @Param('otherId') otherId: string,

@@ -19,6 +19,11 @@ export const BlockSwagger = {
         description: '로그인 필요',
         type: ErrorDto,
       },
+      403: {
+        status: 403,
+        description: '토큰 만료',
+        type: ErrorDto,
+      },
     },
   },
   blockOrCancel: {
@@ -44,6 +49,11 @@ export const BlockSwagger = {
       401: {
         status: 401,
         description: '로그인 필요',
+        type: ErrorDto,
+      },
+      403: {
+        status: 403,
+        description: '토큰 만료',
         type: ErrorDto,
       },
     },

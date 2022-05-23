@@ -6,15 +6,10 @@ import { GroupController } from './group.controller';
 import { GroupException } from './group.exception';
 import { GroupRepository } from './group.repository';
 import { GroupService } from './group.service';
-import { ImageRepository } from 'src/image/image.repository';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      GroupRepository,
-      GroupUserRepository,
-      ImageRepository,
-    ]),
+    TypeOrmModule.forFeature([GroupRepository, GroupUserRepository]),
     AuthException,
   ],
   controllers: [GroupController],

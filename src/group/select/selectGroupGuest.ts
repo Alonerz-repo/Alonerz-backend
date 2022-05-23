@@ -1,8 +1,9 @@
 export const selectGroupGuest = [
   'guest.userId',
   'guest.nickname',
-  'guest.year',
+  'guest.profileImageUrl',
+  'guest.characterImageId',
+  'guest.yearId',
   'guest.careerId',
   'guest.description',
-  'guest.imageUrl',
 ];

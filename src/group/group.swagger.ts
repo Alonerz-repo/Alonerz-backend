@@ -1,3 +1,8 @@
+import { ErrorDto } from 'src/common/dto/error.dto';
+import { CreatedGroupDto } from './dto/response/created-group.dto';
+import { GroupDetailDto } from './dto/response/group-detail.dto';
+import { SelectGroupsDto } from './dto/response/select-groups.dto';
+
 export const GroupSwagger = {
   tag: '그룹 API',
   getTodayGroups: {
@@ -9,12 +14,17 @@ export const GroupSwagger = {
       200: {
         status: 200,
         description: '성공',
-        // type
+        type: SelectGroupsDto,
       },
       401: {
         status: 401,
         description: '로그인 필요',
-        // type
+        type: ErrorDto,
+      },
+      403: {
+        status: 403,
+        description: '토큰 만료',
+        type: ErrorDto,
       },
     },
   },
@@ -28,7 +38,7 @@ export const GroupSwagger = {
       200: {
         status: 200,
         description: '성공',
-        // type
+        type: SelectGroupsDto,
       },
     },
     query: {
@@ -76,12 +86,17 @@ export const GroupSwagger = {
       200: {
         status: 200,
         description: '성공',
-        // type
+        type: SelectGroupsDto,
       },
       401: {
         status: 401,
         description: '로그인 필요',
-        // type
+        type: ErrorDto,
+      },
+      403: {
+        status: 403,
+        description: '토큰 만료',
+        type: ErrorDto,
       },
     },
     param: {
@@ -111,17 +126,22 @@ export const GroupSwagger = {
       200: {
         status: 200,
         description: '성공',
-        // type
+        type: GroupDetailDto,
       },
       401: {
         status: 401,
         description: '로그인 필요',
-        // type
+        type: ErrorDto,
+      },
+      403: {
+        status: 403,
+        description: '토큰 만료',
+        type: ErrorDto,
       },
       404: {
         status: 404,
         description: '조회 실패',
-        // type
+        type: ErrorDto,
       },
     },
     param: {
@@ -143,79 +163,22 @@ export const GroupSwagger = {
       201: {
         status: 201,
         description: '성공',
-        // type
+        type: CreatedGroupDto,
       },
       400: {
         status: 400,
         description: '잘못된 입력',
-        // type
+        type: ErrorDto,
       },
       401: {
         status: 401,
         description: '로그인 필요',
-        // type
+        type: ErrorDto,
       },
-    },
-    body: {
-      schema: {
-        type: 'object',
-        properties: {
-          title: {
-            type: 'string',
-            description: '그룹 제목',
-            example: '퇴근 후 치맥하실분~',
-          },
-          description: {
-            type: 'string',
-            description: '덧붙일 내용',
-            example: '내일 출근이니 가볍게 적실 예정입니다.',
-          },
-          menu: {
-            type: 'string',
-            description: '메뉴',
-            example: '치맥',
-          },
-          placeName: {
-            type: 'string',
-            description: '모임 장소',
-            example: '오빠닭 강남점',
-          },
-          startAt: {
-            type: 'date',
-            description: '모임 시작일시',
-            example: new Date(),
-          },
-          endAt: {
-            type: 'date',
-            description: '모임 종료일시',
-            example: new Date(),
-          },
-          limit: {
-            type: 'integer',
-            description: '인원 제한',
-            example: 4,
-          },
-          locationX: {
-            type: 'double',
-            description: '카카오맵 좌표(x)',
-            example: 36.358361084097034,
-          },
-          locationY: {
-            type: 'double',
-            description: '카카오맵 좌표(y)',
-            example: 127.34540366949406,
-          },
-          address: {
-            type: 'string',
-            description: '상세 주소',
-            example: '대전광역시 유성구 봉명동 629-2',
-          },
-          image: {
-            type: 'string',
-            description: '그룹 이미지',
-            format: 'binary',
-          },
-        },
+      403: {
+        status: 403,
+        description: '토큰 만료',
+        type: ErrorDto,
       },
     },
   },
@@ -228,22 +191,27 @@ export const GroupSwagger = {
       200: {
         status: 200,
         description: '성공',
-        // type
+        type: null,
       },
       400: {
         status: 400,
         description: '잘못된 입력',
-        // type
+        type: ErrorDto,
       },
       401: {
         status: 401,
         description: '로그인 필요',
-        // type
+        type: ErrorDto,
+      },
+      403: {
+        status: 403,
+        description: '토큰 만료',
+        type: ErrorDto,
       },
       404: {
         status: 404,
         description: '조회 실패',
-        // type
+        type: ErrorDto,
       },
     },
     param: {
@@ -253,68 +221,6 @@ export const GroupSwagger = {
         type: 'string',
         example: '050b9744-b833-4c49-b35a-c9c7e631c2e2',
         required: true,
-      },
-    },
-    body: {
-      schema: {
-        type: 'object',
-        properties: {
-          title: {
-            type: 'string',
-            description: '그룹 제목',
-            example: '퇴근 후 치맥하실분~',
-          },
-          description: {
-            type: 'string',
-            description: '덧붙일 내용',
-            example: '내일 출근이니 가볍게 적실 예정입니다.',
-          },
-          menu: {
-            type: 'string',
-            description: '메뉴',
-            example: '치맥',
-          },
-          placeName: {
-            type: 'string',
-            description: '모임 장소',
-            example: '오빠닭 강남점',
-          },
-          startAt: {
-            type: 'date',
-            description: '모임 시작일시',
-            example: new Date(),
-          },
-          endAt: {
-            type: 'date',
-            description: '모임 종료일시',
-            example: new Date(),
-          },
-          limit: {
-            type: 'integer',
-            description: '인원 제한',
-            example: 4,
-          },
-          locationX: {
-            type: 'double',
-            description: '카카오맵 좌표(x)',
-            example: 36.358361084097034,
-          },
-          locationY: {
-            type: 'double',
-            description: '카카오맵 좌표(y)',
-            example: 127.34540366949406,
-          },
-          address: {
-            type: 'string',
-            description: '상세 주소',
-            example: '대전광역시 유성구 봉명동 629-2',
-          },
-          image: {
-            type: 'string',
-            description: '그룹 이미지',
-            format: 'binary',
-          },
-        },
       },
     },
   },
@@ -336,17 +242,22 @@ export const GroupSwagger = {
       200: {
         status: 200,
         description: '성공',
-        // type
+        type: null,
       },
       401: {
         status: 401,
         description: '로그인 필요',
-        // type
+        type: ErrorDto,
+      },
+      403: {
+        status: 403,
+        description: '토큰 만료',
+        type: ErrorDto,
       },
       404: {
         status: 404,
         description: '조회 실패',
-        // type
+        type: ErrorDto,
       },
     },
   },
@@ -385,22 +296,27 @@ export const GroupSwagger = {
       200: {
         status: 200,
         description: '성공',
-        // type
+        type: null,
       },
       400: {
         status: 400,
         description: '잘못된 요청',
-        // type
+        type: ErrorDto,
       },
       401: {
         status: 401,
         description: '로그인 필요',
-        // type
+        type: ErrorDto,
+      },
+      403: {
+        status: 403,
+        description: '토큰 만료',
+        type: ErrorDto,
       },
       404: {
         status: 404,
         description: '조회 실패',
-        // type
+        type: ErrorDto,
       },
     },
   },
