@@ -1,4 +1,3 @@
-import { User } from 'src/user/user.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -9,6 +8,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
+import { User } from 'src/user/user.entity';
 import { Group } from '../group/group.entity';
 
 @Entity('comments')
@@ -24,7 +24,7 @@ export class Comment {
   parentId: number;
 
   @Column({ type: 'int', default: 0 })
-  childComments: number;
+  childCommentCount: number;
 
   @ManyToOne(() => User, (user) => user.userId)
   @JoinColumn({ name: 'userId' })
