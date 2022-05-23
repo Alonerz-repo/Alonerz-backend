@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsOptional } from 'class-validator';
 
 export class CreateStickerDto {
-  @ApiProperty({ type: 'integer' })
+  @ApiProperty({ type: 'integer', required: false })
   @IsOptional()
   @IsNumber()
   readonly stickerId?: number;
