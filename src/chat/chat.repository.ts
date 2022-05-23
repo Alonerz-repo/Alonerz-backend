@@ -7,20 +7,24 @@ import { selectUsers } from './select/selectUsers';
 export class ChatRepository extends Repository<Chat> {
   // 채팅 존재 여부 확인
   async findOneByChatId(chatId: number) {
-    return await this.findOne({ chatId });
+    return await this.createQueryBuilder('chats')
+      .leftJoin('chats.user', 'user')
+      .addSelect(['user.userId'])
+      .where('chats.chatId = :chatId', { chatId })
+      .getOne();
   }
 
-  // 채팅 조회
-  async findManybyRoomId(roomId: string, joinRoomAt: Date) {
+  // 채팅 조회 : 채팅방 입장
+  async findManyByRoomId(roomId: string, joinRoomAt: Date) {
     return await this.createQueryBuilder('chats')
       .select(selectChats)
       .leftJoin('chats.user', 'user')
       .addSelect(selectUsers)
       .where('chats.roomId = :roomId', { roomId })
-      .andWhere('chats.deleteAt IS NULL')
-      .andWhere('chats.createdAt < :joinRoomAt', { joinRoomAt })
+      .andWhere('chats.deletedAt IS NULL')
+      .andWhere('chats.createdAt > :joinRoomAt', { joinRoomAt })
       .orderBy('chats.chatId', 'DESC')
-      .limit(20)
+      .limit(10)
       .getMany();
   }
 
@@ -35,18 +39,17 @@ export class ChatRepository extends Repository<Chat> {
       .leftJoin('chats.user', 'user')
       .addSelect(selectUsers)
       .where('chats.roomId = :roomId', { roomId })
-      .andWhere('chats.deleteAt IS NULL')
-      .andWhere('chats.createdAt < :joinRoomAt', { joinRoomAt })
+      .andWhere('chats.deletedAt IS NULL')
+      .andWhere('chats.createdAt > :joinRoomAt', { joinRoomAt })
       .andWhere('chats.chatId < :offset', { offset })
       .orderBy('chats.chatId', 'DESC')
-      .limit(20)
-      //.offset(offset ? offset - 20 : 0) // offset을 chatId가 아닌 채팅 개수로 해야하나? chatId로 하면 => where에 추가
+      .limit(10)
       .getMany();
   }
 
   // 채팅 저장
   async createChat(roomId: string, userId: string, message: string) {
-    return await this.save({ roomId, userId, message });
+    return await this.save({ roomId: roomId, user: userId, message });
   }
 
   // 채팅 삭제
