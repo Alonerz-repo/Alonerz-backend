@@ -10,6 +10,9 @@ export class StickerRepository extends Repository<Sticker> {
     return this.find({
       where: { userId },
       select: ['stickerId', 'stickerImageId', 'stickerOrder'],
+      order: {
+        stickerOrder: 'ASC',
+      },
     });
   }
 
