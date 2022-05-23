@@ -1,14 +1,21 @@
+import { Tokens } from 'src/auth/auth.interface';
 import { EntityRepository, Repository } from 'typeorm';
 import { Token } from './token.entity';
 
 @EntityRepository(Token)
 export class TokenRepository extends Repository<Token> {
-  // 토큰 갱신 및 저장
-  async saveToken(
-    userId: string,
-    tokens: { accessToken: string; refreshToken: string },
-  ): Promise<void> {
+  // 토큰 저장
+  async saveToken(userId: string, tokens: Tokens): Promise<void> {
     await this.save({ ...tokens, userId });
+  }
+
+  // 토큰 갱신
+  async updateToken(
+    userId: string,
+    refreshToken: string,
+    tokens: Tokens,
+  ): Promise<void> {
+    await this.update({ userId, refreshToken }, tokens);
   }
 
   // 토큰 조회

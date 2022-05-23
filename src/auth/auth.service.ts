@@ -57,7 +57,7 @@ export class AuthService {
     return new CreatedTokensDto(tokens);
   }
 
-  // 토큰 재발급
+  // 토큰 갱신
   async reissueTokens(
     authorization: string,
     refreshToken: string,
@@ -75,7 +75,7 @@ export class AuthService {
     }
 
     const tokens = this.generateTokens(userId);
-    await this.tokenRepository.saveToken(userId, tokens);
+    await this.tokenRepository.updateToken(userId, refreshToken, tokens);
     return new ReissuedTokensDto(tokens, user);
   }
 
