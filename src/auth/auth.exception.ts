@@ -3,6 +3,7 @@ import {
   HttpStatus,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 
@@ -29,6 +30,14 @@ export class AuthException {
       statusCode: HttpStatus.FORBIDDEN,
       message: ['토큰이 만료되었습니다.'],
       error: 'Forbidden',
+    });
+  }
+
+  NotFound() {
+    throw new NotFoundException({
+      statusCode: HttpStatus.NOT_FOUND,
+      message: ['삭제되었거나 존재하지 않는 계정입니다.'],
+      error: 'Not Found',
     });
   }
 

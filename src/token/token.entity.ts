@@ -14,9 +14,6 @@ export class Token {
   @Column('varchar')
   userId: string;
 
-  @Column('varchar')
-  kakaoId: string;
-
   @Column('text')
   accessToken: string;
 
