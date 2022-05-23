@@ -22,13 +22,13 @@ export class Group {
   @Column('varchar')
   title: string;
 
-  @Column('varchar')
-  menu: string;
+  @Column('int')
+  categoryId: number;
 
   @Column('varchar')
   placeName: string;
 
-  @Column('text')
+  @Column({ type: 'text', default: null })
   description: string;
 
   @Column({ type: 'varchar', default: null })

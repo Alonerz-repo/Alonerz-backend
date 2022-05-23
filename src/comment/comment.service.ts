@@ -3,8 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
 import { CommentException } from './comment.exception';
 import { CommentRepository } from './comment.repository';
-import { CreateCommentDto } from './dto/create-comment.dto';
-import { UpdateCommentDto } from './dto/update-comment.dto';
+import { CreateCommentDto } from './dto/request/create-comment.dto';
+import { UpdateCommentDto } from './dto/request/update-comment.dto';
+import { SelectCommentDto } from './dto/response/select-comment.dto';
+import { SelectCommentsDto } from './dto/response/select-comments.dto';
 
 @Injectable()
 export class CommentService {
@@ -15,37 +17,36 @@ export class CommentService {
     private readonly connection: Connection,
   ) {}
 
-  // 그룹 댓글 존재 여부 확인
-  private async findComment(commentId: number) {
-    const comment = await this.commentRepository.findOne(commentId);
+  // 댓글 존재 여부 및 하위 댓글수 확인
+  private async findComment(commentId: number): Promise<number> {
+    const comment = await this.commentRepository.findOne({ commentId });
     if (!comment) {
       this.commentException.NotFound();
     }
-    return comment.childComments;
+    return comment.childCommentCount;
   }
 
   // 그룹 댓글 접근 권한 확인
-  private async accessComment(userId: string, commentId: number) {
+  private async accessComment(
+    userId: string,
+    commentId: number,
+  ): Promise<void> {
     const comment = await this.commentRepository.findOne({ userId, commentId });
     if (!comment) {
       this.commentException.AccessDenined();
     }
-    return comment;
   }
 
   // 그룹 댓글 조회
-  async getGroupComments(groupId: string, offset: number) {
-    const rows = await this.commentRepository.findCommentByGroupId(
+  async getGroupComments(
+    groupId: string,
+    offset: number,
+  ): Promise<SelectCommentsDto> {
+    const comments = await this.commentRepository.findCommentByGroupId(
       groupId,
       offset,
     );
-    const comments = rows.map((row) => {
-      const comment = row as any;
-      comment.user = row.userId;
-      delete comment.userId;
-      return comment;
-    });
-    return { comments };
+    return new SelectCommentsDto(comments);
   }
 
   // 그룹 댓글 작성
@@ -53,29 +54,28 @@ export class CommentService {
     groupId: string,
     userId: string,
     createCommentDto: CreateCommentDto,
-  ) {
-    await this.commentRepository.createGroupComment(
+  ): Promise<SelectCommentDto> {
+    const comment = await this.commentRepository.createGroupComment(
       groupId,
       userId,
       createCommentDto,
     );
+    return new SelectCommentDto(comment);
   }
 
   // 하위 댓글 조회
-  async getChildComments(groupId: string, parentId: number, offset: number) {
+  async getChildComments(
+    groupId: string,
+    parentId: number,
+    offset: number,
+  ): Promise<SelectCommentsDto> {
     await this.findComment(parentId);
-    const rows = await this.commentRepository.findChildComments(
+    const comments = await this.commentRepository.findChildComments(
       groupId,
       parentId,
       offset,
     );
-    const comments = rows.map((row) => {
-      const comment = row as any;
-      comment.user = row.userId;
-      delete comment.userId;
-      return comment;
-    });
-    return { comments };
+    return new SelectCommentsDto(comments);
   }
 
   // 하위 댓글 작성
@@ -84,17 +84,18 @@ export class CommentService {
     parentId: number,
     userId: string,
     createCommentDto: CreateCommentDto,
-  ) {
-    const childComments = await this.findComment(parentId);
+  ): Promise<SelectCommentDto> {
+    const childCommentCount = await this.findComment(parentId);
 
     const queryRunner = this.connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     let error = null;
+    let comment = null;
     try {
       // 하위 comment 등록
-      await this.commentRepository.createChildCommentTransaction(
+      comment = await this.commentRepository.createChildCommentTransaction(
         queryRunner,
         groupId,
         parentId,
@@ -105,7 +106,7 @@ export class CommentService {
       await this.commentRepository.increaseChildCommentCountTransaction(
         queryRunner,
         parentId,
-        childComments + 1,
+        childCommentCount + 1,
       );
       await queryRunner.commitTransaction();
     } catch (e) {
@@ -118,6 +119,8 @@ export class CommentService {
     if (error) {
       this.commentException.Transaction();
     }
+
+    return new SelectCommentDto(comment);
   }
 
   // 댓글 수정
@@ -125,13 +128,13 @@ export class CommentService {
     userId: string,
     commentId: number,
     updateCommentDto: UpdateCommentDto,
-  ) {
+  ): Promise<void> {
     await this.accessComment(userId, commentId);
     await this.commentRepository.updateComment(commentId, updateCommentDto);
   }
 
   // 댓글 삭제
-  async deleteComment(userId: string, commentId: number) {
+  async deleteComment(userId: string, commentId: number): Promise<void> {
     await this.accessComment(userId, commentId);
     await this.commentRepository.deleteComment(commentId);
   }

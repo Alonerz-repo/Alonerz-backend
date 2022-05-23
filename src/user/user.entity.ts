@@ -16,6 +16,7 @@ import {
 } from 'typeorm';
 import { ChatUser } from 'src/chatuser/chatuser.entity';
 import { Chat } from 'src/chat/chat.entity';
+import { Sticker } from 'src/sticker/sticker.entity';
 
 const now = () => String(Date.now());
 
@@ -31,13 +32,19 @@ export class User {
   nickname: string;
 
   @Column({ type: 'varchar', default: null })
-  imageUrl: string;
+  profileImageUrl: string;
 
-  @Column({ type: 'int', default: null })
+  @Column({ type: 'int', default: 0 })
+  characterImageId: number;
+
+  @Column({ type: 'int', default: 0 })
+  backgroundColorId: number;
+
+  @Column({ type: 'int', default: 0 })
   careerId: number;
 
-  @Column({ type: 'varchar', default: null })
-  year: string;
+  @Column({ type: 'int', default: 0 })
+  yearId: number;
 
   @Column({ type: 'text', default: null })
   description: string;
@@ -59,17 +66,17 @@ export class User {
   // 사용자 : 팔로잉 = 1 : N
   @OneToMany(() => Follow, (follow) => follow.userId, { cascade: true })
   @JoinColumn({ name: 'following' })
-  following: Follow[];
+  followingUserIds: Follow[];
 
   // 사용자 : 팔로워 = 1 : N
   @OneToMany(() => Follow, (follow) => follow.otherId, { cascade: true })
   @JoinColumn({ name: 'follower' })
-  follower: Follow[];
+  followerUserIds: Follow[];
 
   // 사용자 : 차단 = 1 : N
   @OneToMany(() => Block, (block) => block.userId, { cascade: true })
   @JoinColumn({ name: 'blocker' })
-  blocker: Block[];
+  blockerUserIds: Block[];
 
   // 사용자 : 그룹(호스트) = 1 : N
   @OneToMany(() => Group, (group) => group.host, { cascade: true })
@@ -85,6 +92,11 @@ export class User {
   @OneToMany(() => Comment, (comment) => comment.userId, { cascade: true })
   @JoinColumn({ name: 'guestGroups' })
   comments: Comment[];
+
+  // 사용자 : 스티커 = 1 : N
+  @OneToMany(() => Sticker, (sticker) => sticker.userId, { cascade: true })
+  @JoinColumn({ name: 'stickers' })
+  stickers: Sticker[];
 
   // 사용자 : 채팅방 = 1 : N
   @OneToMany(() => ChatUser, (chatUser) => chatUser.user, { cascade: true })

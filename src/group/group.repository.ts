@@ -1,6 +1,6 @@
-import { EntityRepository, QueryRunner, Repository } from 'typeorm';
-import { CreateGroupDto } from './dto/create-group.dto';
-import { UpdateGroupDto } from './dto/update-group.dto';
+import { EntityRepository, Repository } from 'typeorm';
+import { CreateGroupDto } from './dto/request/create-group.dto';
+import { UpdateGroupDto } from './dto/request/update-group.dto';
 import { selectGroup } from './select/selectGroup';
 import { selectGroupGuest } from './select/selectGroupGuest';
 import { selectGroupHost } from './select/selectGroupHost';
@@ -21,13 +21,12 @@ export class GroupRepository extends Repository<Group> {
   }
 
   // 그룹 생성 트랜젝션
-  async createGroupTransaction(
-    queryRunner: QueryRunner,
+  async createGroup(
     userId: string,
     imageUrl: string | null,
     createGroupDto: CreateGroupDto,
-  ) {
-    const { groupId } = await queryRunner.manager.save(Group, {
+  ): Promise<string> {
+    const { groupId } = await this.save({
       host: userId,
       imageUrl,
       ...createGroupDto,
@@ -36,44 +35,39 @@ export class GroupRepository extends Repository<Group> {
   }
 
   // 그룹 수정 트랜젝션
-  async updateGroupTransaction(
-    queryRunner: QueryRunner,
+  async updateGroup(
     groupId: string,
     imageUrl: string | null,
     updateGroupDto: UpdateGroupDto,
-  ) {
-    if (imageUrl) {
-      return await queryRunner.manager.update(
-        Group,
-        { groupId },
-        { ...updateGroupDto, imageUrl },
-      );
-    }
-    await queryRunner.manager.update(Group, { groupId }, updateGroupDto);
+  ): Promise<void> {
+    imageUrl
+      ? await this.update({ groupId }, { ...updateGroupDto, imageUrl })
+      : await this.update({ groupId }, updateGroupDto);
   }
 
   // 그룹 삭제
-  async deleteGroup(groupId: string) {
+  async deleteGroup(groupId: string): Promise<void> {
     await this.softDelete(groupId);
+    return;
   }
 
   // 그룹 상세 정보 조회
-  async findGroupInfo(groupId: string) {
-    const group = await this.createQueryBuilder('group')
+  async findGroupInfo(groupId: string): Promise<Group> {
+    return await this.createQueryBuilder('group')
       .select(selectGroup)
       .leftJoin('group.host', 'host')
       .addSelect(selectGroupHost)
-      .leftJoinAndSelect('group.guests', 'guests')
+      .leftJoin('group.guests', 'guests')
+      .addSelect(['guests.id'])
       .leftJoin('guests.guest', 'guest')
       .addSelect(selectGroupGuest)
       .where('group.groupId = :groupId', { groupId })
       .getOne();
-    return group;
   }
 
   // 오늘 참여 그룹 목록 조회
-  async findTodayGroups(userId: string) {
-    const groups = await this.createQueryBuilder('groups')
+  async findTodayGroups(userId: string): Promise<Group[]> {
+    return await this.createQueryBuilder('groups')
       .select(selectGroups)
       .leftJoin('groups.host', 'host')
       .addSelect(selectGroupHost)
@@ -85,15 +79,6 @@ export class GroupRepository extends Repository<Group> {
       // .andWhere('groups.startAt > :today', { today: new Date() })
       .orderBy('groups.startAt', 'DESC')
       .getMany();
-
-    return groups.map((group) => {
-      const row = {
-        ...group,
-        join: group.guests.length + 1,
-      };
-      delete row.guests;
-      return row;
-    });
   }
 
   // 조건에 따른 그룹 목록 조회
@@ -103,7 +88,7 @@ export class GroupRepository extends Repository<Group> {
     y: number,
     offset?: number,
     time?: GroupTime,
-  ) {
+  ): Promise<Group[]> {
     let today: Date;
     switch (time) {
       case 'lunch':
@@ -132,8 +117,8 @@ export class GroupRepository extends Repository<Group> {
   }
 
   // 사용자가 참여한 모든 그룹 조회
-  async findGroupsByUserId(userId: string, offset?: number) {
-    const groups = await this.createQueryBuilder('groups')
+  async findGroupsByUserId(userId: string, offset?: number): Promise<Group[]> {
+    return await this.createQueryBuilder('groups')
       .select(selectGroups)
       .leftJoin('groups.host', 'host')
       .addSelect(selectGroupHost)
@@ -146,13 +131,5 @@ export class GroupRepository extends Repository<Group> {
       .limit(offset ? 8 : 4)
       .offset(offset ? offset : 0)
       .getMany();
-    return groups.map((group) => {
-      const row = {
-        ...group,
-        join: group.guests.length + 1,
-      };
-      delete row.guests;
-      return row;
-    });
   }
 }

@@ -3,6 +3,7 @@ import {
   HttpStatus,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 
@@ -12,7 +13,7 @@ export class AuthException {
     throw new UnauthorizedException({
       statusCode: HttpStatus.UNAUTHORIZED,
       message: ['카카오 인증에 실패하였습니다.'],
-      error: 'Unauthorized',
+      error: 'FailKakaoLogin',
     });
   }
 
@@ -20,7 +21,7 @@ export class AuthException {
     throw new UnauthorizedException({
       statusCode: HttpStatus.UNAUTHORIZED,
       message: ['로그인이 필요합니다.'],
-      error: 'Unauthorized',
+      error: 'InvalidToken',
     });
   }
 
@@ -28,7 +29,15 @@ export class AuthException {
     throw new ForbiddenException({
       statusCode: HttpStatus.FORBIDDEN,
       message: ['토큰이 만료되었습니다.'],
-      error: 'Forbidden',
+      error: 'ExpiredToken',
+    });
+  }
+
+  NotFound() {
+    throw new NotFoundException({
+      statusCode: HttpStatus.NOT_FOUND,
+      message: ['삭제되었거나 존재하지 않는 계정입니다.'],
+      error: 'NotFound',
     });
   }
 

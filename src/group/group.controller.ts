@@ -13,15 +13,8 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { JwtGuard } from 'src/auth/guard/jwt.guard';
-import { GroupTime, GroupAction, Payload } from 'src/common/interface';
-import { Request } from 'express';
-import { GroupService } from './group.service';
-import { CreateGroupDto } from './dto/create-group.dto';
-import { UpdateGroupDto } from './dto/update-group.dto';
 import {
   ApiBearerAuth,
-  ApiBody,
   ApiConsumes,
   ApiOperation,
   ApiParam,
@@ -29,8 +22,18 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { JwtGuard } from 'src/auth/guard/jwt.guard';
+import { GroupTime, GroupAction, Payload } from 'src/common/interface';
+import { Request } from 'express';
+import { GroupService } from './group.service';
 import { GroupSwagger } from './group.swagger';
-import { GroupImageInterceptor } from 'src/image/image.interceptors';
+import { GroupImageInterceptor } from 'src/common/interceptors';
+import { CreateGroupDto } from './dto/request/create-group.dto';
+import { UpdateGroupDto } from './dto/request/update-group.dto';
+import { GroupImageDto } from './dto/request/group-image.dto';
+import { GroupDetailDto } from './dto/response/group-detail.dto';
+import { CreatedGroupDto } from './dto/response/created-group.dto';
+import { SelectGroupsDto } from './dto/response/select-groups.dto';
 
 @ApiTags(GroupSwagger.tag)
 @Controller('groups')
@@ -44,6 +47,7 @@ export class GroupController {
   @ApiOperation(GroupSwagger.getTodayGroups.operation)
   @ApiResponse(GroupSwagger.getTodayGroups.response[200])
   @ApiResponse(GroupSwagger.getTodayGroups.response[401])
+  @ApiResponse(GroupSwagger.getTodayGroups.response[403])
   async getTodayGroups(@Req() req: Request) {
     const { userId } = req.user as Payload;
     return this.groupService.getTodayGroups(userId);
@@ -62,7 +66,7 @@ export class GroupController {
     @Query('y') y: number,
     @Query('offset') offset?: number,
     @Query('time') time?: GroupTime,
-  ) {
+  ): Promise<SelectGroupsDto> {
     return await this.groupService.getGroupsByQuery(x, y, offset, time);
   }
 
@@ -75,10 +79,11 @@ export class GroupController {
   @ApiOperation(GroupSwagger.getUserGroups.operation)
   @ApiResponse(GroupSwagger.getUserGroups.response[200])
   @ApiResponse(GroupSwagger.getUserGroups.response[401])
+  @ApiResponse(GroupSwagger.getUserGroups.response[403])
   async getUserGroups(
     @Param('userId') userId: string,
     @Query('offset') offset?: number,
-  ) {
+  ): Promise<SelectGroupsDto> {
     return await this.groupService.getUserGroups(userId, offset);
   }
 
@@ -90,8 +95,11 @@ export class GroupController {
   @ApiOperation(GroupSwagger.getGroupDetail.operation)
   @ApiResponse(GroupSwagger.getGroupDetail.response[200])
   @ApiResponse(GroupSwagger.getGroupDetail.response[401])
+  @ApiResponse(GroupSwagger.getGroupDetail.response[403])
   @ApiResponse(GroupSwagger.getGroupDetail.response[404])
-  async getGroupDetail(@Param('groupId') groupId: string) {
+  async getGroupDetail(
+    @Param('groupId') groupId: string,
+  ): Promise<GroupDetailDto> {
     return await this.groupService.getGroupDetail(groupId);
   }
 
@@ -101,18 +109,22 @@ export class GroupController {
   @UseInterceptors(GroupImageInterceptor())
   @ApiBearerAuth('AccessToken')
   @ApiConsumes('multipart/form-data')
-  @ApiBody(GroupSwagger.createGroup.body)
   @ApiOperation(GroupSwagger.createGroup.operation)
   @ApiResponse(GroupSwagger.createGroup.response[201])
   @ApiResponse(GroupSwagger.createGroup.response[400])
   @ApiResponse(GroupSwagger.createGroup.response[401])
+  @ApiResponse(GroupSwagger.createGroup.response[403])
   async createGroup(
     @Req() req: Request,
     @Body() createGroupDto: CreateGroupDto,
-    @UploadedFile() image: Express.MulterS3.File,
-  ) {
+    @UploadedFile() image: GroupImageDto,
+  ): Promise<CreatedGroupDto> {
     const { userId } = req.user as Payload;
-    return await this.groupService.createGroup(userId, image, createGroupDto);
+    return await this.groupService.createGroup(
+      userId,
+      image as unknown as Express.MulterS3.File,
+      createGroupDto,
+    );
   }
 
   // 그룹 정보 수정
@@ -121,26 +133,27 @@ export class GroupController {
   @UseInterceptors(GroupImageInterceptor())
   @ApiBearerAuth('AccessToken')
   @ApiConsumes('multipart/form-data')
-  @ApiBody(GroupSwagger.updateGroup.body)
   @ApiParam(GroupSwagger.updateGroup.param.groupId)
   @ApiOperation(GroupSwagger.updateGroup.operation)
   @ApiResponse(GroupSwagger.updateGroup.response[200])
   @ApiResponse(GroupSwagger.updateGroup.response[400])
   @ApiResponse(GroupSwagger.updateGroup.response[401])
+  @ApiResponse(GroupSwagger.updateGroup.response[403])
   @ApiResponse(GroupSwagger.updateGroup.response[404])
   async updateGroup(
     @Req() req: Request,
     @Param('groupId') groupId: string,
     @Body() updateGroupDto: UpdateGroupDto,
-    @UploadedFile() image: Express.MulterS3.File,
-  ) {
+    @UploadedFile() image: GroupImageDto,
+  ): Promise<void> {
     const { userId } = req.user as Payload;
-    return await this.groupService.updateGroup(
+    await this.groupService.updateGroup(
       userId,
       groupId,
-      image,
+      image as unknown as Express.MulterS3.File,
       updateGroupDto,
     );
+    return;
   }
 
   // 그룹 삭제
@@ -151,10 +164,15 @@ export class GroupController {
   @ApiOperation(GroupSwagger.deleteGroup.operation)
   @ApiResponse(GroupSwagger.deleteGroup.response[200])
   @ApiResponse(GroupSwagger.deleteGroup.response[401])
+  @ApiResponse(GroupSwagger.deleteGroup.response[403])
   @ApiResponse(GroupSwagger.deleteGroup.response[404])
-  async deleteGroup(@Req() req: Request, @Param('groupId') groupId: string) {
+  async deleteGroup(
+    @Req() req: Request,
+    @Param('groupId') groupId: string,
+  ): Promise<void> {
     const { userId } = req.user as Payload;
-    return await this.groupService.deleteGroup(userId, groupId);
+    await this.groupService.deleteGroup(userId, groupId);
+    return;
   }
 
   // 그룹 참여 및 탈퇴
@@ -167,13 +185,15 @@ export class GroupController {
   @ApiResponse(GroupSwagger.joinOrExit.response[200])
   @ApiResponse(GroupSwagger.joinOrExit.response[400])
   @ApiResponse(GroupSwagger.joinOrExit.response[401])
+  @ApiResponse(GroupSwagger.joinOrExit.response[403])
   @ApiResponse(GroupSwagger.joinOrExit.response[404])
   async joinOrExit(
     @Req() req: Request,
     @Param('groupId') groupId: string,
     @Query('action') action: GroupAction,
-  ) {
+  ): Promise<void> {
     const { userId } = req.user as Payload;
-    return this.groupService.joinOrExitGroup(userId, groupId, action);
+    await this.groupService.joinOrExitGroup(userId, groupId, action);
+    return;
   }
 }

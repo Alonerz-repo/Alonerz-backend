@@ -1,6 +1,8 @@
 export const selectCommentUser = [
   'user.userId',
   'user.nickname',
-  'user.imageUrl',
+  'user.profileImageUrl',
+  'user.characterImageId',
   'user.careerId',
+  'user.yearId',
 ];

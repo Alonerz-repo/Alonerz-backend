@@ -25,7 +25,7 @@ export class BlockRepository extends Repository<Block> {
   }
 
   // 차단 상태 조회
-  async findBlock(userId: string, otherId: string) {
+  async findBlock(userId: string, otherId: string): Promise<Block> {
     return await this.findOne({ userId, otherId });
   }
 
@@ -34,14 +34,19 @@ export class BlockRepository extends Repository<Block> {
     queryRunner: QueryRunner,
     userId: string,
     otherId: string,
-  ) {
+  ): Promise<void> {
     await queryRunner.manager.save(Block, { userId, otherId });
+    return;
   }
 
   // 차단 상태 해제 트랜젝션
-  async blockCancelTransaction(queryRunner: QueryRunner, blockId: number) {
+  async blockCancelTransaction(
+    queryRunner: QueryRunner,
+    blockId: number,
+  ): Promise<void> {
     await queryRunner.manager.delete(Block, {
       id: blockId,
     });
+    return;
   }
 }

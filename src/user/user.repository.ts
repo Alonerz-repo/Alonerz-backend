@@ -1,7 +1,13 @@
-import { EntityRepository, QueryRunner, Repository } from 'typeorm';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { selectUsers } from './select/selectUsers';
+import {
+  selectStickers,
+  selectUserBoard,
+  selectUserMain,
+  selectUserProfile,
+} from './select/selectUsers';
 import { User } from './user.entity';
+import { EntityRepository, Repository } from 'typeorm';
+import { UpdateBoardDto } from './dto/request/update-board.dto';
+import { UpdateProfileDto } from './dto/request/update-profile.dto';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
@@ -10,33 +16,74 @@ export class UserRepository extends Repository<User> {
     return await this.save({ kakaoId });
   }
 
-  // 사용자 프로필 조회
-  async findUserInfo(userId: string) {
+  // 사용자 메인 정보 조회
+  async selectUserMain(userId: string): Promise<User> {
     return await this.createQueryBuilder('users')
-      .select(selectUsers)
-      .leftJoinAndSelect('users.following', 'following')
-      .leftJoinAndSelect('users.follower', 'follower')
-      .leftJoinAndSelect('follower.userId', 'followerUser')
+      .select(selectUserMain)
+      .leftJoin('users.stickers', 'sticker')
+      .addSelect(selectStickers)
+      .leftJoinAndSelect('users.followingUserIds', 'followingUserIds')
+      .leftJoinAndSelect('users.followerUserIds', 'followerUserIds')
+      .leftJoinAndSelect('followerUserIds.userId', 'followerUser')
       .leftJoin('users.point', 'points')
       .addSelect(['points.point'])
       .where('users.userId = :userId', { userId })
       .getOne();
   }
 
-  // 사용자 프로필 수정 트랜젝션
-  async updateUserProfileTransaction(
-    queryRunner: QueryRunner,
+  // 사용자 스티커, 캐릭터, 배경 정보 조회
+  async selectBoard(userId: string): Promise<User> {
+    return await this.createQueryBuilder('users')
+      .select(selectUserBoard)
+      .leftJoin('users.stickers', 'sticker')
+      .addSelect(selectStickers)
+      .leftJoin('users.point', 'points')
+      .addSelect(['points.point'])
+      .where('users.userId = :userId', { userId })
+      .getOne();
+  }
+
+  // 사용자 프로필(프로필 이미지, 닉네임, 커리어, 연차, 한 줄 소개) 조회
+  async selectUserProfile(userId: string): Promise<User> {
+    return await this.createQueryBuilder('users')
+      .select(selectUserProfile)
+      .leftJoin('users.point', 'points')
+      .addSelect(['points.point'])
+      .where('users.userId = :userId', { userId })
+      .getOne();
+  }
+
+  // 사용자 프로필 정보 수정
+  async updateProfile(
     userId: string,
-    imageUrl: string,
-    updateUserDto: UpdateUserDto,
-  ) {
-    if (imageUrl) {
-      return await queryRunner.manager.update(
-        User,
-        { userId },
-        { ...updateUserDto, imageUrl },
-      );
-    }
-    await queryRunner.manager.update(User, { userId }, updateUserDto);
+    updateProfileDto: UpdateProfileDto,
+  ): Promise<void> {
+    await this.update({ userId }, updateProfileDto);
+    return;
+  }
+
+  // 사용자 프로필 이미지 수정
+  async updateProfileImage(
+    userId: string,
+    image: Express.MulterS3.File,
+  ): Promise<string> {
+    const profileImageUrl = image.location;
+    await this.update({ userId }, { profileImageUrl });
+    return profileImageUrl;
+  }
+
+  // 사용자 프로필 이미지 삭제
+  async deleteProfileImage(userId: string): Promise<void> {
+    await this.update({ userId }, { profileImageUrl: null });
+    return;
+  }
+
+  // 사용자 보드(캐릭터, 배경색) 수정
+  async updateBoard(
+    userId: string,
+    updateBoardDto: UpdateBoardDto,
+  ): Promise<void> {
+    await this.update({ userId }, updateBoardDto);
+    return;
   }
 }

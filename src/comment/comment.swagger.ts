@@ -1,3 +1,7 @@
+import { ErrorDto } from 'src/common/dto/error.dto';
+import { SelectCommentDto } from './dto/response/select-comment.dto';
+import { SelectCommentsDto } from './dto/response/select-comments.dto';
+
 export const CommentSwagger = {
   tag: '댓글 API',
   getGroupComments: {
@@ -9,12 +13,17 @@ export const CommentSwagger = {
       200: {
         status: 200,
         description: '성공',
-        // type
+        type: SelectCommentsDto,
+      },
+      403: {
+        status: 403,
+        description: '토큰 만료',
+        type: ErrorDto,
       },
       404: {
         status: 404,
         description: '그룹 없음',
-        // type
+        type: ErrorDto,
       },
     },
     param: {
@@ -38,18 +47,6 @@ export const CommentSwagger = {
       summary: '그룹 댓글 등록 API',
       description: '특정 그룹에 새로운 댓글을 등록합니다.',
     },
-    body: {
-      schema: {
-        type: 'object',
-        properties: {
-          content: {
-            type: 'string',
-            description: '댓글 내용',
-            example: '혹시 30분 늦게 참석해도 되나요?',
-          },
-        },
-      },
-    },
     param: {
       groupId: {
         in: 'path',
@@ -62,28 +59,33 @@ export const CommentSwagger = {
       201: {
         status: 201,
         description: '성공',
-        // type
+        type: SelectCommentDto,
       },
       400: {
         status: 400,
         description: '잘못된 입력',
-        // type
+        type: ErrorDto,
       },
       401: {
         status: 401,
         description: '로그인 필요',
-        // type
+        type: ErrorDto,
+      },
+      403: {
+        status: 403,
+        description: '토큰 만료',
+        type: ErrorDto,
       },
       404: {
         status: 404,
         description: '그룹 없음',
-        // type
+        type: ErrorDto,
       },
     },
   },
   getChildComments: {
     operation: {
-      summary: '히위 댓글 조회 API',
+      summary: '하위 댓글 조회 API',
       description: '특정 댓글의 하위 댓글을 조회합니다.',
     },
     param: {
@@ -111,12 +113,17 @@ export const CommentSwagger = {
       200: {
         status: 200,
         description: '성공',
-        // type
+        type: SelectCommentsDto,
+      },
+      403: {
+        status: 403,
+        description: '토큰 만료',
+        type: ErrorDto,
       },
       404: {
         status: 404,
         description: '그룹 또는 상위 댓글 없음',
-        // type
+        type: ErrorDto,
       },
     },
   },
@@ -124,18 +131,6 @@ export const CommentSwagger = {
     operation: {
       summary: '히위 댓글 등록 API',
       description: '특정 댓글에 하위 댓글을 등록합니다.',
-    },
-    body: {
-      schema: {
-        type: 'object',
-        properties: {
-          content: {
-            type: 'string',
-            description: '댓글 내용',
-            example: '혹시 30분 늦게 참석해도 되나요?',
-          },
-        },
-      },
     },
     param: {
       groupId: {
@@ -155,22 +150,27 @@ export const CommentSwagger = {
       201: {
         status: 201,
         description: '성공',
-        // type
+        type: SelectCommentDto,
       },
       400: {
         status: 400,
         description: '잘못된 입력',
-        // type
+        type: ErrorDto,
       },
       401: {
         status: 401,
         description: '로그인 필요',
-        // type
+        type: ErrorDto,
+      },
+      403: {
+        status: 403,
+        description: '토큰 만료',
+        type: ErrorDto,
       },
       404: {
         status: 404,
         description: '그룹 또는 상위 댓글 없음',
-        // type
+        type: ErrorDto,
       },
     },
   },
@@ -178,18 +178,6 @@ export const CommentSwagger = {
     operation: {
       summary: '특정 댓글 수정 API',
       description: '특정 상위 댓글, 하위 댓글을 수정합니다.',
-    },
-    body: {
-      schema: {
-        type: 'object',
-        properties: {
-          content: {
-            type: 'string',
-            description: '댓글 내용',
-            example: '혹시 30분 늦게 참석해도 되나요?',
-          },
-        },
-      },
     },
     param: {
       commentId: {
@@ -203,27 +191,32 @@ export const CommentSwagger = {
       200: {
         status: 200,
         description: '성공',
-        // type
+        type: null,
       },
       400: {
         status: 400,
         description: '잘못된 입력',
-        // type
+        type: ErrorDto,
       },
       401: {
         status: 401,
         description: '로그인 필요',
-        // type
+        type: ErrorDto,
+      },
+      402: {
+        status: 403,
+        description: '수정 권한 없음',
+        type: ErrorDto,
       },
       403: {
         status: 403,
-        description: '수정 권한 없음',
-        // type
+        description: '토큰 만료',
+        type: ErrorDto,
       },
       404: {
         status: 404,
         description: '댓글 조회 실패',
-        // type
+        type: ErrorDto,
       },
     },
   },
@@ -244,49 +237,23 @@ export const CommentSwagger = {
       200: {
         status: 200,
         description: '성공',
-        // type
+        type: null,
       },
       401: {
         status: 401,
         description: '로그인 필요',
-        // type
+        type: ErrorDto,
       },
       403: {
         status: 403,
-        description: '삭제 권한 없음',
-        // type
+        description: '토큰 만료/삭제 권한 없음',
+        type: ErrorDto,
       },
       404: {
         status: 404,
         description: '댓글 조회 실패',
-        // type
+        type: ErrorDto,
       },
-    },
-  },
-  query: {
-    groupId: {
-      name: 'groupId',
-      example: 1,
-      required: true,
-    },
-    offset: {
-      name: 'offset',
-      example: 0,
-      required: false,
-    },
-  },
-  param: {
-    commentId: {
-      in: 'path',
-      name: 'commentId',
-      example: 1,
-      required: true,
-    },
-    parentId: {
-      in: 'path',
-      name: 'parentId',
-      example: 1,
-      required: true,
     },
   },
 };

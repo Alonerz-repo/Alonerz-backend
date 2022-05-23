@@ -13,7 +13,7 @@ export const useSwagger = (app: INestApplication) => {
     .setTitle(init.title)
     .setDescription(init.description)
     .setVersion(init.version)
-    .addServer('http://localhost:5000/api')
+    .addServer('http://localhost:5000')
     .addBearerAuth(bearerConfig, 'AccessToken')
     .build();
   const docs = SwaggerModule.createDocument(app, swagger);

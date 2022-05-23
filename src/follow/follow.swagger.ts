@@ -1,9 +1,13 @@
+import { ErrorDto } from 'src/common/dto/error.dto';
+import { FollowingsDto } from './dto/response/followers.dto';
+import { FollowersDto } from './dto/response/followings.dto';
+
 export const FollowSwagger = {
   tag: '사용자 팔로우 API',
-  getUserFollows: {
+  getFollowings: {
     operation: {
-      summary: '사용자 팔로잉 또는 팔로워 목록 조회 API',
-      description: '사용자의 팔로잉 또는 팔로워 목록을 조회합니다.',
+      summary: ' 팔로잉 목록 조회 API',
+      description: '사용자의 팔로잉 목록을 조회합니다.',
     },
     param: {
       userId: {
@@ -14,32 +18,53 @@ export const FollowSwagger = {
         required: true,
       },
     },
-    query: {
-      type: {
-        name: 'type',
+    response: {
+      200: {
+        status: 200,
+        description: '성공',
+        type: FollowingsDto,
+      },
+      401: {
+        status: 401,
+        description: '로그인 필요',
+        type: ErrorDto,
+      },
+      403: {
+        status: 403,
+        description: '토큰 만료',
+        type: ErrorDto,
+      },
+    },
+  },
+  getFollowers: {
+    operation: {
+      summary: '팔로워 목록 조회 API',
+      description: '사용자의 팔로워 목록을 조회합니다.',
+    },
+    param: {
+      userId: {
+        in: 'path',
+        name: 'userId',
         type: 'string',
-        examples: {
-          1: {
-            summary: '팔로잉 목록',
-            value: 'following',
-          },
-          2: {
-            summary: '팔로워 목록',
-            value: 'follower',
-          },
-        },
+        example: 'c4ef4a2a-b215-45cc-b98c-101438104540',
+        required: true,
       },
     },
     response: {
       200: {
         status: 200,
         description: '성공',
-        // type
+        type: FollowersDto,
       },
       401: {
         status: 401,
         description: '로그인 필요',
-        // type
+        type: ErrorDto,
+      },
+      403: {
+        status: 403,
+        description: '토큰 만료',
+        type: ErrorDto,
       },
     },
   },
@@ -61,12 +86,17 @@ export const FollowSwagger = {
       200: {
         status: 200,
         description: '성공',
-        // type
+        type: null,
       },
       401: {
         status: 401,
         description: '로그인 필요',
-        // type
+        type: ErrorDto,
+      },
+      403: {
+        status: 403,
+        description: '토큰 만료',
+        type: ErrorDto,
       },
     },
   },

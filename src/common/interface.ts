@@ -1,7 +1,5 @@
 export interface Payload {
   userId: string;
-  kakaoId: string;
-  nickname: string;
 }
 
 export type GroupTime = 'lunch' | 'dinner';
