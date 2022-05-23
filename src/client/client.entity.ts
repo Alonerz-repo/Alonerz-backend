@@ -1,11 +1,11 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('client')
+@Entity('clients')
 export class Client {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column('varchar')
+  @Column({ type: 'varchar', unique: true })
   socketId: string;
 
   @Column('varchar')

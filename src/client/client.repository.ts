@@ -4,7 +4,7 @@ import { Client } from './client.entity';
 @EntityRepository(Client)
 export class ClientRepository extends Repository<Client> {
   // 사용자 소켓 정보 확인
-  async getOneBySocketId(socketId: string) {
+  async findOneBySocketId(socketId: string) {
     return await this.findOne({ socketId });
   }
 
