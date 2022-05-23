@@ -48,12 +48,25 @@ export class StickerService {
     userId: string,
     createStickerDto: CreateStickerDto,
   ): Promise<CreatedStickerDto> {
-    const { stickerOrder, stickerImageId } = createStickerDto;
-    const sticker = await this.stickerRepository.save({
+    const { stickerImageId, stickerOrder } = createStickerDto;
+    const exist = await this.stickerRepository.findOne({
       userId,
       stickerOrder,
-      stickerImageId,
     });
+
+    let sticker;
+    if (exist) {
+      const { stickerId } = exist;
+      sticker = await this.stickerRepository.update(
+        { stickerId },
+        { stickerImageId, stickerOrder },
+      );
+    } else {
+      sticker = await this.stickerRepository.save({
+        userId,
+        ...createStickerDto,
+      });
+    }
     return new CreatedStickerDto(sticker);
   }
 
