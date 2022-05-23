@@ -1,18 +1,21 @@
-import { Comment } from './comment.entity';
-import { EntityRepository, QueryRunner, Repository } from 'typeorm';
-import { CreateCommentDto } from './dto/create-comment.dto';
-import { UpdateCommentDto } from './dto/update-comment.dto';
 import {
   selectChildComments,
   selectGroupComments,
 } from './select/selectComments';
+import { Comment } from './comment.entity';
+import { EntityRepository, QueryRunner, Repository } from 'typeorm';
+import { CreateCommentDto } from './dto/request/create-comment.dto';
+import { UpdateCommentDto } from './dto/request/update-comment.dto';
 import { selectCommentUser } from './select/selectCommentUser';
 
 @EntityRepository(Comment)
 export class CommentRepository extends Repository<Comment> {
   // 그룹의 댓글 조회
-  async findCommentByGroupId(groupId: string, offset: number) {
-    const comment = await this.createQueryBuilder('comments')
+  async findCommentByGroupId(
+    groupId: string,
+    offset: number,
+  ): Promise<Comment[]> {
+    return await this.createQueryBuilder('comments')
       .select(selectGroupComments)
       .leftJoin('comments.userId', 'user')
       .addSelect(selectCommentUser)
@@ -21,8 +24,6 @@ export class CommentRepository extends Repository<Comment> {
       .limit(offset ? 10 : 20)
       .offset(offset ? offset : 0)
       .getMany();
-
-    return comment;
   }
 
   // 그룹 댓글 작성
@@ -30,11 +31,11 @@ export class CommentRepository extends Repository<Comment> {
     groupId: string,
     userId: string,
     createCommentDto: CreateCommentDto,
-  ) {
-    await this.save({
-      ...createCommentDto,
+  ): Promise<Comment> {
+    return await this.save({
       groupId,
       userId,
+      ...createCommentDto,
     });
   }
 
@@ -71,12 +72,12 @@ export class CommentRepository extends Repository<Comment> {
   async increaseChildCommentCountTransaction(
     queryRunner: QueryRunner,
     parentId: number,
-    childComments: number,
+    childCommentCount: number,
   ) {
     await queryRunner.manager.update(
       Comment,
       { commentId: parentId },
-      { childComments },
+      { childCommentCount },
     );
   }
 

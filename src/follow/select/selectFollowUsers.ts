@@ -1,8 +1,9 @@
 export const selectFollowUsers = [
   'users.userId',
   'users.nickname',
-  'users.imageUrl',
+  'users.profileImageUrl',
+  'users.characterImageId',
   'users.careerId',
-  'users.year',
+  'users.yearId',
   'users.description',
 ];

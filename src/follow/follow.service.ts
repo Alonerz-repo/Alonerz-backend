@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FollowType } from 'src/common/interface';
-import { UserInfoRow } from 'src/user/row/user-info.row';
+import { User } from 'src/user/user.entity';
 import { UserRepository } from 'src/user/user.repository';
+import { FollowingsDto } from './dto/response/followers.dto';
+import { FollowersDto } from './dto/response/followings.dto';
 import { FollowException } from './follow.exception';
 import { FollowRepository } from './follow.repository';
-import { FollowRow } from './row/user-follow.row';
 
 @Injectable()
 export class FollowService {
@@ -18,7 +18,7 @@ export class FollowService {
   ) {}
 
   // 계정 조회
-  private async findUser(userId: string) {
+  private async findUser(userId: string): Promise<User> {
     const user = await this.userRepository.findOne({ userId });
     if (!user) {
       this.followException.NotFound();
@@ -26,23 +26,16 @@ export class FollowService {
     return user;
   }
 
-  // 팔로잉 또는 팔로워 목록 조회
-  async findFollows(userId: string, followType: FollowType) {
-    const joinner = followType === 'following' ? 'otherId' : 'userId';
-    const rows: FollowRow[] = await this.followRepository.findFollowUsers(
-      userId,
-      followType,
-    );
-    const users = rows.map((row) => {
-      const user = row[joinner] as UserInfoRow;
-      user.point = user.point as [];
-      user.point = user.point.reduce(
-        (pre: number, current: { point: number }) => pre + current.point,
-        0,
-      );
-      return user;
-    });
-    return { users };
+  // 팔로잉 목록 조회
+  async getFollowings(userId: string): Promise<FollowingsDto> {
+    const users = await this.followRepository.findFollowings(userId);
+    return new FollowingsDto(users);
+  }
+
+  // 팔로워 목록 조회
+  async getFollowers(userId: string): Promise<FollowersDto> {
+    const users = await this.followRepository.findFollowers(userId);
+    return new FollowersDto(users);
   }
 
   // 팔로잉 또는 팔로잉 상태 철회

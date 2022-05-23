@@ -1,4 +1,3 @@
-import { Controller, Get, Param, Put, Req, UseGuards } from '@nestjs/common';
 import {
   ApiBasicAuth,
   ApiOperation,
@@ -6,11 +5,13 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { Controller, Get, Param, Put, Req, UseGuards } from '@nestjs/common';
 import { Request } from 'express';
 import { JwtGuard } from 'src/auth/guard/jwt.guard';
 import { Payload } from 'src/common/interface';
 import { BlockService } from './block.service';
 import { BlockSwagger } from './block.swagger';
+import { BlocksDto } from './dto/response/blocks.dto';
 
 @ApiTags(BlockSwagger.tag)
 @Controller('blocks')
@@ -24,7 +25,7 @@ export class BlockController {
   @ApiOperation(BlockSwagger.getBlocks.operation)
   @ApiResponse(BlockSwagger.getBlocks.response[200])
   @ApiResponse(BlockSwagger.getBlocks.response[401])
-  async getBlocks(@Req() req: Request) {
+  async getBlocks(@Req() req: Request): Promise<BlocksDto> {
     const { userId } = req.user as Payload;
     return await this.blockService.findBlocks(userId);
   }
@@ -37,8 +38,12 @@ export class BlockController {
   @ApiParam(BlockSwagger.blockOrCancel.param.otherId)
   @ApiResponse(BlockSwagger.blockOrCancel.response[200])
   @ApiResponse(BlockSwagger.blockOrCancel.response[401])
-  async blockOrCancel(@Req() req: Request, @Param('otherId') otherId: string) {
+  async blockOrCancel(
+    @Req() req: Request,
+    @Param('otherId') otherId: string,
+  ): Promise<void> {
     const { userId } = req.user as Payload;
-    return await this.blockService.blockOrCancel(userId, otherId);
+    await this.blockService.blockOrCancel(userId, otherId);
+    return;
   }
 }

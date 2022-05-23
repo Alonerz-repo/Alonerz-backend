@@ -1,20 +1,28 @@
-import { FollowType } from 'src/common/interface';
 import { EntityRepository, QueryRunner, Repository } from 'typeorm';
 import { selectFollowUsers } from './select/selectFollowUsers';
 import { Follow } from './follow.entity';
 
 @EntityRepository(Follow)
 export class FollowRepository extends Repository<Follow> {
-  // 사용자 팔로잉 또는 팔로워 목록 조회
-  async findFollowUsers(userId: string, followType: FollowType) {
-    const joinner = followType === 'following' ? 'otherId' : 'userId';
-    const where = followType === 'following' ? 'userId' : 'otherId';
+  // 팔로잉 목록 조회
+  async findFollowings(userId: string) {
     return await this.createQueryBuilder('follows')
-      .leftJoin(`follows.${joinner}`, 'users')
+      .leftJoin('follows.otherId', 'users')
       .addSelect(selectFollowUsers)
       .leftJoin('users.point', 'points')
       .addSelect(['points.point'])
-      .where(`follows.${where} = :userId`, { userId })
+      .where('follows.userId = :userId', { userId })
+      .getMany();
+  }
+
+  // 팔로워 목록 조회
+  async findFollowers(userId: string): Promise<Follow[]> {
+    return await this.createQueryBuilder('follows')
+      .leftJoin('follows.userId', 'users')
+      .addSelect(selectFollowUsers)
+      .leftJoin('users.point', 'points')
+      .addSelect(['points.point'])
+      .where('follows.otherId = :userId', { userId })
       .getMany();
   }
 

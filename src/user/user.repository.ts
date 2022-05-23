@@ -67,7 +67,6 @@ export class UserRepository extends Repository<User> {
     userId: string,
     image: Express.MulterS3.File,
   ): Promise<string> {
-    console.log(image);
     const profileImageUrl = image.location;
     await this.update({ userId }, { profileImageUrl });
     return profileImageUrl;

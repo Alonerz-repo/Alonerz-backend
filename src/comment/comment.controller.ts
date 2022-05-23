@@ -12,7 +12,6 @@ import {
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
-  ApiBody,
   ApiConsumes,
   ApiOperation,
   ApiParam,
@@ -25,8 +24,10 @@ import { JwtGuard } from 'src/auth/guard/jwt.guard';
 import { Payload } from 'src/common/interface';
 import { CommentService } from './comment.service';
 import { CommentSwagger } from './comment.swagger';
-import { CreateCommentDto } from './dto/create-comment.dto';
-import { UpdateCommentDto } from './dto/update-comment.dto';
+import { CreateCommentDto } from './dto/request/create-comment.dto';
+import { UpdateCommentDto } from './dto/request/update-comment.dto';
+import { SelectCommentDto } from './dto/response/select-comment.dto';
+import { SelectCommentsDto } from './dto/response/select-comments.dto';
 
 @ApiTags(CommentSwagger.tag)
 @Controller('comments')
@@ -43,7 +44,7 @@ export class CommentController {
   async getGroupComments(
     @Param('groupId') groupId: string,
     @Query('offset') offset: number,
-  ) {
+  ): Promise<SelectCommentsDto> {
     return await this.commentService.getGroupComments(groupId, offset);
   }
 
@@ -52,7 +53,6 @@ export class CommentController {
   @UseGuards(JwtGuard)
   @ApiBearerAuth('AccessToken')
   @ApiConsumes('application/x-www-form-urlencoded')
-  @ApiBody(CommentSwagger.createGroupComment.body)
   @ApiQuery(CommentSwagger.createGroupComment.param.groupId)
   @ApiOperation(CommentSwagger.createGroupComment.operation)
   @ApiResponse(CommentSwagger.createGroupComment.response[201])
@@ -63,7 +63,7 @@ export class CommentController {
     @Req() req: Request,
     @Param('groupId') groupId: string,
     @Body() createCommentDto: CreateCommentDto,
-  ) {
+  ): Promise<SelectCommentDto> {
     const { userId } = req.user as Payload;
     return await this.commentService.createGroupComment(
       groupId,
@@ -84,7 +84,7 @@ export class CommentController {
     @Param('groupId') groupId: string,
     @Param('parentId') parentId: number,
     @Query('offset') offset: number,
-  ) {
+  ): Promise<SelectCommentsDto> {
     return await this.commentService.getChildComments(
       groupId,
       parentId,
@@ -97,7 +97,6 @@ export class CommentController {
   @UseGuards(JwtGuard)
   @ApiBearerAuth('AccessToken')
   @ApiConsumes('application/x-www-form-urlencoded')
-  @ApiBody(CommentSwagger.createChildComment.body)
   @ApiParam(CommentSwagger.createChildComment.param.groupId)
   @ApiParam(CommentSwagger.createChildComment.param.parentId)
   @ApiOperation(CommentSwagger.createChildComment.operation)
@@ -110,7 +109,7 @@ export class CommentController {
     @Param('groupId') groupId: string,
     @Param('parentId') parentId: number,
     @Body() createCommentDto: CreateCommentDto,
-  ) {
+  ): Promise<SelectCommentDto> {
     const { userId } = req.user as Payload;
     return await this.commentService.createChildComment(
       groupId,
@@ -125,7 +124,6 @@ export class CommentController {
   @UseGuards(JwtGuard)
   @ApiBearerAuth('AccessToken')
   @ApiConsumes('application/x-www-form-urlencoded')
-  @ApiBody(CommentSwagger.updateComment.body)
   @ApiParam(CommentSwagger.updateComment.param.commentId)
   @ApiOperation(CommentSwagger.updateComment.operation)
   @ApiResponse(CommentSwagger.updateComment.response[200])
@@ -137,13 +135,14 @@ export class CommentController {
     @Req() req: Request,
     @Param('commentId') commentId: number,
     @Body() updateCommentDto: UpdateCommentDto,
-  ) {
+  ): Promise<void> {
     const { userId } = req.user as Payload;
-    return await this.commentService.updateComment(
+    await this.commentService.updateComment(
       userId,
       commentId,
       updateCommentDto,
     );
+    return;
   }
 
   // 댓글 삭제
@@ -159,8 +158,9 @@ export class CommentController {
   async deleteComment(
     @Req() req: Request,
     @Param('commentId') commentId: number,
-  ) {
+  ): Promise<void> {
     const { userId } = req.user as Payload;
-    return await this.commentService.deleteComment(userId, commentId);
+    await this.commentService.deleteComment(userId, commentId);
+    return;
   }
 }
