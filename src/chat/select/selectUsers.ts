@@ -1,2 +1,2 @@
-// 하위 댓글 개수 파악
+// 채팅 유저조회 컬럼
 export const selectUsers = ['user.userId', 'user.nickname', 'user.imageUrl'];
