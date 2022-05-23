@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateStickerDto } from './dto/request/create-sticker.dto';
 import { CreatedStickerDto } from './dto/response/created-sticker.dto';
 import { SelectStickersDto } from './dto/response/select-stickers.dto';
-import { UpdateStickerDto } from './dto/request/update-sticker.dto';
 import { StickerException } from './sticker.exception';
 import { StickerRepository } from './sticker.repository';
 import { Sticker } from './sticker.entity';
@@ -37,13 +36,10 @@ export class StickerService {
     createStickerDto: CreateStickerDto,
   ): Promise<CreatedStickerDto> {
     const { stickerImageId, stickerOrder } = createStickerDto;
-    const exist = await this.stickerRepository
-      .createQueryBuilder('stickers')
-      .select()
-      .leftJoinAndSelect('stickers.userId', 'user')
-      .where('user.userId = :userId', { userId })
-      .andWhere('stickers.stickerOrder = :stickerOrder', { stickerOrder })
-      .getOne();
+    const exist = await this.stickerRepository.findOne({
+      userId,
+      stickerOrder,
+    });
 
     // 내일 맨정신으로 코드 수정해놓고
     // Repository 불필요한 코드 싹다 정리하고
@@ -51,11 +47,17 @@ export class StickerService {
     let sticker;
     if (exist) {
       const { stickerId } = exist;
-      sticker = await this.stickerRepository.save({
-        stickerId,
-        stickerImageId,
-        stickerOrder,
-      });
+      await this.stickerRepository.update(
+        {
+          stickerId,
+          stickerOrder,
+        },
+        {
+          stickerImageId,
+        },
+      );
+      exist.stickerImageId = stickerImageId;
+      sticker = exist;
     } else {
       sticker = await this.stickerRepository.save({
         userId,
