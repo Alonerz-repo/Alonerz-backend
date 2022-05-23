@@ -29,8 +29,8 @@ export class ChatUser {
   createdAt: Date;
 
   @UpdateDateColumn()
-  updateAt: Date;
+  updatedAt: Date;
 
   @DeleteDateColumn({ default: null })
-  deleteAt: Date;
+  deletedAt: Date;
 }
