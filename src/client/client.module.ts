@@ -5,7 +5,7 @@ import { ClientService } from './client.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([ClientRepository])],
-  providers: [ClientService, ClientRepository],
+  providers: [ClientService],
   exports: [ClientService],
 })
 export class ClientModule {}

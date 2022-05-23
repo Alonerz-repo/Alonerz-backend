@@ -19,7 +19,7 @@ export class ChatRoomController {
   @ApiBearerAuth('AccessToken')
   async getChatRooms(@Req() req: Request) {
     const { userId } = req.user as Payload;
-    return await this.chatRoomService.getChatRooms(userId);
+    //return await this.chatRoomService.getChatRooms(userId);
   }
 
   @Post()
@@ -30,6 +30,6 @@ export class ChatRoomController {
     @Body() createChatRoomDto: CreateChatRoomDto,
   ) {
     const { userId } = req.user as Payload;
-    return await this.chatRoomService.createChatRoom(userId, createChatRoomDto);
+    //return await this.chatRoomService.createChatRoom(userId, createChatRoomDto);
   }
 }

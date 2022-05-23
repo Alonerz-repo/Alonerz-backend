@@ -1,4 +1,4 @@
-// 하위 댓글 개수 파악
+// 채팅 조회 컬럼
 export const selectChats = [
   'chats.chatId',
   'chats.roomId',

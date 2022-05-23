@@ -5,16 +5,20 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ChatRepository } from 'src/chat/chat.repository';
 import { ChatUserRepository } from 'src/chatuser/chatuser.repository';
 import { Connection } from 'typeorm';
 import { ChatRoomRepository } from './chatroom.repository';
 import { CreateChatRoomDto } from './dto/create-chatroom.dto';
+import { v4 } from 'uuid';
 
 @Injectable()
 export class ChatRoomService {
   constructor(
     @InjectRepository(ChatRoomRepository)
     private readonly chatRoomRepository: ChatRoomRepository,
+    @InjectRepository(ChatRepository)
+    private readonly chatRepository: ChatRepository,
     @InjectRepository(ChatUserRepository)
     private readonly chatUserRepository: ChatUserRepository,
     private readonly connection: Connection,
@@ -33,76 +37,134 @@ export class ChatRoomService {
     return room;
   }
 
-  // 자신이 참여중인 채팅방 조회
-  // 레거시 코드이므로 상황에 맞게 수정하세요.
-  async getChatRooms(userId: string) {
-    const rows = await this.chatUserRepository.findUserChatRooms(userId);
-    const rooms = rows.map((row: any) => {
-      const room = row.room;
-      room.users = room.users.map((user: any) => user.user);
-      return room;
-    });
-    return { rooms };
+  // 채팅방 참가 시간 조회 (roomId, userId)
+  private async getDateByUserId(roomId: string, userId: string) {
+    const joinRoomAt = await this.chatUserRepository.findChatUserEnterTime(
+      roomId,
+      userId,
+    );
+    if (!joinRoomAt) {
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: ['삭제되었거나, 존재하지 않는 유저 채팅 정보입니다.'],
+        error: 'Not Found',
+      });
+    }
+    return joinRoomAt;
   }
 
-  // 1:1 채팅방 생성 및 참여
-  // 레거시 코드이므로 상황에 맞게 수정하세요.
-  async createChatRoom(userId: string, createChatRoomDto: CreateChatRoomDto) {
-    // const { otherId } = createChatRoomDto;
-    // let room = await this.chatRoomRepository.findChatRoomWithOther(otherId);
-    // let error = null;
-    // if (!room) {
-    //   room = await this.chatRoomRepository.createChatRoom();
-    //   const queryRunner = this.connection.createQueryRunner();
-    //   await queryRunner.connect();
-    //   await queryRunner.startTransaction();
-    //   try {
-    //     await this.chatUserRepository.enterChatRoomTransaction(
-    //       queryRunner,
-    //       userId,
-    //       room.roomId,
-    //     );
-    //     await this.chatUserRepository.enterChatRoomTransaction(
-    //       queryRunner,
-    //       otherId,
-    //       room.roomId,
-    //     );
-    //     await queryRunner.commitTransaction();
-    //   } catch (e) {
-    //     error = e;
-    //     await queryRunner.rollbackTransaction();
-    //   } finally {
-    //     await queryRunner.release();
-    //   }
-    // }
-    // if (error) {
-    //   await this.chatRoomRepository.deleteChatRoom(room.roomId);
-    //   throw new InternalServerErrorException({
-    //     statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-    //     error: 'Internal Server Error',
-    //     message: ['트랜젝션 오류'],
-    //   });
-    // }
-    // return { roomId: room.roomId };
-  }
+  // 채팅방 입장 시 최근 메세지 조회
+  private async getChatsByRoomId(roomId: string, userId: string) {
+    // 유저가 채팅방에 참가한 시간 조회
+    const joinRoomAt = await this.getDateByUserId(roomId, userId);
 
-  // 채팅방 입장 (채팅방 목록에서)
-  async EnterChatRoomToServer(roomId: string) {
-    const chats = [];
+    // 채팅 조회
+    const chats = await this.chatRepository.findManyByRoomId(
+      roomId,
+      joinRoomAt,
+    );
+
     return chats;
   }
 
-  // 채팅방 입장 (생성은 메시지 보낼 시)
-  async enterRoom(enterRoomDto) {
-    // (1:1 DM을 통해 채팅방에 간접적으로 들어오는 경우)
-    // { userId } AND { otherId }에 해당하는 roomId 조회
-    // 없으면 { roomId } 생성
+  // 채팅방 입장 (채팅방 목록)
+  async enterRoomByList(roomId: string, userId: string) {
+    await this.getOneByRoomId(roomId);
 
-    // (채팅목록을 통해 채팅방에 직접적으로 들어온 경우)
-    // 해당 roomId 사용
+    // 최근 메세지 조회
+    const chats = this.getChatsByRoomId(roomId, userId);
 
-    // roomId로 최근 채팅내역 조회 후 emit
-    const chats = [];
-    return;
+    return chats;
+  }
+
+  // 채팅방 입장 (1대1 DM)
+  async enterRoomByDM(userId: string, otherId: string) {
+    // userId와 otherId로 roomId를 찾는다
+    let roomId = await this.chatUserRepository.findRoomByUserIds(
+      userId,
+      otherId,
+    );
+
+    // userId, otherId로 찾은 채팅방이 없다면, 채팅방 생성
+    // 예외 처리 필요!! (채팅방은 있지만 1명이 나간 상태일 경우(한명은 null or update가 delete이후, 다른 한명은 delete가 update이후) 처리 필요)
+    if (!roomId) {
+      roomId = v4();
+      await this.createChatRoomUser(roomId, userId, otherId);
+    }
+
+    // 최근 메세지 조회
+    const chats = this.getChatsByRoomId(roomId, userId);
+
+    return chats;
+  }
+
+  // 채팅방 목록에서 직접 채팅방을 나가기
+  async leaveChatRoom(roomId: string, userId: string) {
+    await this.getOneByRoomId(roomId);
+
+    // 채팅 유저 삭제 처리
+    const room = await this.chatUserRepository.deleteChatUser(roomId, userId);
+
+    return room;
+  }
+
+  // 상대방과의 채팅방에서 나가는 경우
+  async exitChatRoom(roomId: string) {
+    await this.getOneByRoomId(roomId);
+
+    // 채팅 조회
+    const chat = await this.chatRepository.findOne({ roomId });
+    if (chat) {
+      return;
+    }
+
+    return await this.chatRoomRepository.delete(roomId);
+  }
+
+  // 채팅방 & 채팅유저 생성
+  private async createChatRoomUser(
+    roomId: string,
+    userId: string,
+    otherId: string,
+  ) {
+    const queryRunner = this.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    let error = null;
+    try {
+      // 채팅방 생성
+      await this.chatRoomRepository.createChatRoomTransaction(
+        queryRunner,
+        roomId,
+      );
+      // 채팅 유저 내 정보 생성
+      await this.chatUserRepository.createChatUserTransaction(
+        queryRunner,
+        userId,
+        roomId,
+      );
+      // 채팅 유저 상대 정보 생성
+      await this.chatUserRepository.createChatUserTransaction(
+        queryRunner,
+        otherId,
+        roomId,
+      );
+
+      await queryRunner.commitTransaction();
+    } catch (e) {
+      error = e;
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
+    }
+
+    if (error) {
+      throw new InternalServerErrorException({
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: ['처리 중에 예기치 않은 오류가 발생하였습니다.'],
+        error: 'Internal Server Error',
+      });
+    }
   }
 }

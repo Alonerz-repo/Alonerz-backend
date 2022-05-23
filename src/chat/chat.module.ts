@@ -14,7 +14,8 @@ import { ChatUserRepository } from 'src/chatuser/chatuser.repository';
       ChatUserRepository,
     ]),
   ],
-  providers: [ChatService, ChatRepository],
+  providers: [ChatService],
   controllers: [ChatController],
+  exports: [ChatService],
 })
 export class ChatModule {}
