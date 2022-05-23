@@ -46,7 +46,7 @@ export class User {
   @Column({ type: 'int', default: 0 })
   yearId: number;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'text', default: null })
   description: string;
 
   @CreateDateColumn()

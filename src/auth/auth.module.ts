@@ -7,17 +7,15 @@ import { KakaoStrategy } from 'src/auth/guard/kakao.guard';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TokenRepository } from 'src/token/token.repository';
 import { AuthException } from './auth.exception';
-import { UserRepository } from 'src/user/user.repository';
-import { UserModule } from 'src/user/user.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { AuthRepository } from './auth.repository';
 
 @Module({
   imports: [
     ConfigModule,
-    TypeOrmModule.forFeature([UserRepository, TokenRepository]),
     JwtModule.register(jwtConfig),
-    UserModule,
+    TypeOrmModule.forFeature([AuthRepository, TokenRepository]),
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy, KakaoStrategy, AuthException],

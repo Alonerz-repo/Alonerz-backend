@@ -1,7 +1,7 @@
 import { Sticker } from 'src/sticker/sticker.entity';
 import { ApiResponseProperty } from '@nestjs/swagger';
 
-export class SelectStickerDto {
+export class StickerDto {
   @ApiResponseProperty()
   stickerId: number;
 

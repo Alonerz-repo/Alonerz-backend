@@ -16,8 +16,8 @@ export class KakaoGuard extends AuthGuard('kakao') {}
 @Injectable()
 export class KakaoStrategy extends PassportStrategy(Strategy) {
   constructor(
-    private readonly configService: ConfigService,
-    private authException: AuthException,
+    readonly configService: ConfigService,
+    readonly authException: AuthException,
   ) {
     const kakaoStrategyConfig = configService.get<KakaoStrategyConfig>('kakao');
     super(kakaoStrategyConfig);

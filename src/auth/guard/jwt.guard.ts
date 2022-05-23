@@ -31,7 +31,7 @@ export class JwtGuard extends AuthGuard('jwt') {
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(private readonly configService: ConfigService) {
+  constructor(readonly configService: ConfigService) {
     const secret = configService.get('secret');
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -43,8 +43,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   async validate(payload: Payload) {
     return {
       userId: payload.userId,
-      kakaoId: payload.kakaoId,
-      nickname: payload.nickname,
     };
   }
 }

@@ -1,48 +1,7 @@
 import { ApiResponseProperty } from '@nestjs/swagger';
 import { User } from 'src/user/user.entity';
-import { SelectStickerDto } from './select-sticker.dto';
 import { SelectStickersDto } from './select-stickers.dto';
-
-class UserDto {
-  @ApiResponseProperty()
-  userId: string;
-
-  @ApiResponseProperty()
-  nickname: string;
-
-  @ApiResponseProperty()
-  careerId: number;
-
-  @ApiResponseProperty()
-  yearId: number;
-
-  @ApiResponseProperty()
-  description: string;
-
-  @ApiResponseProperty()
-  stickers: SelectStickerDto[];
-
-  @ApiResponseProperty()
-  characterImageId: number;
-
-  @ApiResponseProperty()
-  backgroundColorId: number;
-
-  @ApiResponseProperty()
-  followingUserCount: number;
-
-  @ApiResponseProperty()
-  followerUserCount: number;
-
-  @ApiResponseProperty()
-  isFollowing: boolean;
-
-  @ApiResponseProperty()
-  isFollower: boolean;
-
-  @ApiResponseProperty()
-  point: number;
-}
+import { UserDto } from './user-dto';
 
 export class SelectMainDto {
   @ApiResponseProperty()
