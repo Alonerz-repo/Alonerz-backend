@@ -1,3 +1,3 @@
 export class ConnectDto {
-  readonly userId: string;
+  userId: string;
 }
