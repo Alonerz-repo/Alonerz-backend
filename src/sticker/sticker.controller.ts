@@ -4,8 +4,7 @@ import {
   Delete,
   Get,
   Param,
-  Patch,
-  Post,
+  Put,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -23,7 +22,6 @@ import { Payload } from 'src/common/interface';
 import { CreateStickerDto } from './dto/request/create-sticker.dto';
 import { CreatedStickerDto } from './dto/response/created-sticker.dto';
 import { SelectStickersDto } from './dto/response/select-stickers.dto';
-import { UpdateStickerDto } from './dto/request/update-sticker.dto';
 import { StickerService } from './sticker.service';
 import { StickerSwagger } from './sticker.swagger';
 
@@ -46,7 +44,7 @@ export class StickerController {
     return await this.stickerService.getStickers(userId);
   }
 
-  @Post()
+  @Put()
   @UseGuards(JwtGuard)
   @ApiBearerAuth('AccessToken')
   @ApiConsumes('application/x-www-form-urlencoded')
@@ -55,29 +53,12 @@ export class StickerController {
   @ApiResponse(StickerSwagger.createSticker.response[400])
   @ApiResponse(StickerSwagger.createSticker.response[401])
   @ApiResponse(StickerSwagger.createSticker.response[403])
-  async createSticker(
+  async putSticker(
     @Req() req: Request,
     @Body() createStickerDto: CreateStickerDto,
   ): Promise<CreatedStickerDto> {
     const { userId } = req.user as Payload;
     return await this.stickerService.createSticker(userId, createStickerDto);
-  }
-
-  @Patch(':stickerId')
-  @UseGuards(JwtGuard)
-  @ApiBearerAuth('AccessToken')
-  @ApiConsumes('application/x-www-form-urlencoded')
-  @ApiOperation(StickerSwagger.updateSticker.operation)
-  @ApiParam(StickerSwagger.updateSticker.param.stickerId)
-  @ApiResponse(StickerSwagger.updateSticker.response[200])
-  @ApiResponse(StickerSwagger.updateSticker.response[401])
-  @ApiResponse(StickerSwagger.updateSticker.response[403])
-  @ApiResponse(StickerSwagger.updateSticker.response[404])
-  async updateSticker(
-    @Param('stickerId') stickerId: number,
-    @Body() updateStickerDto: UpdateStickerDto,
-  ): Promise<void> {
-    return await this.stickerService.updateSticker(stickerId, updateStickerDto);
   }
 
   @Delete(':stickerId')
