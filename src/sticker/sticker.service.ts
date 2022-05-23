@@ -43,6 +43,27 @@ export class StickerService {
     return new CreatedStickerDto(sticker);
   }
 
+  // 스티커 저장(v2)
+  async putSticker(
+    userId: string,
+    createStickerDto: CreateStickerDto,
+  ): Promise<CreatedStickerDto> {
+    const { stickerId } = createStickerDto;
+    let sticker = null;
+    if (!stickerId) {
+      sticker = await this.stickerRepository.createSticker(
+        userId,
+        createStickerDto,
+      );
+    } else {
+      sticker = await this.stickerRepository.updateSticker(
+        stickerId,
+        createStickerDto,
+      );
+    }
+    return new CreatedStickerDto(sticker);
+  }
+
   // 스티커 이미지 및 위치 변경
   async updateSticker(
     stickerId: number,
