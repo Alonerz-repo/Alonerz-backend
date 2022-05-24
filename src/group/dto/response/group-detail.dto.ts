@@ -14,6 +14,9 @@ export class GroupDetailDto {
   categoryId: number;
 
   @ApiResponseProperty()
+  description: string;
+
+  @ApiResponseProperty()
   placeName: string;
 
   @ApiResponseProperty()
@@ -50,10 +53,10 @@ export class GroupDetailDto {
   updatedAt: Date;
 
   constructor(group: Group) {
-    console.log(group);
     const {
       groupId,
       title,
+      description,
       categoryId,
       placeName,
       imageUrl,
@@ -71,6 +74,7 @@ export class GroupDetailDto {
 
     this.groupId = groupId;
     this.title = title;
+    this.description = description;
     this.categoryId = categoryId;
     this.placeName = placeName;
     this.imageUrl = imageUrl;

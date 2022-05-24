@@ -59,8 +59,8 @@ export class CommentRepository extends Repository<Comment> {
     parentId: number,
     userId: string,
     createCommentDto: CreateCommentDto,
-  ) {
-    await queryRunner.manager.save(Comment, {
+  ): Promise<Comment> {
+    return await queryRunner.manager.save(Comment, {
       groupId,
       parentId,
       userId,

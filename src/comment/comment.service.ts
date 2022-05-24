@@ -119,7 +119,6 @@ export class CommentService {
     if (error) {
       this.commentException.Transaction();
     }
-
     return new SelectCommentDto(comment);
   }
 
