@@ -8,6 +8,7 @@ export class SelectMainDto {
   user: UserDto;
 
   constructor(userId: string, user: User) {
+    user.followingUserIds.map((other: any) => other.otherId.userId);
     this.user = {
       userId: userId,
       nickname: user.nickname,
@@ -19,14 +20,14 @@ export class SelectMainDto {
       backgroundColorId: user.backgroundColorId,
       followingUserCount: user.followingUserIds.length,
       followerUserCount: user.followerUserIds.length,
-      isFollowing: user.followerUserIds.find(
-        (other: any) => other.userId.userId === userId,
-      )
+      isFollowing: user.followerUserIds
+        .map((other: any) => other.userId.userId)
+        .includes(userId)
         ? true
         : false,
-      isFollower: user.followingUserIds.find(
-        (other: any) => other.userId.userId === userId,
-      )
+      isFollower: user.followingUserIds
+        .map((other: any) => other.otherId.userId)
+        .includes(userId)
         ? true
         : false,
       point: user.point.reduce((pre: number, point: { point: number }) => {
