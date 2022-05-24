@@ -9,7 +9,7 @@ export class SelectMainDto {
 
   constructor(userId: string, user: User) {
     this.user = {
-      userId: user.userId,
+      userId: userId,
       nickname: user.nickname,
       careerId: user.careerId,
       yearId: user.yearId,
