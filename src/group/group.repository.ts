@@ -40,9 +40,6 @@ export class GroupRepository extends Repository<Group> {
     imageUrl: string | null,
     updateGroupDto: UpdateGroupDto,
   ): Promise<void> {
-    console.log(groupId);
-    console.log(imageUrl);
-    console.log(updateGroupDto);
     imageUrl
       ? await this.update({ groupId }, { ...updateGroupDto, imageUrl })
       : await this.update({ groupId }, updateGroupDto);
