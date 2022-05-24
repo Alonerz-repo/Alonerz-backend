@@ -1,4 +1,4 @@
-// import { HttpExceptionModule } from './common/filter/http.exception.module';
+import { HttpExceptionModule } from './common/filter/http.exception.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -24,7 +24,7 @@ import * as path from 'path';
     }),
     ConfigModule.forRoot(envConfig),
     TypeOrmModule.forRoot(typeormConfig),
-    // HttpExceptionModule,
+    HttpExceptionModule,
     SocketModule,
     AuthModule,
     UserModule,
