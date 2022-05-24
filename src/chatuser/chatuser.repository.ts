@@ -9,13 +9,17 @@ export class ChatUserRepository extends Repository<ChatUser> {
       .withDeleted()
       .select('chatusers.id')
       .leftJoin('chatusers.user', 'user')
-      .addSelect(['user.userId', 'user.nickname', 'user.imageUrl'])
+      .addSelect(['user.userId', 'user.nickname', 'user.profileImageUrl'])
       .leftJoin('chatusers.room', 'room')
       .select(['room.roomId'])
       .leftJoin('room.users', 'users')
       .addSelect(['users.user'])
       .leftJoin('users.user', 'chatuser')
-      .addSelect(['chatuser.userId', 'chatuser.nickname', 'chatuser.imageUrl'])
+      .addSelect([
+        'chatuser.userId',
+        'chatuser.nickname',
+        'chatuser.profileImageUrl',
+      ])
       .where(`user.userId = :userId`, { userId })
       .andWhere(
         'chatusers.deletedAt IS NULL OR chatusers.updatedAt > chatusers.deletedAt',
