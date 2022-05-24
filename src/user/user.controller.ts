@@ -53,7 +53,7 @@ export class UserController {
     @Param('userId') otherId: string,
   ): Promise<SelectMainDto> {
     const { userId } = req.user as Payload;
-    return this.userService.getUser(userId, otherId);
+    return await this.userService.getUser(userId, otherId);
   }
 
   // 사용자 프로필 페이지의 정보 조회
@@ -67,7 +67,7 @@ export class UserController {
   @ApiResponse(UserSwagger.getProfile.response[403])
   @ApiResponse(UserSwagger.getProfile.response[404])
   async getProfile(@Param('userId') userId: string): Promise<SelectProfileDto> {
-    return this.userService.getProfile(userId);
+    return await this.userService.getProfile(userId);
   }
 
   // 사용자 보드(스티커, 캐릭터, 배경색상) 페이지의 정보 조회
@@ -80,7 +80,7 @@ export class UserController {
   @ApiResponse(UserSwagger.getBoard.response[401])
   @ApiResponse(UserSwagger.getBoard.response[403])
   async getBoard(@Param('userId') userId: string): Promise<SelectBoardDto> {
-    return this.userService.getBoard(userId);
+    return await this.userService.getBoard(userId);
   }
 
   // 프로필 정보 수정
@@ -98,7 +98,7 @@ export class UserController {
     @Body() updateProfileDto: UpdateProfileDto,
   ): Promise<void> {
     const { userId } = req.user as Payload;
-    return this.userService.updateProfile(userId, updateProfileDto);
+    return await this.userService.updateProfile(userId, updateProfileDto);
   }
 
   // 프로필 이미지 수정
@@ -119,7 +119,7 @@ export class UserController {
   ): Promise<UpdatedProfileImageDto> {
     const { userId } = req.user as Payload;
     const image = profileImageDto as unknown as Express.MulterS3.File;
-    return this.userService.updateProfileImage(userId, image);
+    return await this.userService.updateProfileImage(userId, image);
   }
 
   // 프로필 이미지 삭제
@@ -132,7 +132,7 @@ export class UserController {
   @ApiResponse(UserSwagger.deleteProfileImage.response[403])
   async deleteProfileImage(@Req() req: Request): Promise<void> {
     const { userId } = req.user as Payload;
-    return this.userService.deleteProfileImage(userId);
+    return await this.userService.deleteProfileImage(userId);
   }
 
   // 보드(캐릭터, 배경색상) 수정
@@ -150,6 +150,6 @@ export class UserController {
     @Body() updateBoardDto: UpdateBoardDto,
   ): Promise<void> {
     const { userId } = req.user as Payload;
-    return this.userService.updateBoard(userId, updateBoardDto);
+    return await this.userService.updateBoard(userId, updateBoardDto);
   }
 }
