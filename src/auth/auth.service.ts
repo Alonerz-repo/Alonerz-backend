@@ -51,6 +51,11 @@ export class AuthService {
   // 로그인(최초 로그인 시 회원가입 처리)
   async loginOrSignup(kakaoId: string): Promise<CreatedTokensDto> {
     const exist = await this.authRepository.findUserByKakaoId(kakaoId);
+
+    if (exist) {
+      await this.authRepository.restoreUser(exist.userId);
+    }
+
     const user = exist ? exist : await this.authRepository.createUser(kakaoId);
     const tokens = this.generateTokens(user.userId);
     await this.tokenRepository.saveToken(user.userId, tokens);
