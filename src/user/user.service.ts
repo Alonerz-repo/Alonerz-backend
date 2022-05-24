@@ -51,10 +51,11 @@ export class UserService {
   // 사용자 프로필 조회
   async getUser(userId: string, otherId: string): Promise<SelectMainDto> {
     const user = await this.userRepository.selectUserMain(otherId);
+    console.log(user);
     if (!user) {
       this.userException.NotFoundUser();
     }
-    this.checkBlockRelation(userId, otherId);
+    await this.checkBlockRelation(userId, otherId);
     return new SelectMainDto(userId, user);
   }
 

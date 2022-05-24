@@ -32,7 +32,7 @@ export class SelectCommentDto {
       userId,
     } = comment;
     this.commentId = commentId;
-    if (parentId) {
+    if (!parentId) {
       this.childCommentCount = childCommentCount;
     }
     this.content = content;
