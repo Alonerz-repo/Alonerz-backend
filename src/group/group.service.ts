@@ -68,7 +68,7 @@ export class GroupService {
   ): Promise<void> {
     await this.accessGroup(userId, groupId);
     const imageUrl = image?.location;
-    await this.groupRepository.updateGroup(userId, imageUrl, updateGroupDto);
+    await this.groupRepository.updateGroup(groupId, imageUrl, updateGroupDto);
     return;
   }
 
