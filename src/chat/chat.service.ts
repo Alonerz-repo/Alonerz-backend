@@ -71,7 +71,7 @@ export class ChatService {
       joinRoomAt,
     );
 
-    return new SelectedChatsDto(chats);
+    return new SelectedChatsDto(roomId, chats);
   }
 
   // 채팅 저장

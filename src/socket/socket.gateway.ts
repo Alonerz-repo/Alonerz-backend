@@ -10,15 +10,16 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { ChatService } from 'src/chat/chat.service';
+import { CreateChatDto } from 'src/chat/dto/request/create-chat.dto';
+import { DeleteChatDto } from 'src/chat/dto/request/delete-chat.dto';
+import { SelectChatsDto } from 'src/chat/dto/request/select-chats.dto';
 import { ChatRoomService } from 'src/chatroom/chatroom.service';
+import { DeleteChatRoomDto } from 'src/chatroom/dto/request/delete-chatroom.dto';
+import { SelectChatRoomDto } from 'src/chatroom/dto/request/select-chatroom.dto';
+import { SelectChatRoomsDto } from 'src/chatroom/dto/request/select-chatrooms.dto';
 import { ChatUserService } from 'src/chatuser/chatuser.service';
 import { ClientService } from 'src/client/client.service';
-import { ConnectDto } from './dto/auth-connect.dto';
-import { CreateChatDto } from './dto/create-chat.dto';
-import { DeleteChatDto } from './dto/delete-chat.dto';
-import { EnterChatRoomDto } from './dto/enter-chatroom.dto';
-import { LeaveChatRoomDto } from './dto/leave-chatroom.dto';
-import { SelectChatsDto } from './dto/select-chats.dto';
+import { CreateClientDto } from '../client/dto/request/create-client.dto';
 import { EVENT } from './socket.event';
 
 @WebSocketGateway({
@@ -45,21 +46,22 @@ export class SocketGateway
   // (완료) 사용자 소켓 연결 및 소켓 연결 정보 저장
   @SubscribeMessage(EVENT.CONNECT.ON)
   async onConnect(
-    @MessageBody() connectDto: ConnectDto,
+    @MessageBody() createClientDto: CreateClientDto,
     @ConnectedSocket() client: Socket,
   ) {
-    const { userId } = connectDto;
-    await this.clientService.connect(userId, client.id);
+    await this.clientService.connect(client.id, createClientDto);
     return client.emit(EVENT.CONNECT.EMIT, 'connected');
   }
 
   // 참여중인 채팅방 조회
   @SubscribeMessage(EVENT.GET_CHATROOMS.ON)
   async getChatRooms(
-    @MessageBody() userId: string,
+    @MessageBody() selectChatRoomsDto: SelectChatRoomsDto,
     @ConnectedSocket() client: Socket,
   ) {
-    const rooms = await this.chatUserService.findUserChatRooms(userId);
+    const rooms = await this.chatUserService.findUserChatRooms(
+      selectChatRoomsDto,
+    );
 
     client.emit(EVENT.GET_CHATROOMS.EMIT, rooms);
     return;
@@ -68,11 +70,11 @@ export class SocketGateway
   // 채팅방 입장 (채팅방 목록)
   @SubscribeMessage(EVENT.ENTER_ROOM_LIST.ON)
   async enterChatRoomByList(
-    @MessageBody() enterChatRoomDto: EnterChatRoomDto,
+    @MessageBody() selectChatRoomDto: SelectChatRoomDto,
     @ConnectedSocket() client: Socket,
   ) {
-    const { roomId, userId } = enterChatRoomDto;
-    const chats = await this.chatRoomService.enterRoomByList(roomId, userId);
+    const { roomId } = selectChatRoomDto;
+    const chats = await this.chatRoomService.enterRoomByList(selectChatRoomDto);
 
     client.join(roomId);
     client.emit(EVENT.GET_CHATS.EMIT, chats);
@@ -82,13 +84,12 @@ export class SocketGateway
   // 채팅방 입장 (1대1 DM)
   @SubscribeMessage(EVENT.ENTER_ROOM_DM.ON)
   async enterChatRoomByDM(
-    @MessageBody() enterChatRoomDto: EnterChatRoomDto,
+    @MessageBody() selectChatRoomDto: SelectChatRoomDto,
     @ConnectedSocket() client: Socket,
   ) {
-    const { userId, otherId } = enterChatRoomDto;
-    const chats = await this.chatRoomService.enterRoomByDM(userId, otherId);
+    const chats = await this.chatRoomService.enterRoomByDM(selectChatRoomDto);
 
-    client.join('roomId'); // 테스트 코드; roomId 조회 후 join 예정
+    client.join(chats.roomId);
     client.emit(EVENT.GET_CHATS.EMIT, chats);
     return;
   }
@@ -96,11 +97,11 @@ export class SocketGateway
   // 채팅방 목록에서 직접 채팅방을 나가기
   @SubscribeMessage(EVENT.LEAVE_ROOM.ON)
   async leaveChatRoom(
-    @MessageBody() leaveChatRoomDto: LeaveChatRoomDto,
+    @MessageBody() deleteChatRoomDto: DeleteChatRoomDto,
     @ConnectedSocket() client: Socket,
   ) {
-    const { roomId, userId } = leaveChatRoomDto;
-    const room = await this.chatRoomService.leaveChatRoom(roomId, userId);
+    const { roomId } = deleteChatRoomDto;
+    const room = await this.chatRoomService.leaveChatRoom(deleteChatRoomDto);
 
     client.leave(roomId);
     client.emit(EVENT.LEAVE_ROOM.EMIT, room);
@@ -110,11 +111,11 @@ export class SocketGateway
   // 상대방과의 채팅방에서 나가는 경우
   @SubscribeMessage(EVENT.EXIT_ROOM.ON)
   async exitChatRoom(
-    @MessageBody() leaveChatRoomDto: LeaveChatRoomDto,
+    @MessageBody() deleteChatRoomDto: DeleteChatRoomDto,
     @ConnectedSocket() client: Socket,
   ) {
-    const { roomId } = leaveChatRoomDto;
-    const room = await this.chatRoomService.exitChatRoom(roomId);
+    const { roomId } = deleteChatRoomDto;
+    const room = await this.chatRoomService.exitChatRoom(deleteChatRoomDto);
 
     client.leave(roomId);
     client.emit(EVENT.EXIT_ROOM.EMIT, room);
@@ -127,12 +128,8 @@ export class SocketGateway
     @MessageBody() selectChatsDto: SelectChatsDto,
     @ConnectedSocket() client: Socket,
   ) {
-    const { roomId, userId, offset } = selectChatsDto;
-
     const chats = await this.chatService.getManyByRoomIdWithOffset(
-      roomId,
-      userId,
-      offset,
+      selectChatsDto,
     );
 
     client.emit(EVENT.GET_CHATS.EMIT, chats);
@@ -145,9 +142,9 @@ export class SocketGateway
     @MessageBody() createChatDto: CreateChatDto,
     @ConnectedSocket() client: Socket,
   ) {
-    const { roomId, userId, message } = createChatDto;
+    const { roomId } = createChatDto;
 
-    const chat = await this.chatService.create(roomId, userId, message);
+    const chat = await this.chatService.create(createChatDto);
 
     // 해당 room에 어떤 socketId가 있는지?
     // this.server.sockets.adapter.rooms.get(roomId);
@@ -173,12 +170,9 @@ export class SocketGateway
     @MessageBody() deleteChatDto: DeleteChatDto,
     @ConnectedSocket() client: Socket,
   ) {
-    const { userId, chatId } = deleteChatDto;
-
-    const chat = await this.chatService.deleteByChatId(userId, chatId);
+    const chat = await this.chatService.deleteByChatId(deleteChatDto);
 
     client.emit(EVENT.DELETE_CHAT.EMIT, chat);
-
     return;
   }
 }

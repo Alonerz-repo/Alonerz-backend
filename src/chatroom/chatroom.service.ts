@@ -104,7 +104,7 @@ export class ChatRoomService {
       roomId,
       joinRoomAt,
     );
-    return new SelectedChatsDto(chats);
+    return new SelectedChatsDto(roomId, chats);
   }
 
   // 채팅방 입장 (채팅방 목록)
