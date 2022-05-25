@@ -1,8 +1,6 @@
 export class ChatRoomUserDto {
   userId: string;
-
   nickname: string;
-
   profileImageUrl: string;
 
   constructor(chatRoom: any) {

@@ -1,8 +1,6 @@
 export class ChatUserDto {
   userId: string;
-
   nickname: string;
-
   profileImageUrl: string;
 
   constructor(chat: any) {

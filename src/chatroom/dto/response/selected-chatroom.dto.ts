@@ -2,7 +2,6 @@ import { ChatRoomUserDto } from './chatroom-user.dto';
 
 export class SelectedChatRoomDto {
   roomId: string;
-
   user: ChatRoomUserDto;
 
   constructor(chatRoom: any) {
