@@ -13,7 +13,6 @@ export class ChatUserRepository extends Repository<ChatUser> {
       .leftJoin('chatusers.room', 'room')
       .select(['room.roomId'])
       .leftJoin('room.users', 'users')
-      .addSelect(['users.user'])
       .leftJoin('users.user', 'chatuser')
       .addSelect([
         'chatuser.userId',
@@ -21,6 +20,7 @@ export class ChatUserRepository extends Repository<ChatUser> {
         'chatuser.profileImageUrl',
       ])
       .where(`user.userId = :userId`, { userId })
+      .andWhere(`chatuser.userId != :userId`, { userId })
       .andWhere(
         'chatusers.deletedAt IS NULL OR chatusers.updatedAt > chatusers.deletedAt',
       )

@@ -1,5 +1,6 @@
 import { EntityRepository, Repository } from 'typeorm';
 import { Client } from './client.entity';
+import { CreateClientDto } from './dto/request/create-client.dto';
 
 @EntityRepository(Client)
 export class ClientRepository extends Repository<Client> {
@@ -9,8 +10,8 @@ export class ClientRepository extends Repository<Client> {
   }
 
   // 사용자 소켓 정보 저장
-  async connect(userId: string, socketId: string) {
-    return await this.save({ socketId, userId });
+  async connect(socketId: string, createClientDto: CreateClientDto) {
+    return await this.save({ socketId, createClientDto });
   }
 
   // 사용자 소켓 정보 삭제

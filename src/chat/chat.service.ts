@@ -1,14 +1,15 @@
-import {
-  HttpStatus,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ChatRoomRepository } from 'src/chatroom/chatroom.repository';
 import { ChatRepository } from './chat.repository';
-import { Connection } from 'typeorm';
 import { ChatUserRepository } from 'src/chatuser/chatuser.repository';
+import { SelectChatsDto } from './dto/request/select-chats.dto';
+import { CreateChatDto } from './dto/request/create-chat.dto';
+import { DeleteChatDto } from './dto/request/delete-chat.dto';
+import { SelectedChatsDto } from './dto/response/selected-chats.dto';
+import { ChatException } from './chat.exception';
+import { ChatRoomException } from 'src/chatroom/chatroom.exception';
+import { ChatUserException } from 'src/chatuser/chatuser.exception';
 
 @Injectable()
 export class ChatService {
@@ -19,18 +20,16 @@ export class ChatService {
     private readonly chatRoomRepository: ChatRoomRepository,
     @InjectRepository(ChatUserRepository)
     private readonly chatUserRepository: ChatUserRepository,
-    private readonly connection: Connection,
+    private readonly chatException: ChatException,
+    private readonly chatRoomException: ChatRoomException,
+    private readonly chatUserException: ChatUserException,
   ) {}
 
   // 채팅방 존재 여부 확인 (RoomId)
   private async getRoomByRoomId(roomId: string) {
     const room = await this.chatRoomRepository.findOneByRoomId(roomId);
     if (!room) {
-      throw new NotFoundException({
-        statusCode: HttpStatus.NOT_FOUND,
-        message: ['삭제되었거나, 존재하지 않는 채팅방입니다.'],
-        error: 'Not Found',
-      });
+      this.chatRoomException.NotFound();
     }
     return room;
   }
@@ -40,11 +39,7 @@ export class ChatService {
     const chat = await this.chatRepository.findOneByChatId(chatId);
 
     if (!chat) {
-      throw new NotFoundException({
-        statusCode: HttpStatus.NOT_FOUND,
-        message: ['삭제되었거나, 존재하지 않는 채팅 내용입니다.'],
-        error: 'Not Found',
-      });
+      this.chatException.NotFound();
     }
     return chat;
   }
@@ -56,33 +51,33 @@ export class ChatService {
       userId,
     );
     if (!joinRoomAt) {
-      throw new NotFoundException({
-        statusCode: HttpStatus.NOT_FOUND,
-        message: ['삭제되었거나, 존재하지 않는 유저 채팅 정보입니다.'],
-        error: 'Not Found',
-      });
+      this.chatUserException.NotFound();
     }
     return joinRoomAt;
   }
 
   // 채팅 조회 : 페이징 처리
-  async getManyByRoomIdWithOffset(
-    roomId: string,
-    userId: string,
-    offset: number,
-  ) {
+  async getManyByRoomIdWithOffset(selectChatsDto: SelectChatsDto) {
+    const { roomId, userId, offset } = selectChatsDto;
+
+    this.getRoomByRoomId(roomId);
+
     // 유저가 채팅방에 참가한 시간 조회
     const joinRoomAt = await this.getDateByUserId(roomId, userId);
 
-    return await this.chatRepository.findManyByRoomIdWithOffset(
+    const chats = await this.chatRepository.findManyByRoomIdWithOffset(
       roomId,
       offset,
       joinRoomAt,
     );
+
+    return new SelectedChatsDto(chats);
   }
 
   // 채팅 저장
-  async create(roomId: string, userId: string, message: string) {
+  async create(createChatDto: CreateChatDto) {
+    const { roomId, userId, message } = createChatDto;
+
     // CreateChatDto에 roomId가 없다면, userId, otherId로 채팅방 조회
     this.getRoomByRoomId(roomId);
 
@@ -91,15 +86,14 @@ export class ChatService {
   }
 
   // 채팅 삭제
-  async deleteByChatId(userId: string, chatId: number) {
+  async deleteByChatId(deleteChatDto: DeleteChatDto) {
+    const { userId, chatId } = deleteChatDto;
+
     const chat = await this.getOneByChatId(chatId);
     if (chat.user['userId'] !== userId) {
-      throw new NotFoundException({
-        statusCode: HttpStatus.NOT_FOUND,
-        message: ['자신이 작성한 메세지만 삭제 가능합니다.'],
-        error: 'Not Found',
-      });
+      this.chatException.AccessDenined();
     }
     await this.chatRepository.deleteByChatId(chatId);
+    return;
   }
 }

@@ -2,8 +2,9 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthException } from 'src/auth/auth.exception';
 import { ChatRepository } from 'src/chat/chat.repository';
+import { ChatUserException } from 'src/chatuser/chatuser.exception';
 import { ChatUserRepository } from 'src/chatuser/chatuser.repository';
-import { ChatRoomController } from './chatroom.controller';
+import { ChatRoomException } from './chatroom.exception';
 import { ChatRoomRepository } from './chatroom.repository';
 import { ChatRoomService } from './chatroom.service';
 
@@ -15,8 +16,12 @@ import { ChatRoomService } from './chatroom.service';
       ChatUserRepository,
     ]),
   ],
-  providers: [AuthException, ChatRoomService],
-  controllers: [ChatRoomController],
+  providers: [
+    AuthException,
+    ChatRoomService,
+    ChatRoomException,
+    ChatUserException,
+  ],
   exports: [ChatRoomService],
 })
 export class ChatRoomModule {}
