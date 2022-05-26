@@ -71,15 +71,9 @@ export class AuthController {
   @ApiConsumes('application/x-www-form-urlencoded')
   @ApiOperation(AuthSwagger.login.operation)
   @ApiResponse(AuthSwagger.login.response[201])
-  async login(
-    @Res() res: Response,
-    @Body() kakaoLoginDto: KakaoLoginDto,
-  ): Promise<Response<CreatedTokensDto>> {
+  async login(@Body() kakaoLoginDto: KakaoLoginDto): Promise<CreatedTokensDto> {
     const { kakaoId } = kakaoLoginDto;
-    const tokens = await this.authService.loginOrSignup(kakaoId);
-    res.cookie('accessToken', tokens.accessToken);
-    res.cookie('refreshToken', tokens.refreshToken);
-    return res.status(200).send(tokens);
+    return await this.authService.loginOrSignup(kakaoId);
   }
 
   // 토큰 재발급
@@ -92,17 +86,10 @@ export class AuthController {
   async reissue(
     @Req() req: Request,
     @Body() reissueTokenDto: ReissueTokneDto,
-    @Res() res: Response,
-  ): Promise<Response<ReissuedTokensDto>> {
+  ): Promise<ReissuedTokensDto> {
     const { authorization } = req.headers;
     const { refreshToken } = reissueTokenDto;
-    const tokens = await this.authService.reissueTokens(
-      authorization,
-      refreshToken,
-    );
-    res.cookie('accessToken', tokens.accessToken);
-    res.cookie('refreshToken', tokens.refreshToken);
-    return res.status(201).send(tokens);
+    return await this.authService.reissueTokens(authorization, refreshToken);
   }
 
   // 로그아웃
