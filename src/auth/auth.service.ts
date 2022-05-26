@@ -74,10 +74,12 @@ export class AuthService {
     }
 
     const user = await this.getUser(userId);
-    const oldToken = await this.tokenRepository.findToken(userId, refreshToken);
-    if (!oldToken) {
-      this.authException.InvalidToken();
-    }
+    // TODO : 프론트로부터 요청이 여러번 오는 경우 refreshToken이 마지막 걸로 반영되어
+    // 인증 처리가 제대로 안 됨
+    // const oldToken = await this.tokenRepository.findToken(userId, refreshToken);
+    // if (!oldToken) {
+    //   this.authException.InvalidToken();
+    // }
 
     const tokens = this.generateTokens(userId);
     await this.tokenRepository.updateToken(userId, refreshToken, tokens);

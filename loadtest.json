@@ -46,6 +46,20 @@
           }
         }
       ]
+    },
+    {
+      "name": "user auth",
+      "flow": [
+        {
+          "get": {
+            "log": "New virtual user get auth",
+            "url": "/api/auth",
+            "headers": {
+              "Authorization": "Bearer {{ accessToken }}"
+            }
+          }
+        }
+      ]
     }
   ]
 }
