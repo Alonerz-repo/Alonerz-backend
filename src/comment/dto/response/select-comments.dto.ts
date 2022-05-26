@@ -7,6 +7,7 @@ export class SelectCommentsDto {
   comments: SelectCommentDto[];
 
   constructor(comments: Comment[]) {
+    console.log(comments);
     this.comments = comments.map((comment) => new SelectCommentDto(comment));
   }
 }

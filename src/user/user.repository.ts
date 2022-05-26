@@ -18,17 +18,21 @@ export class UserRepository extends Repository<User> {
 
   // 사용자 메인 정보 조회
   async selectUserMain(userId: string): Promise<User> {
-    return await this.createQueryBuilder('users')
+    const main = await this.createQueryBuilder('users')
       .select(selectUserMain)
       .leftJoin('users.stickers', 'sticker')
       .addSelect(selectStickers)
       .leftJoinAndSelect('users.followingUserIds', 'followingUserIds')
+      .leftJoinAndSelect('followingUserIds.otherId', 'other')
       .leftJoinAndSelect('users.followerUserIds', 'followerUserIds')
-      .leftJoinAndSelect('followerUserIds.userId', 'followerUser')
+      .leftJoinAndSelect('followerUserIds.userId', 'me')
       .leftJoin('users.point', 'points')
       .addSelect(['points.point'])
       .where('users.userId = :userId', { userId })
       .getOne();
+
+    console.log(main);
+    return main;
   }
 
   // 사용자 스티커, 캐릭터, 배경 정보 조회

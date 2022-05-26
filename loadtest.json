@@ -1,0 +1,65 @@
+{
+  "config": {
+    "target": "http://localhost:5000",
+    "phases": [
+      {
+        "duration": 60,
+        "arrivalRate": 30
+      }
+    ],
+    "defaults": {
+      "headers": {
+        "User-Agent": "Artillery"
+      }
+    },
+    "payload": [
+      {
+        "path": "./loadtest.data.csv",
+        "fields": ["kakaoId"]
+      }
+    ]
+  },
+  "scenarios": [
+    {
+      "name": "user kakao signup",
+      "flow": [
+        {
+          "post": {
+            "log": "New virtual user kakao login",
+            "url": "/api/auth/login",
+            "json": {
+              "kakaoId": "{{ kakaoId }}"
+            },
+            "capture": {
+              "json": "$.accessToken",
+              "as": "accessToken"
+            }
+          }
+        },
+        {
+          "get": {
+            "log": "New virtual user get auth",
+            "url": "/api/auth",
+            "headers": {
+              "Authorization": "Bearer {{ accessToken }}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "user auth",
+      "flow": [
+        {
+          "get": {
+            "log": "New virtual user get auth",
+            "url": "/api/auth",
+            "headers": {
+              "Authorization": "Bearer {{ accessToken }}"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

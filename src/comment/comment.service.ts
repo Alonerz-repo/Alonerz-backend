@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
+import { Comment } from './comment.entity';
 import { CommentException } from './comment.exception';
 import { CommentRepository } from './comment.repository';
 import { CreateCommentDto } from './dto/request/create-comment.dto';
@@ -30,11 +31,12 @@ export class CommentService {
   private async accessComment(
     userId: string,
     commentId: number,
-  ): Promise<void> {
+  ): Promise<Comment> {
     const comment = await this.commentRepository.findOne({ userId, commentId });
     if (!comment) {
       this.commentException.AccessDenined();
     }
+    return comment;
   }
 
   // 그룹 댓글 조회
@@ -119,7 +121,6 @@ export class CommentService {
     if (error) {
       this.commentException.Transaction();
     }
-
     return new SelectCommentDto(comment);
   }
 
@@ -135,7 +136,41 @@ export class CommentService {
 
   // 댓글 삭제
   async deleteComment(userId: string, commentId: number): Promise<void> {
-    await this.accessComment(userId, commentId);
-    await this.commentRepository.deleteComment(commentId);
+    const { parentId } = await this.accessComment(userId, commentId);
+
+    if (!parentId) {
+      await this.commentRepository.deleteComment(commentId);
+      return;
+    }
+
+    const childCommentCount = await this.findComment(parentId);
+    const queryRunner = this.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    let error = null;
+    try {
+      // 하위 comment 삭제
+      await this.commentRepository.deleteChildCommentTransaction(
+        queryRunner,
+        commentId,
+      );
+      // 상위 comment의 childComments -= 1
+      await this.commentRepository.decreaseChildCommentCountTransaction(
+        queryRunner,
+        parentId,
+        childCommentCount - 1,
+      );
+      await queryRunner.commitTransaction();
+    } catch (e) {
+      error = e;
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
+    }
+
+    if (error) {
+      this.commentException.Transaction();
+    }
   }
 }

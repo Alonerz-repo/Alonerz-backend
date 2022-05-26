@@ -51,6 +51,11 @@ export class AuthService {
   // 로그인(최초 로그인 시 회원가입 처리)
   async loginOrSignup(kakaoId: string): Promise<CreatedTokensDto> {
     const exist = await this.authRepository.findUserByKakaoId(kakaoId);
+
+    if (exist) {
+      await this.authRepository.restoreUser(exist.userId);
+    }
+
     const user = exist ? exist : await this.authRepository.createUser(kakaoId);
     const tokens = this.generateTokens(user.userId);
     await this.tokenRepository.saveToken(user.userId, tokens);
@@ -69,10 +74,12 @@ export class AuthService {
     }
 
     const user = await this.getUser(userId);
-    const oldToken = await this.tokenRepository.findToken(userId, refreshToken);
-    if (!oldToken) {
-      this.authException.InvalidToken();
-    }
+    // TODO : 프론트로부터 요청이 여러번 오는 경우 refreshToken이 마지막 걸로 반영되어
+    // 인증 처리가 제대로 안 됨
+    // const oldToken = await this.tokenRepository.findToken(userId, refreshToken);
+    // if (!oldToken) {
+    //   this.authException.InvalidToken();
+    // }
 
     const tokens = this.generateTokens(userId);
     await this.tokenRepository.updateToken(userId, refreshToken, tokens);
