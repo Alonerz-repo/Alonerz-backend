@@ -51,7 +51,6 @@ export class UserService {
   // 사용자 프로필 조회
   async getUser(userId: string, otherId: string): Promise<SelectMainDto> {
     const user = await this.userRepository.selectUserMain(otherId);
-    console.log(userId === otherId);
     if (!user) {
       this.userException.NotFoundUser();
     }
