@@ -8,6 +8,21 @@ import { selectGroups } from './select/selectGroups';
 import { GroupTime } from 'src/common/interface';
 import { Group } from './group.entity';
 
+const times = {
+  lunch: {
+    startTime: '09:00:00',
+    endTime: '17:00:00',
+  },
+  dinner: {
+    startTime: '17:00',
+    endTime: '23:00:00',
+  },
+  all: {
+    startTime: '09:00',
+    endTime: '23:00:00',
+  },
+};
+
 @EntityRepository(Group)
 export class GroupRepository extends Repository<Group> {
   // 그룹 방장 조회
@@ -76,7 +91,7 @@ export class GroupRepository extends Repository<Group> {
       .addSelect('guest.userId')
       .where('groups.host.userId = :userId', { userId })
       .orWhere('guest.userId = :userId', { userId })
-      // .andWhere('groups.startAt > :today', { today: new Date() })
+      .andWhere('groups.startAt > :today', { today: new Date() })
       .orderBy('groups.startAt', 'DESC')
       .getMany();
   }
@@ -89,31 +104,30 @@ export class GroupRepository extends Repository<Group> {
     offset?: number,
     time?: GroupTime,
   ): Promise<Group[]> {
-    let today: Date;
-    switch (time) {
-      case 'lunch':
-        today = new Date();
-        break;
-      case 'dinner':
-        today = new Date();
-        break;
-      default:
-        today = new Date();
-        break;
-    }
-    console.log(today);
+    // 500미터
+    // 1000미터
+    // 3000미터
+    // 5000미터
 
-    return await this.createQueryBuilder('groups')
-      .select(selectGroups)
+    const { startTime, endTime } = times[time ? time : 'all'];
+    const groups = await this.createQueryBuilder('groups')
+      .select([...selectGroups])
       .leftJoin('groups.host', 'host')
       .addSelect(selectGroupHost)
       .leftJoin('groups.guests', 'guests')
       .addSelect(['guests.id'])
-      // .where('groups.startAt > :today', { today })
+      .where(
+        `DATE_FORMAT(groups.startAt, '%T') between :startTime and :endTime`,
+        {
+          startTime,
+          endTime,
+        },
+      )
       .orderBy('groups.startAt', 'DESC')
-      .limit(offset ? 8 : 4)
+      // .limit(offset ? 8 : 4)
       .offset(offset ? offset : 0)
       .getMany();
+    return groups;
   }
 
   // 사용자가 참여한 모든 그룹 조회
@@ -128,7 +142,7 @@ export class GroupRepository extends Repository<Group> {
       .where('groups.host.userId = :userId', { userId })
       .orWhere('guest.userId = :userId', { userId })
       .orderBy('groups.startAt', 'DESC')
-      .limit(offset ? 8 : 4)
+      // .limit(offset ? 8 : 4)
       .offset(offset ? offset : 0)
       .getMany();
   }
