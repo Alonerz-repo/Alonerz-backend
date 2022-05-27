@@ -48,6 +48,7 @@ jobs:
           echo PORT=8081 >> .env
           echo NODE_ENV=${{ secrets.NODE_ENV }} >> .env
           echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
+          echo CLIENT_URL=${{ secrets.CLIENT_URL }} >> .env
           echo KAKAO_REST_API_KEY=${{ secrets.KAKAO_REST_API_KEY }} >> .env
           echo KAKAO_ADMIN_KEY=${{ secrets.KAKAO_ADMIN_KEY }} >> .env
           echo KAKAO_CLIENT_REDIRECT_URL=${{ secrets.KAKAO_CLIENT_REDIRECT_URL }} >> .env
