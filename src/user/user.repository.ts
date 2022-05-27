@@ -11,11 +11,6 @@ import { UpdateProfileDto } from './dto/request/update-profile.dto';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
-  // 계정 생성
-  async createUser(kakaoId: string) {
-    return await this.save({ kakaoId });
-  }
-
   // 사용자 메인 정보 조회
   async selectUserMain(userId: string): Promise<User> {
     const main = await this.createQueryBuilder('users')

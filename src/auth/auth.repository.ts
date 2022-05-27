@@ -17,14 +17,4 @@ export class AuthRepository extends Repository<User> {
   async createUser(kakaoId: string): Promise<User> {
     return await this.save({ kakaoId });
   }
-
-  // 계정 복구
-  async restoreUser(userId: string): Promise<void> {
-    await this.restore({ userId });
-  }
-
-  // 계정 탈퇴
-  async deleteUser(userId: string): Promise<void> {
-    await this.softDelete({ userId });
-  }
 }
