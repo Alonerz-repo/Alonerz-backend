@@ -1,10 +1,16 @@
-import { Controller, Get, Res } from '@nestjs/common';
-import { Response } from 'express';
+import { Controller, Logger, Post, Req } from '@nestjs/common';
+import { Request } from 'express';
 
 @Controller()
 export class AppController {
-  @Get('/alonerz')
-  index(@Res() res: Response) {
-    return res.sendFile('index.html');
+  private logger = new Logger();
+  @Post()
+  index(@Req() req: Request) {
+    const unknownRequest = {
+      user: req.user,
+      hostname: req.hostname,
+    };
+    this.logger.log(unknownRequest);
+    return;
   }
 }
