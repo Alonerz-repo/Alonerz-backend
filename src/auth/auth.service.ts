@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TokenRepository } from 'src/token/token.repository';
@@ -11,7 +10,6 @@ import { Payload } from 'src/common/interface';
 import { PayloadDto } from './dto/response/payload.dto';
 import { CreatedTokensDto } from './dto/response/created-tokens.dto';
 import { ReissuedTokensDto } from './dto/response/reissued-tokens.dto';
-import axios from 'axios';
 
 @Injectable()
 export class AuthService {
@@ -21,7 +19,6 @@ export class AuthService {
     @InjectRepository(TokenRepository)
     private readonly tokenRepository: TokenRepository,
     private jwtService: JwtService,
-    private configService: ConfigService,
     private authException: AuthException,
   ) {}
 
@@ -51,11 +48,6 @@ export class AuthService {
   // 로그인(최초 로그인 시 회원가입 처리)
   async loginOrSignup(kakaoId: string): Promise<CreatedTokensDto> {
     const exist = await this.authRepository.findUserByKakaoId(kakaoId);
-
-    if (exist) {
-      await this.authRepository.restoreUser(exist.userId);
-    }
-
     const user = exist ? exist : await this.authRepository.createUser(kakaoId);
     const tokens = this.generateTokens(user.userId);
     await this.tokenRepository.saveToken(user.userId, tokens);
@@ -72,15 +64,7 @@ export class AuthService {
     if (!userId) {
       this.authException.InvalidToken();
     }
-
     const user = await this.getUser(userId);
-    // TODO : 프론트로부터 요청이 여러번 오는 경우 refreshToken이 마지막 걸로 반영되어
-    // 인증 처리가 제대로 안 됨
-    // const oldToken = await this.tokenRepository.findToken(userId, refreshToken);
-    // if (!oldToken) {
-    //   this.authException.InvalidToken();
-    // }
-
     const tokens = this.generateTokens(userId);
     await this.tokenRepository.updateToken(userId, refreshToken, tokens);
     return new ReissuedTokensDto(tokens, user);
@@ -90,24 +74,5 @@ export class AuthService {
   async logout(userId: string): Promise<void> {
     await this.tokenRepository.deleteToken(userId);
     return;
-  }
-
-  // TODO : 삭제할 것
-  // 계정 탈퇴(kakao 계정 탈퇴, 서비스 계정 삭제)
-  async unlink(userId: string) {
-    const user = await this.authRepository.findUserByUserId(userId);
-    const kakaoAdmin = this.configService.get('kakaoAdmin');
-    const host = 'https://kapi.kakao.com';
-    const url = `/v1/user/unlink?target_id_type=user_id&target_id=${user.kakaoId}`;
-    const headers = {
-      Authorization: `KakaoAK ${kakaoAdmin}`,
-    };
-
-    try {
-      await axios.post(`${host}${url}`, {}, { headers });
-      await this.authRepository.deleteUser(userId);
-    } catch (e) {
-      console.log(e);
-    }
   }
 }

@@ -14,14 +14,9 @@ import { BlockModule } from './block/block.module';
 import { SocketModule } from './socket/socket.module';
 import { ChatRoomModule } from './chatroom/chatroom.module';
 import { ChatModule } from './chat/chat.module';
-import { ServeStaticModule } from '@nestjs/serve-static';
-import * as path from 'path';
 
 @Module({
   imports: [
-    ServeStaticModule.forRoot({
-      rootPath: path.resolve(__dirname, '../static'),
-    }),
     ConfigModule.forRoot(envConfig),
     TypeOrmModule.forRoot(typeormConfig),
     HttpExceptionModule,
