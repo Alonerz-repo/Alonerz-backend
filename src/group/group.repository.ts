@@ -93,7 +93,7 @@ export class GroupRepository extends Repository<Group> {
       .where('groups.host.userId = :userId', { userId })
       .orWhere('guest.userId = :userId', { userId })
       .andWhere('groups.startAt >= :today', { today: new Date() })
-      .orderBy('groups.startAt', 'DESC')
+      .orderBy('groups.startAt', 'ASC')
       .getMany();
   }
 
@@ -124,7 +124,7 @@ export class GroupRepository extends Repository<Group> {
           endTime,
         },
       )
-      .orderBy('groups.startAt', 'DESC')
+      .orderBy('groups.startAt', 'ASC')
       // .limit(offset ? 8 : 4)
       .offset(offset ? offset : 0)
       .getMany();
