@@ -22,7 +22,7 @@ export class GroupService {
   ) {}
 
   // 그룹 방장 확인
-  private async isHost(groupId: string): Promise<string> {
+  private async isJoinable(userId: string, groupId: string): Promise<boolean> {
     const group = await this.groupRepository.findGroupHost(groupId);
     if (!group) {
       this.groupException.NotFound();
@@ -31,7 +31,11 @@ export class GroupService {
     if (!host) {
       this.groupException.NotFound();
     }
-    return host.userId;
+    if (host.userId === userId) {
+      this.groupException.YouAreHost();
+    }
+    const { limit, guests } = group;
+    return limit !== guests.length + 1;
   }
 
   // 그룹 접근 권한 확인
@@ -49,7 +53,7 @@ export class GroupService {
     image: Express.MulterS3.File,
     createGroupDto: CreateGroupDto,
   ): Promise<CreatedGroupDto> {
-    // 현재 사용자가 참여 중인 그룹의 시간과 겹치는지 확인 후 생성
+    // TODO : 현재 사용자가 참여 중인 그룹의 시간과 겹치는지 확인 후 생성
     const imageUrl = image?.location;
     const groupId = await this.groupRepository.createGroup(
       userId,
@@ -132,9 +136,10 @@ export class GroupService {
       this.groupException.BadRequest();
     }
 
-    const hostId = await this.isHost(groupId);
-    if (hostId === userId) {
-      this.groupException.YouAreHost();
+    const joinable = await this.isJoinable(userId, groupId);
+
+    if (action === 'join' && !joinable) {
+      this.groupException.MaximumLimit();
     }
 
     action === 'join'

@@ -31,6 +31,7 @@ export class GroupRepository extends Repository<Group> {
       .select()
       .leftJoin('group.host', 'host')
       .addSelect(['host.userId'])
+      .leftJoinAndSelect('group.guests', 'guests')
       .where('group.groupId = :groupId', { groupId })
       .getOne();
   }
@@ -91,7 +92,7 @@ export class GroupRepository extends Repository<Group> {
       .addSelect('guest.userId')
       .where('groups.host.userId = :userId', { userId })
       .orWhere('guest.userId = :userId', { userId })
-      .andWhere('groups.startAt > :today', { today: new Date() })
+      .andWhere('groups.startAt >= :today', { today: new Date() })
       .orderBy('groups.startAt', 'DESC')
       .getMany();
   }
