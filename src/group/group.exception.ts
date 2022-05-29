@@ -5,6 +5,7 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  ConflictException,
 } from '@nestjs/common';
 
 @Injectable()
@@ -38,6 +39,14 @@ export class GroupException {
       statusCode: HttpStatus.BAD_REQUEST,
       message: ['방장은 그룹을 지켜야합니다.'],
       error: 'Bad Request',
+    });
+  }
+
+  MaximumLimit() {
+    throw new ConflictException({
+      statusCode: HttpStatus.CONFLICT,
+      message: ['참여 가능한 인원이 가득찼습니다.'],
+      error: 'Conflict',
     });
   }
 
