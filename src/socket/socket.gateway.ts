@@ -39,18 +39,18 @@ export class SocketGateway
   afterInit = async (server: Server) => server;
   handleConnection = async (client: Socket) => client;
 
-  // (완료) 소켓 연결 정보 삭제
+  // 소켓 연결 정보 삭제
   handleDisconnect = async (client: Socket) =>
     await this.clientService.disConnect(client.id);
 
-  // (완료) 사용자 소켓 연결 및 소켓 연결 정보 저장
+  // 사용자 소켓 연결 및 소켓 연결 정보 저장
   @SubscribeMessage(EVENT.CONNECT.ON)
   async onConnect(
     @MessageBody() createClientDto: CreateClientDto,
     @ConnectedSocket() client: Socket,
   ) {
     await this.clientService.connect(client.id, createClientDto);
-    return client.emit(EVENT.CONNECT.EMIT, 'connected');
+    return client.emit(EVENT.CONNECT.EMIT, { result: 'OK' });
   }
 
   // 참여중인 채팅방 조회
@@ -77,7 +77,7 @@ export class SocketGateway
     const chats = await this.chatRoomService.enterRoomByList(selectChatRoomDto);
 
     client.join(roomId);
-    client.emit(EVENT.GET_CHATS.EMIT, chats);
+    client.emit(EVENT.ENTER_ROOM_LIST.EMIT, chats);
     return;
   }
 
@@ -90,7 +90,7 @@ export class SocketGateway
     const chats = await this.chatRoomService.enterRoomByDM(selectChatRoomDto);
 
     client.join(chats.roomId);
-    client.emit(EVENT.GET_CHATS.EMIT, chats);
+    client.emit(EVENT.ENTER_ROOM_DM.EMIT, chats);
     return;
   }
 
@@ -143,24 +143,9 @@ export class SocketGateway
     @ConnectedSocket() client: Socket,
   ) {
     const { roomId } = createChatDto;
-
     const chat = await this.chatService.create(createChatDto);
 
-    // 해당 room에 어떤 socketId가 있는지?
-    // this.server.sockets.adapter.rooms.get(roomId);
-
-    // 해당 socketId가 현재 연결되어 있는지?
-
-    // 해당 room에 없는 사람들(userId)의 socketId 조회
-
-    // 해당 채팅방에 알림 보내주고
     this.server.to(roomId).emit(EVENT.SEND_CHAT.EMIT, chat);
-
-    /* 채팅방에 접속하지않은 사람에게 알림을 보내준다?
-    [socketId].forEach((socketId) => { 
-       ->
-    })
-    */
     return;
   }
 
