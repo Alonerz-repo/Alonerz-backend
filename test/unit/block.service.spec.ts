@@ -48,14 +48,14 @@ const mockConnection = {
 type MockBlockRepository = Partial<Record<keyof BlockRepository, jest.Mock>>;
 type MockUserRepository = Partial<Record<keyof UserRepository, jest.Mock>>;
 type MockFollowRepository = Partial<Record<keyof FollowRepository, jest.Mock>>;
+type MockBlockException = Partial<Record<keyof BlockException, jest.Mock>>;
 
 describe('BlockService', () => {
   let service: BlockService;
   let blockRepository: MockBlockRepository;
   let userRepository: MockUserRepository;
   let followRepository: MockFollowRepository;
-  let blockException;
-  let connection;
+  let blockException: MockBlockException;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -89,7 +89,6 @@ describe('BlockService', () => {
     userRepository = module.get(UserRepository);
     followRepository = module.get(FollowRepository);
     blockException = module.get(BlockException);
-    connection = module.get<Connection>(Connection);
   });
 
   it('should be defined', () => {

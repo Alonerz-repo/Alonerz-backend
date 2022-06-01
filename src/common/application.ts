@@ -20,7 +20,7 @@ export const useApplication = async (
     }),
   );
   app.enableCors({
-    origin: [process.env.CLIENT_URL],
+    origin: process.env.CLIENT_URL,
     credentials: true,
   });
   useSwagger(app);

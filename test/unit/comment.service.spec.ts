@@ -34,9 +34,9 @@ const mockConnection = {
     rollbackTransaction: jest.fn(),
     release: jest.fn(),
     manager: {
-      save: (r) => r,
-      update: (r) => r,
-      delete: (r) => r,
+      save: (r: Response) => r,
+      update: (r: Response) => r,
+      delete: (r: Response) => r,
     },
   }),
 };

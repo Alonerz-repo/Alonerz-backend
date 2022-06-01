@@ -14,11 +14,11 @@ const times = {
     endTime: '17:00:00',
   },
   dinner: {
-    startTime: '17:00',
+    startTime: '17:00:00',
     endTime: '23:00:00',
   },
   all: {
-    startTime: '09:00',
+    startTime: '09:00:00',
     endTime: '23:00:00',
   },
 };
@@ -31,6 +31,7 @@ export class GroupRepository extends Repository<Group> {
       .select()
       .leftJoin('group.host', 'host')
       .addSelect(['host.userId'])
+      .leftJoinAndSelect('group.guests', 'guests')
       .where('group.groupId = :groupId', { groupId })
       .getOne();
   }
@@ -82,6 +83,17 @@ export class GroupRepository extends Repository<Group> {
 
   // 오늘 참여 그룹 목록 조회
   async findTodayGroups(userId: string): Promise<Group[]> {
+    const date = new Date();
+    const today = [
+      date.getFullYear(),
+      `0${date.getMonth() + 1}`.slice(-2),
+      `0${date.getDate()}`.slice(-2),
+    ].join('-');
+    const time = [
+      `0${date.getHours()}`.slice(-2),
+      `0${date.getMinutes()}`.slice(-2),
+    ].join(':');
+
     return await this.createQueryBuilder('groups')
       .select(selectGroups)
       .leftJoin('groups.host', 'host')
@@ -89,10 +101,13 @@ export class GroupRepository extends Repository<Group> {
       .leftJoinAndSelect('groups.guests', 'guests')
       .leftJoin('guests.guest', 'guest')
       .addSelect('guest.userId')
-      .where('groups.host.userId = :userId', { userId })
+      .where(
+        `DATE_FORMAT(groups.endAt, '%Y-%m-%d %T') between :startTime and :endTime`,
+        { startTime: `${today} ${time}:00`, endTime: `${today} 23:00:00` },
+      )
+      .andWhere('groups.host.userId = :userId', { userId })
       .orWhere('guest.userId = :userId', { userId })
-      .andWhere('groups.startAt > :today', { today: new Date() })
-      .orderBy('groups.startAt', 'DESC')
+      .orderBy('groups.startAt', 'ASC')
       .getMany();
   }
 
@@ -123,7 +138,7 @@ export class GroupRepository extends Repository<Group> {
           endTime,
         },
       )
-      .orderBy('groups.startAt', 'DESC')
+      .orderBy('groups.startAt', 'ASC')
       // .limit(offset ? 8 : 4)
       .offset(offset ? offset : 0)
       .getMany();
@@ -141,7 +156,7 @@ export class GroupRepository extends Repository<Group> {
       .addSelect('guest.userId')
       .where('groups.host.userId = :userId', { userId })
       .orWhere('guest.userId = :userId', { userId })
-      .orderBy('groups.startAt', 'DESC')
+      .orderBy('groups.startAt', 'ASC')
       // .limit(offset ? 8 : 4)
       .offset(offset ? offset : 0)
       .getMany();
